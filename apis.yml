@@ -3,21 +3,81 @@ url: https://raw.githubusercontent.com/api-evangelist/lusha/refs/heads/main/apis
 name: Lusha
 x-type: company
 description: >-
-  Lusha is a B2B contact data platform offering email and phone numbers for sales prospecting via browser extension and API.
+  Lusha is a B2B sales intelligence platform offering verified contact and company data. It exposes
+  four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus an OpenAPI specification.
+  Authentication is via API key generated in the dashboard.
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
   - Sales Intelligence
-  - B2B Data
+  - B2B
+  - Enrichment
+  - Contact Data
   - Prospecting
-  - Phone
-  - Email
+  - Intent
 created: '2026-05-08'
 modified: '2026-05-08'
 specificationVersion: '0.19'
-apis: []
+apis:
+  - aid: lusha:enrichment
+    name: Lusha Enrichment API
+    description: >-
+      Adds verified contact (email, phone) and company (firmographic) details to records given identifiers
+      (email, LinkedIn, domain).
+    humanURL: https://docs.lusha.com/apis
+    baseURL: https://api.lusha.com
+    tags:
+      - Enrichment
+      - Contacts
+      - Companies
+    properties:
+      - type: Documentation
+        url: https://docs.lusha.com/apis
+      - type: OpenAPI
+        url: https://docs.lusha.com/apis/openapi
+  - aid: lusha:prospecting
+    name: Lusha Prospecting API
+    description: >-
+      Search and filter contacts/companies by job title, seniority, industry, geography, and other
+      firmographic/persona filters.
+    humanURL: https://docs.lusha.com/apis
+    baseURL: https://api.lusha.com
+    tags:
+      - Prospecting
+      - Search
+    properties:
+      - type: Documentation
+        url: https://docs.lusha.com/apis
+  - aid: lusha:signals
+    name: Lusha Signals API
+    description: >-
+      Real-world signals (job changes, hiring, momentum) that affect outreach timing.
+    humanURL: https://docs.lusha.com/apis
+    baseURL: https://api.lusha.com
+    tags:
+      - Intent
+      - Signals
+    properties:
+      - type: Documentation
+        url: https://docs.lusha.com/apis
+  - aid: lusha:lookalike
+    name: Lusha Lookalike API
+    description: >-
+      Discover similar accounts and buyers based on a seed list.
+    humanURL: https://docs.lusha.com/apis
+    baseURL: https://api.lusha.com
+    tags:
+      - ABM
+      - Lookalike
+    properties:
+      - type: Documentation
+        url: https://docs.lusha.com/apis
 common:
   - type: Website
     url: https://www.lusha.com/
+  - type: DeveloperPortal
+    url: https://docs.lusha.com/
+  - type: OpenAPI
+    url: https://docs.lusha.com/apis/openapi
   - type: Plans
     url: plans/lusha-plans-pricing.yml
   - type: RateLimits

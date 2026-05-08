@@ -5,20 +5,24 @@ provider: Lusha
 providerId: lusha
 created: '2026-05-08'
 modified: '2026-05-08'
-reconciled: false
+reconciled: true
 tags:
 - Sales Intelligence
-- B2B Data
+- B2B
+- Enrichment
+- Contact Data
 - Prospecting
-- Phone
-- Email
+- Intent
 - FinOps
 - Cost Management
 - FOCUS
-description: FOCUS-aligned FinOps placeholder for Lusha. Pipeline will replace with real billing details.
-notes: Initial scaffold — billing model has not yet been reconciled.
+description: >-
+  FOCUS-aligned FinOps profile for Lusha. Cost is driven by seat-based subscription plus monthly
+  credit consumption. Optimize by matching seat tier to user roles and tracking credit-per-enrichment
+  ratios; consolidate with overlapping vendors (Cognism, Apollo, ZoomInfo) at renewal.
+notes: Seat + credits model; renewal-time optimization.
 sources:
-- https://www.lusha.com/
+- https://www.lusha.com/pricing/
 - https://focus.finops.org/focus-specification/v1-3/
 alignedWith:
   framework: FinOps Foundation Framework
@@ -29,38 +33,43 @@ alignedWith:
 publisherName: Lusha
 serviceCategory: Sales Intelligence
 billingModel:
-  pricingCategory: To Be Reconciled
-  billingFrequency: Monthly
+  pricingCategory: Subscription + Credits
+  billingFrequency: Monthly / Annual
   billingCurrency: USD
   chargeCategories:
+  - Subscription
   - Usage
-  - Purchase
-  - Adjustment
 focusColumns:
-  ServiceName: Lusha
+  ServiceName: Lusha API
   ServiceCategory: Sales Intelligence
   ProviderName: Lusha
   PublisherName: Lusha
   InvoiceIssuerName: Lusha
   BillingCurrency: USD
-  ChargeCategory: Usage
+  ChargeCategory: Subscription
 meters:
-- name: api_usage
-  description: Catch-all meter pending reconciliation.
-  unit: varies
+- name: seats
+  description: Active user seats.
+  unit: seat-month
+  aggregation: max
+  dimensions:
+  - team
+- name: credits_consumed
+  description: Enrichment credits used.
+  unit: credit
   aggregation: sum
   dimensions:
-  - account
-  - resource
+  - api
+  - endpoint
 principles:
 - name: Visibility
-  description: Pull provider invoices or usage exports until a self-serve usage feed is documented.
+  description: Pull monthly credit consumption from the dashboard; reconcile against contract.
 - name: Allocation
-  description: Tag invoice line items to consuming business units in your FinOps store.
+  description: Allocate seats and credits to consuming revenue teams.
 - name: Optimization
-  description: Levers depend on the provider's billing model; review at renewal once reconciled.
+  description: Right-size seat tier; cache enrichments to avoid double-charging on dedupe.
 - name: Accountability
-  description: Assign a contract owner to review billing against negotiated terms.
+  description: RevOps owns the contract; admin controls credit-pool reset cadence.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

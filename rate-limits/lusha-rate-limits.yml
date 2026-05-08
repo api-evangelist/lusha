@@ -8,28 +8,39 @@ modified: '2026-05-08'
 reconciled: false
 tags:
 - Sales Intelligence
-- B2B Data
+- B2B
+- Enrichment
+- Contact Data
 - Prospecting
-- Phone
-- Email
+- Intent
 - Rate Limiting
 - Quotas
 - Throttling
-description: Placeholder rate-limit artifact for Lusha. Replace with real limits once researched.
-notes: Initial scaffold — limits have not yet been reconciled.
+description: >-
+  Lusha applies per-API-key rate limits and a monthly credit pool tied to the plan. The exact RPS
+  thresholds are not published on the docs landing page; the OpenAPI spec returns 429 with rate-limit
+  headers when exceeded.
+notes: Per-key + plan-based credit pool; specific RPS not publicly documented on landing page.
 sources:
-- https://www.lusha.com/
+- https://docs.lusha.com/apis
 responseCodes:
   throttled: 429
 limits:
-- name: Default
+- name: Per API key
   scope: account
-  metric: varies
+  metric: requests
   limit: see provider documentation
-  notes: Pending reconciliation.
+  notes: Throttled with 429 responses; thresholds not published on landing page.
+- name: Monthly credits
+  scope: account
+  metric: credits
+  limit: plan-based
+  notes: Each enrichment consumes credits from the plan's monthly pool.
 policies:
 - name: Backoff Strategy
-  description: Clients should implement exponential backoff with jitter and honor any Retry-After header.
+  description: Honor 429 with exponential backoff and Retry-After.
+- name: Bulk Endpoints
+  description: Use bulk lookups when available to reduce per-call overhead.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

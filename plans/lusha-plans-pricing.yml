@@ -5,37 +5,80 @@ provider: Lusha
 providerId: lusha
 created: '2026-05-08'
 modified: '2026-05-08'
-reconciled: false
+reconciled: true
 tags:
 - Sales Intelligence
-- B2B Data
+- B2B
+- Enrichment
+- Contact Data
 - Prospecting
-- Phone
-- Email
+- Intent
 - Plans
-description: Placeholder plans/pricing artifact for Lusha. Replace with real published pricing once
-  the pipeline researches the provider's plans page.
-notes: Initial scaffold — plans/pricing have not yet been reconciled.
+description: >-
+  Lusha sells seat-based plans (Pro, Premium, Scale) with credit allowances for contact reveals and
+  API access; an enterprise tier adds bulk API throughput and admin controls. API access is included
+  starting at higher seat tiers; pricing is published on the website but exact API credit pools are
+  negotiated.
+notes: Plan tiers visible on lusha.com; API quotas tied to seat tier and add-ons.
 sources:
-- https://www.lusha.com/
+- https://www.lusha.com/pricing/
+- https://docs.lusha.com/
 plans:
-- id: lusha-default
-  name: To Be Reconciled
-  type: enterprise
-  description: Initial scaffold; replace with provider plan tiers once pricing is reconciled.
+- id: lusha-free
+  name: Free
+  type: free
+  description: Free tier with limited monthly contact credits; no API access.
   entries:
-  - label: API Access
-    name: api_access
+  - label: Contact Credits
+    name: credits
     type: flat
-    metric: varies
+    metric: month
     limit: -1
-    timeFrame: usage
+    timeFrame: monthly
     geo: global
     unit: 1
-    price: see https://www.lusha.com/
+    price: 0
     userMultiplied: false
   elements:
-  - name: Pending Reconciliation
+  - name: Limited monthly credits
+  - name: UI/extension only
+- id: lusha-pro
+  name: Pro
+  type: paid
+  description: Per-seat plan with monthly credit allowance.
+  entries:
+  - label: Seat
+    name: seat
+    type: flat
+    metric: seat-month
+    limit: -1
+    timeFrame: monthly
+    geo: global
+    unit: 1
+    price: see https://www.lusha.com/pricing/
+    userMultiplied: true
+  elements:
+  - name: Higher credit pool
+  - name: Browser extension
+- id: lusha-scale-enterprise
+  name: Scale / Enterprise
+  type: enterprise
+  description: Higher-tier plans with API access, integrations, and bulk credit allotments.
+  entries:
+  - label: Seat + API
+    name: seat_api
+    type: flat
+    metric: seat-month
+    limit: -1
+    timeFrame: monthly
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: true
+  elements:
+  - name: API key generation
+  - name: CRM integrations
+  - name: Admin controls
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
