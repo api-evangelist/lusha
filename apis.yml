@@ -1,0 +1,29 @@
+aid: lusha
+url: https://raw.githubusercontent.com/api-evangelist/lusha/refs/heads/main/apis.yml
+name: Lusha
+x-type: company
+description: >-
+  Lusha is a B2B contact data platform offering email and phone numbers for sales prospecting via browser extension and API.
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Sales Intelligence
+  - B2B Data
+  - Prospecting
+  - Phone
+  - Email
+created: '2026-05-08'
+modified: '2026-05-08'
+specificationVersion: '0.19'
+apis: []
+common:
+  - type: Website
+    url: https://www.lusha.com/
+  - type: Plans
+    url: plans/lusha-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/lusha-rate-limits.yml
+  - type: FinOps
+    url: finops/lusha-finops.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
