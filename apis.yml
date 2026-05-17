@@ -1,7 +1,7 @@
 aid: lusha
 url: https://raw.githubusercontent.com/api-evangelist/lusha/refs/heads/main/apis.yml
 name: Lusha
-x-type: company
+kind: company
 description: >-
   Lusha is a B2B sales intelligence platform offering verified contact and company data. It exposes
   four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus an OpenAPI specification.
