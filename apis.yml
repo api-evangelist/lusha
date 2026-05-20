@@ -72,6 +72,10 @@ apis:
       - type: Documentation
         url: https://docs.lusha.com/apis
 common:
+  - type: GitHubOrganization
+    url: https://github.com/lusha-oss
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/lushadata
   - type: Website
     url: https://www.lusha.com/
   - type: DeveloperPortal
