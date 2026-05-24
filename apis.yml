@@ -88,6 +88,8 @@ common:
     url: rate-limits/lusha-rate-limits.yml
   - type: FinOps
     url: finops/lusha-finops.yml
+  - type: LLMsTxt
+    url: https://docs.lusha.com/llms.txt
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
