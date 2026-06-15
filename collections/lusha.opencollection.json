@@ -1,0 +1,532 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Enrichment",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find contacts by identifier (email, LinkedIn URL, name + company, etc.)."
+        },
+        {
+          "info": {
+            "name": "Enrich contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reveal full contact data (verified emails, phones) for a set of contact IDs."
+        },
+        {
+          "info": {
+            "name": "Search and enrich contacts in a single call",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/search-and-enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search and enrich contacts in a single call"
+        },
+        {
+          "info": {
+            "name": "Search companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search companies"
+        },
+        {
+          "info": {
+            "name": "Enrich companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Enrich companies"
+        },
+        {
+          "info": {
+            "name": "Search and enrich companies in a single call",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/search-and-enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search and enrich companies in a single call"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Prospecting",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Filter-based contact prospecting",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/prospecting",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Filter-based contact prospecting"
+        },
+        {
+          "info": {
+            "name": "Filter-based company prospecting",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/prospecting",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Filter-based company prospecting"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Lookalike",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Find lookalike contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/lookalike",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find lookalike contacts"
+        },
+        {
+          "info": {
+            "name": "Find lookalike companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/lookalike",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find lookalike companies"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Signals",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get contact activity signals",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/signals",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Get contact activity signals"
+        },
+        {
+          "info": {
+            "name": "Get company activity signals",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/signals",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Get company activity signals"
+        },
+        {
+          "info": {
+            "name": "List contact signal types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/signals/types"
+          },
+          "docs": "List contact signal types"
+        },
+        {
+          "info": {
+            "name": "List company signal types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/signals/types"
+          },
+          "docs": "List company signal types"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Filters",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List company-signal filter types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/signals/filters"
+          },
+          "docs": "List company-signal filter types"
+        },
+        {
+          "info": {
+            "name": "Get values for a company-signal filter type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/signals/filters/:filterType",
+            "params": [
+              {
+                "name": "filterType",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get values for a company-signal filter type"
+        },
+        {
+          "info": {
+            "name": "List contact prospecting filter types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/prospecting/filters"
+          },
+          "docs": "List contact prospecting filter types"
+        },
+        {
+          "info": {
+            "name": "Get values for a contact prospecting filter type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/prospecting/filters/:filterType",
+            "params": [
+              {
+                "name": "filterType",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get values for a contact prospecting filter type"
+        },
+        {
+          "info": {
+            "name": "List company prospecting filter types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/prospecting/filters"
+          },
+          "docs": "List company prospecting filter types"
+        },
+        {
+          "info": {
+            "name": "Get values for a company prospecting filter type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/prospecting/filters/:filterType",
+            "params": [
+              {
+                "name": "filterType",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get values for a company prospecting filter type"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List webhook subscriptions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/api/subscriptions"
+          },
+          "docs": "List webhook subscriptions"
+        },
+        {
+          "info": {
+            "name": "Create a signal subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/api/subscriptions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a signal subscription"
+        },
+        {
+          "info": {
+            "name": "Retrieve a webhook subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/api/subscriptions/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve a webhook subscription"
+        },
+        {
+          "info": {
+            "name": "Update a webhook subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lusha.com/api/subscriptions/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a webhook subscription"
+        },
+        {
+          "info": {
+            "name": "Send a test webhook delivery",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/api/subscriptions/:id/test",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Send a test webhook delivery"
+        },
+        {
+          "info": {
+            "name": "Bulk-delete subscriptions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/api/subscriptions/delete",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk-delete subscriptions"
+        },
+        {
+          "info": {
+            "name": "Subscribe to opt-out notifications",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/api/subscriptions/opt-out",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Subscribe to opt-out notifications"
+        },
+        {
+          "info": {
+            "name": "View webhook delivery audit logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/api/audit-logs"
+          },
+          "docs": "View webhook delivery audit logs"
+        },
+        {
+          "info": {
+            "name": "Get webhook delivery statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/api/audit-logs/stats"
+          },
+          "docs": "Get webhook delivery statistics"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Account",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve webhook signing secret",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/api/account/secret"
+          },
+          "docs": "Retrieve webhook signing secret"
+        },
+        {
+          "info": {
+            "name": "Regenerate webhook signing secret",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/api/account/secret/regenerate"
+          },
+          "docs": "Regenerate webhook signing secret"
+        },
+        {
+          "info": {
+            "name": "Retrieve account usage, credits and plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/account/usage"
+          },
+          "docs": "Retrieve account usage, credits and plan"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
