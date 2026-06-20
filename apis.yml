@@ -6,7 +6,7 @@ description: >-
   Lusha is a B2B sales intelligence platform offering verified contact and company data. It exposes
   four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus an OpenAPI specification.
   Authentication is via API key generated in the dashboard.
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
   - Sales Intelligence
   - B2B
