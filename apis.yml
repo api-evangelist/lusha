@@ -72,6 +72,12 @@ apis:
       - type: Documentation
         url: https://docs.lusha.com/apis
 common:
+  - type: VulnerabilityDisclosure
+    url: security/lusha-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/lusha-domain-security.yml
+  - type: Authentication
+    url: authentication/lusha-authentication.yml
   - type: GitHubOrganization
     url: https://github.com/lusha-oss
   - type: LinkedIn
@@ -90,6 +96,8 @@ common:
     url: finops/lusha-finops.yml
   - type: LlmsText
     url: https://docs.lusha.com/llms.txt
+  - url: https://www.lusha.com/blog/
+    type: Blog
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
