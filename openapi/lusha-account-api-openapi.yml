@@ -1,0 +1,50 @@
+openapi: 3.1.0
+info:
+  title: Lusha Account API
+  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
+  version: 3.0.0
+  contact:
+    name: Lusha
+    url: https://docs.lusha.com/apis
+servers:
+- url: https://api.lusha.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Account
+  description: Account usage, credits, and webhook-secret administration
+paths:
+  /api/account/secret:
+    get:
+      tags:
+      - Account
+      summary: Retrieve webhook signing secret
+      operationId: getWebhookSecret
+      responses:
+        '200':
+          description: Current secret
+  /api/account/secret/regenerate:
+    post:
+      tags:
+      - Account
+      summary: Regenerate webhook signing secret
+      operationId: regenerateWebhookSecret
+      responses:
+        '200':
+          description: New secret
+  /v3/account/usage:
+    get:
+      tags:
+      - Account
+      summary: Retrieve account usage, credits and plan
+      operationId: getAccountUsage
+      responses:
+        '200':
+          description: Account usage details
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key

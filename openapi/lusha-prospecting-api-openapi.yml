@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: Lusha Account Prospecting API
+  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
+  version: 3.0.0
+  contact:
+    name: Lusha
+    url: https://docs.lusha.com/apis
+servers:
+- url: https://api.lusha.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Prospecting
+  description: Filter-based contact and company search
+paths:
+  /v3/contacts/prospecting:
+    post:
+      tags:
+      - Prospecting
+      summary: Filter-based contact prospecting
+      operationId: prospectContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Matching contacts
+  /v3/companies/prospecting:
+    post:
+      tags:
+      - Prospecting
+      summary: Filter-based company prospecting
+      operationId: prospectCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Matching companies
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key

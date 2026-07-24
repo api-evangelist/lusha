@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: Lusha Account Lookalike API
+  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
+  version: 3.0.0
+  contact:
+    name: Lusha
+    url: https://docs.lusha.com/apis
+servers:
+- url: https://api.lusha.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Lookalike
+  description: AI-powered similar contact and company recommendations
+paths:
+  /v3/contacts/lookalike:
+    post:
+      tags:
+      - Lookalike
+      summary: Find lookalike contacts
+      operationId: lookalikeContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Similar contact recommendations
+  /v3/companies/lookalike:
+    post:
+      tags:
+      - Lookalike
+      summary: Find lookalike companies
+      operationId: lookalikeCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Similar company recommendations
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key

@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: Lusha Account Enrichment API
+  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
+  version: 3.0.0
+  contact:
+    name: Lusha
+    url: https://docs.lusha.com/apis
+servers:
+- url: https://api.lusha.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Enrichment
+  description: Reveal contact and company details from identifiers
+paths:
+  /v3/contacts/search:
+    post:
+      tags:
+      - Enrichment
+      summary: Search contacts
+      description: Find contacts by identifier (email, LinkedIn URL, name + company, etc.).
+      operationId: searchContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+  /v3/contacts/enrich:
+    post:
+      tags:
+      - Enrichment
+      summary: Enrich contacts
+      description: Reveal full contact data (verified emails, phones) for a set of contact IDs.
+      operationId: enrichContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Enriched contacts
+  /v3/contacts/search-and-enrich:
+    post:
+      tags:
+      - Enrichment
+      summary: Search and enrich contacts in a single call
+      operationId: searchAndEnrichContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Enriched contact results
+  /v3/companies/search:
+    post:
+      tags:
+      - Enrichment
+      summary: Search companies
+      operationId: searchCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Company search results
+  /v3/companies/enrich:
+    post:
+      tags:
+      - Enrichment
+      summary: Enrich companies
+      operationId: enrichCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Enriched companies
+  /v3/companies/search-and-enrich:
+    post:
+      tags:
+      - Enrichment
+      summary: Search and enrich companies in a single call
+      operationId: searchAndEnrichCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Enriched company results
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key

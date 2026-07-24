@@ -1,0 +1,95 @@
+openapi: 3.1.0
+info:
+  title: Lusha Account Filters API
+  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
+  version: 3.0.0
+  contact:
+    name: Lusha
+    url: https://docs.lusha.com/apis
+servers:
+- url: https://api.lusha.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Filters
+  description: Filter discovery endpoints for prospecting and signals
+paths:
+  /v3/companies/signals/filters:
+    get:
+      tags:
+      - Filters
+      summary: List company-signal filter types
+      operationId: listCompanySignalFilters
+      responses:
+        '200':
+          description: Filter types
+  /v3/companies/signals/filters/{filterType}:
+    get:
+      tags:
+      - Filters
+      summary: Get values for a company-signal filter type
+      operationId: getCompanySignalFilterValues
+      parameters:
+      - name: filterType
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Filter values
+  /v3/contacts/prospecting/filters:
+    get:
+      tags:
+      - Filters
+      summary: List contact prospecting filter types
+      operationId: listContactProspectingFilters
+      responses:
+        '200':
+          description: Filter types
+  /v3/contacts/prospecting/filters/{filterType}:
+    get:
+      tags:
+      - Filters
+      summary: Get values for a contact prospecting filter type
+      operationId: getContactProspectingFilterValues
+      parameters:
+      - name: filterType
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Filter values
+  /v3/companies/prospecting/filters:
+    get:
+      tags:
+      - Filters
+      summary: List company prospecting filter types
+      operationId: listCompanyProspectingFilters
+      responses:
+        '200':
+          description: Filter types
+  /v3/companies/prospecting/filters/{filterType}:
+    get:
+      tags:
+      - Filters
+      summary: Get values for a company prospecting filter type
+      operationId: getCompanyProspectingFilterValues
+      parameters:
+      - name: filterType
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Filter values
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key

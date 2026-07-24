@@ -1,0 +1,144 @@
+openapi: 3.1.0
+info:
+  title: Lusha Account Webhooks API
+  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
+  version: 3.0.0
+  contact:
+    name: Lusha
+    url: https://docs.lusha.com/apis
+servers:
+- url: https://api.lusha.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Webhooks
+  description: Signal-subscription webhook management
+paths:
+  /api/subscriptions:
+    get:
+      tags:
+      - Webhooks
+      summary: List webhook subscriptions
+      operationId: listSubscriptions
+      responses:
+        '200':
+          description: Subscriptions
+    post:
+      tags:
+      - Webhooks
+      summary: Create a signal subscription
+      operationId: createSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Subscription created
+  /api/subscriptions/{id}:
+    get:
+      tags:
+      - Webhooks
+      summary: Retrieve a webhook subscription
+      operationId: getSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Subscription
+    patch:
+      tags:
+      - Webhooks
+      summary: Update a webhook subscription
+      operationId: updateSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated
+  /api/subscriptions/{id}/test:
+    post:
+      tags:
+      - Webhooks
+      summary: Send a test webhook delivery
+      operationId: testSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Test delivery dispatched
+  /api/subscriptions/delete:
+    post:
+      tags:
+      - Webhooks
+      summary: Bulk-delete subscriptions
+      operationId: deleteSubscriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Deleted
+  /api/subscriptions/opt-out:
+    post:
+      tags:
+      - Webhooks
+      summary: Subscribe to opt-out notifications
+      operationId: subscribeOptOut
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Subscribed
+  /api/audit-logs:
+    get:
+      tags:
+      - Webhooks
+      summary: View webhook delivery audit logs
+      operationId: listAuditLogs
+      responses:
+        '200':
+          description: Audit logs
+  /api/audit-logs/stats:
+    get:
+      tags:
+      - Webhooks
+      summary: Get webhook delivery statistics
+      operationId: getAuditLogStats
+      responses:
+        '200':
+          description: Delivery stats
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
