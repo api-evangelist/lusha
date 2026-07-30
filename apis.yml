@@ -6,7 +6,20 @@ description: >-
   Lusha is a B2B sales intelligence platform offering verified contact and company data. It exposes
   four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus an OpenAPI specification.
   Authentication is via API key generated in the dashboard.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/lusha.png
 tags:
   - Sales Intelligence
   - B2B
@@ -18,59 +31,125 @@ created: '2026-05-08'
 modified: '2026-05-08'
 specificationVersion: '0.19'
 apis:
-  - aid: lusha:enrichment
-    name: Lusha Enrichment API
-    description: >-
-      Adds verified contact (email, phone) and company (firmographic) details to records given identifiers
-      (email, LinkedIn, domain).
-    humanURL: https://docs.lusha.com/apis
-    baseURL: https://api.lusha.com
-    tags:
-      - Enrichment
-      - Contacts
-      - Companies
-    properties:
-      - type: Documentation
-        url: https://docs.lusha.com/apis
-      - type: OpenAPI
-        url: https://docs.lusha.com/apis/openapi
-  - aid: lusha:prospecting
-    name: Lusha Prospecting API
-    description: >-
-      Search and filter contacts/companies by job title, seniority, industry, geography, and other
-      firmographic/persona filters.
-    humanURL: https://docs.lusha.com/apis
-    baseURL: https://api.lusha.com
-    tags:
-      - Prospecting
-      - Search
-    properties:
-      - type: Documentation
-        url: https://docs.lusha.com/apis
-  - aid: lusha:signals
-    name: Lusha Signals API
-    description: >-
-      Real-world signals (job changes, hiring, momentum) that affect outreach timing.
-    humanURL: https://docs.lusha.com/apis
-    baseURL: https://api.lusha.com
-    tags:
-      - Intent
-      - Signals
-    properties:
-      - type: Documentation
-        url: https://docs.lusha.com/apis
-  - aid: lusha:lookalike
-    name: Lusha Lookalike API
-    description: >-
-      Discover similar accounts and buyers based on a seed list.
-    humanURL: https://docs.lusha.com/apis
-    baseURL: https://api.lusha.com
-    tags:
-      - ABM
-      - Lookalike
-    properties:
-      - type: Documentation
-        url: https://docs.lusha.com/apis
+- aid: lusha:prospecting
+  name: Lusha Prospecting API
+  description: >-
+    Search and filter contacts/companies by job title, seniority, industry, geography, and other firmographic/persona
+    filters.
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Prospecting
+  - Search
+  properties:
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:signals
+  name: Lusha Signals API
+  description: Real-world signals (job changes, hiring, momentum) that affect outreach timing.
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Intent
+  - Signals
+  properties:
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lookalike
+  name: Lusha Lookalike API
+  description: Discover similar accounts and buyers based on a seed list.
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - ABM
+  - Lookalike
+  properties:
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-account-api
+  name: Lusha Account API
+  description: Account usage, credits, and webhook-secret administration
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Account
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-account-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-enrichment-api
+  name: Lusha Enrichment API
+  description: Reveal contact and company details from identifiers
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Enrichment
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-enrichment-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-filters-api
+  name: Lusha Filters API
+  description: Filter discovery endpoints for prospecting and signals
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Filters
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-filters-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-lookalike-api
+  name: Lusha Lookalike API
+  description: AI-powered similar contact and company recommendations
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Lookalike
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-lookalike-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-prospecting-api
+  name: Lusha Prospecting API
+  description: Filter-based contact and company search
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Prospecting
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-prospecting-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-signals-api
+  name: Lusha Signals API
+  description: Buying-intent and account signals
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Signals
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-signals-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
+- aid: lusha:lusha-webhooks-api
+  name: Lusha Webhooks API
+  description: Signal-subscription webhook management
+  humanURL: https://docs.lusha.com/apis
+  baseURL: https://api.lusha.com
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lusha.com/apis
 common:
   - type: AgenticAccess
     url: agentic-access/lusha-agentic-access.yml
