@@ -3,9 +3,12 @@
   "feeds": [
     {
       "source": "https://www.lusha.com/blog/",
-      "error": "HTTPError"
+      "feed_url": "https://www.lusha.com/blog/feed/",
+      "title": "",
+      "saved": 6,
+      "method": "discovered"
     }
   ],
-  "fetched": "2026-07-11T11:50:51Z",
-  "post_count": 15
+  "fetched": "2026-08-01T15:49:00Z",
+  "post_count": 21
 }

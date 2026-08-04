@@ -1,0 +1,26 @@
+{
+  "provider": "lusha",
+  "sources": [
+    "lusha-account-api-openapi.yml",
+    "lusha-enrichment-api-openapi.yml",
+    "lusha-filters-api-openapi.yml",
+    "lusha-lookalike-api-openapi.yml",
+    "lusha-prospecting-api-openapi.yml",
+    "lusha-signals-api-openapi.yml",
+    "lusha-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "lusha-account-api-openapi.yml",
+    "lusha-enrichment-api-openapi.yml",
+    "lusha-filters-api-openapi.yml",
+    "lusha-lookalike-api-openapi.yml",
+    "lusha-prospecting-api-openapi.yml",
+    "lusha-signals-api-openapi.yml",
+    "lusha-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
