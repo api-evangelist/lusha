@@ -3,16 +3,21 @@ url: https://raw.githubusercontent.com/api-evangelist/lusha/refs/heads/main/apis
 name: Lusha
 kind: company
 description: >-
-  Lusha is a B2B sales intelligence platform offering verified contact and company data. It exposes
-  four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus an OpenAPI specification.
-  Authentication is via API key generated in the dashboard.
+  Lusha is a B2B sales-intelligence platform that sells verified contact and company data, buying
+  signals and AI recommendations to revenue teams. Its v3 REST API at api.lusha.com exposes 58
+  operations across thirteen resource families — Search, Enrich, Search & Enrich, Prospecting,
+  Lookalikes, Buying Group, Contacts Tables, Companies Tables, Signals, Website Visits, Filters,
+  Webhooks and Account — behind a single `api_key` header credential, on a search-then-enrich pattern
+  where previews are free of PII and reveals spend credits. Lusha also ships a first-party hosted MCP
+  server at mcp.lusha.com with 22 tools, OAuth 2.1 discovery and official Claude, ChatGPT and Codex
+  connectors, plus HMAC-signed webhooks for real-time signal delivery.
 accessModel:
   pricing: freemium
   onboarding: self-serve
   trial: false
   try_now: true
   public: false
-  label: Freemium · Self-serve signup
+  label: Freemium · Self-serve signup · API keys gated to Scale plan
   confidence: high
   source:
   - plans
@@ -27,158 +32,370 @@ tags:
   - Contact Data
   - Prospecting
   - Intent
+  - Signals
+  - Lookalikes
+  - Webhooks
+  - MCP
 created: '2026-05-08'
-modified: '2026-05-08'
+modified: '2026-08-13'
 specificationVersion: '0.19'
 apis:
-- aid: lusha:prospecting
+- aid: lusha:lusha-search-api
+  name: Lusha Search API
+  description: >-
+    Find contacts or companies from known identifiers — contact id, LinkedIn URL, email or
+    name + company; company id, name or domain — and return a non-PII preview with `has` and
+    `canReveal` fields describing what exists and what can be unlocked.
+  humanURL: https://docs.lusha.com/apis/openapi/search
+  baseURL: https://api.lusha.com
+  tags:
+  - Search
+  - Enrichment
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-search-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-search-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/search
+- aid: lusha:lusha-enrichment-api
+  name: Lusha Enrich API
+  description: >-
+    Reveal full contact and company profiles by Lusha id, with an explicit `reveal` list controlling
+    which fields are unlocked and charged, and optional waterfall fall-through to enabled third-party
+    data providers.
+  humanURL: https://docs.lusha.com/apis/openapi/enrich
+  baseURL: https://api.lusha.com
+  tags:
+  - Enrichment
+  - Contact Data
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-enrich-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-enrich-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/enrich
+- aid: lusha:lusha-search-enrich-api
+  name: Lusha Search & Enrich API
+  description: >-
+    Resolve an identifier and return the fully revealed contact or company record in a single call,
+    collapsing the two-phase search-then-enrich pattern where the caller has already decided to spend
+    credits.
+  humanURL: https://docs.lusha.com/apis/openapi/search-and-enrich
+  baseURL: https://api.lusha.com
+  tags:
+  - Enrichment
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-search-enrich-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-search-enrich-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/search-and-enrich
+- aid: lusha:lusha-prospecting-api
   name: Lusha Prospecting API
   description: >-
-    Search and filter contacts/companies by job title, seniority, industry, geography, and other firmographic/persona
-    filters.
-  humanURL: https://docs.lusha.com/apis
+    Filter-based search across Lusha's contact and company database — job title, seniority, department,
+    location, company size, revenue, industry, technology and intent — with paged results and a
+    dedupe session so successive pages do not repeat entities.
+  humanURL: https://docs.lusha.com/apis/openapi/prospecting
   baseURL: https://api.lusha.com
   tags:
   - Prospecting
   - Search
   properties:
+  - type: OpenAPI
+    url: openapi/lusha-prospecting-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-prospecting-overlay.yaml
   - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:signals
-  name: Lusha Signals API
-  description: Real-world signals (job changes, hiring, momentum) that affect outreach timing.
-  humanURL: https://docs.lusha.com/apis
+    url: https://docs.lusha.com/apis/openapi/prospecting
+- aid: lusha:lusha-lookalike-api
+  name: Lusha Lookalikes API
+  description: >-
+    AI-powered similarity search that expands a seed list of contacts or companies into comparable
+    profiles, with exclusion lists, a dedupe session id and optional persistence into a Lusha table.
+  humanURL: https://docs.lusha.com/apis/openapi/lookalikes
   baseURL: https://api.lusha.com
   tags:
-  - Intent
-  - Signals
+  - Lookalikes
+  - ABM
   properties:
+  - type: OpenAPI
+    url: openapi/lusha-lookalikes-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-lookalikes-overlay.yaml
   - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:lookalike
-  name: Lusha Lookalike API
-  description: Discover similar accounts and buyers based on a seed list.
-  humanURL: https://docs.lusha.com/apis
+    url: https://docs.lusha.com/apis/openapi/lookalikes
+- aid: lusha:lusha-buying-group-api
+  name: Lusha Buying Group API
+  description: >-
+    Persona classification over a fixed set of up to 25 named accounts — labels each returned contact
+    decision_maker, potential_champion or end_user with a relevance score. Released 2026-08-12 as the
+    replacement for the retired Decision Makers endpoint.
+  humanURL: https://docs.lusha.com/apis/openapi/buying-group
   baseURL: https://api.lusha.com
   tags:
   - ABM
-  - Lookalike
-  properties:
-  - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:lusha-account-api
-  name: Lusha Account API
-  description: Account usage, credits, and webhook-secret administration
-  humanURL: https://docs.lusha.com/apis
-  baseURL: https://api.lusha.com
-  tags:
-  - Account
+  - Buying Group
   properties:
   - type: OpenAPI
-    url: openapi/lusha-account-api-openapi.yml
+    url: openapi/lusha-buying-group-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-buying-group-overlay.yaml
   - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:lusha-enrichment-api
-  name: Lusha Enrichment API
-  description: Reveal contact and company details from identifiers
-  humanURL: https://docs.lusha.com/apis
-  baseURL: https://api.lusha.com
-  tags:
-  - Enrichment
-  properties:
-  - type: OpenAPI
-    url: openapi/lusha-enrichment-api-openapi.yml
-  - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:lusha-filters-api
-  name: Lusha Filters API
-  description: Filter discovery endpoints for prospecting and signals
-  humanURL: https://docs.lusha.com/apis
-  baseURL: https://api.lusha.com
-  tags:
-  - Filters
-  properties:
-  - type: OpenAPI
-    url: openapi/lusha-filters-api-openapi.yml
-  - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:lusha-lookalike-api
-  name: Lusha Lookalike API
-  description: AI-powered similar contact and company recommendations
-  humanURL: https://docs.lusha.com/apis
-  baseURL: https://api.lusha.com
-  tags:
-  - Lookalike
-  properties:
-  - type: OpenAPI
-    url: openapi/lusha-lookalike-api-openapi.yml
-  - type: Documentation
-    url: https://docs.lusha.com/apis
-- aid: lusha:lusha-prospecting-api
-  name: Lusha Prospecting API
-  description: Filter-based contact and company search
-  humanURL: https://docs.lusha.com/apis
-  baseURL: https://api.lusha.com
-  tags:
-  - Prospecting
-  properties:
-  - type: OpenAPI
-    url: openapi/lusha-prospecting-api-openapi.yml
-  - type: Documentation
-    url: https://docs.lusha.com/apis
+    url: https://docs.lusha.com/apis/openapi/buying-group
 - aid: lusha:lusha-signals-api
   name: Lusha Signals API
-  description: Buying-intent and account signals
-  humanURL: https://docs.lusha.com/apis
+  description: >-
+    Real-world activity data for contacts and companies — promotions and job changes on the contact
+    side; headcount movement, hiring surges, web traffic, IT spend, news classes and LinkedIn activity
+    intent on the company side — as raw dated events or as a single 0-1 momentum score per entity.
+  humanURL: https://docs.lusha.com/apis/openapi/signals
   baseURL: https://api.lusha.com
   tags:
   - Signals
+  - Intent
   properties:
   - type: OpenAPI
     url: openapi/lusha-signals-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-signals-overlay.yaml
   - type: Documentation
-    url: https://docs.lusha.com/apis
+    url: https://docs.lusha.com/apis/openapi/signals
+- aid: lusha:lusha-website-visits-api
+  name: Lusha Website Visitors API
+  description: >-
+    Companies ranked by website-visit signals for domains you track, filtered by score band, visitor
+    country, session counts, unique visitors, high-intent pageviews and recency.
+  humanURL: https://docs.lusha.com/apis/openapi/website-visits
+  baseURL: https://api.lusha.com
+  tags:
+  - Intent
+  - Website Visitors
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-website-visits-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-website-visits-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/website-visits
+- aid: lusha:lusha-filters-api
+  name: Lusha Filters API
+  description: >-
+    Filter discovery for prospecting — enumerates the available filter types and the valid values for
+    each, so callers never guess industry labels, seniority ids or technology names. Charges no credits.
+  humanURL: https://docs.lusha.com/apis/openapi/filters
+  baseURL: https://api.lusha.com
+  tags:
+  - Filters
+  - Prospecting
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-filters-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-filters-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/filters
+- aid: lusha:lusha-contacts-tables-api
+  name: Lusha Contacts Tables API
+  description: >-
+    Persist, organise and enrich contacts in reusable tables with dynamic columns — create, list, read,
+    update, delete tables; add and remove up to 500 entity ids per call; run enrichment columns over a
+    scope. Beta on the 2.9.x release line.
+  humanURL: https://docs.lusha.com/apis/openapi/contacts-tables
+  baseURL: https://api.lusha.com
+  tags:
+  - Tables
+  - Enrichment
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-contacts-tables-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-contacts-tables-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/contacts-tables
+- aid: lusha:lusha-companies-tables-api
+  name: Lusha Companies Tables API
+  description: >-
+    The company-side twin of Contacts Tables — persist and enrich company working sets in tables with
+    dynamic columns, capped at 50,000 entities per table and 500 tables per account.
+  humanURL: https://docs.lusha.com/apis/openapi/companies-tables
+  baseURL: https://api.lusha.com
+  tags:
+  - Tables
+  - Enrichment
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-companies-tables-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-companies-tables-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/companies-tables
 - aid: lusha:lusha-webhooks-api
   name: Lusha Webhooks API
-  description: Signal-subscription webhook management
-  humanURL: https://docs.lusha.com/apis
+  description: >-
+    Subscription management for real-time signal callbacks — bulk create and delete up to 25 items per
+    request, account-level HMAC-SHA256 secret with rotation, delivery test, contact opt-out
+    notifications, and a delivery audit log with statistics.
+  humanURL: https://docs.lusha.com/apis/openapi/webhooks
   baseURL: https://api.lusha.com
   tags:
   - Webhooks
+  - Signals
   properties:
   - type: OpenAPI
     url: openapi/lusha-webhooks-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-webhooks-overlay.yaml
+  - type: Webhooks
+    url: asyncapi/lusha-webhooks.yml
   - type: Documentation
-    url: https://docs.lusha.com/apis
+    url: https://docs.lusha.com/apis/openapi/webhooks
+- aid: lusha:lusha-account-api
+  name: Lusha Account API
+  description: >-
+    Credit balance, plan information, per-action credit pricing and the live rate-limit tiers for the
+    minute, hourly and daily windows.
+  humanURL: https://docs.lusha.com/apis/openapi/account
+  baseURL: https://api.lusha.com
+  tags:
+  - Account
+  - Usage
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-account-api-openapi.yml
+  - type: Overlay
+    url: overlays/lusha-account-overlay.yaml
+  - type: Documentation
+    url: https://docs.lusha.com/apis/openapi/account
+- aid: lusha:mcp
+  name: Lusha MCP Server
+  description: >-
+    First-party hosted Model Context Protocol server exposing 22 Lusha tools over streamable HTTP.
+    Authenticates with OAuth 2.1 (scope `mcp`, PKCE S256, dynamic client registration at
+    auth.lusha.com) for the official Claude, ChatGPT and Codex connectors, or with a Lusha API key in
+    a lowercase `x-api-key` header for every other client. A local stdio build ships on npm.
+  humanURL: https://docs.lusha.com/mcp-docs
+  baseURL: https://mcp.lusha.com
+  tags:
+  - MCP
+  - Agents
+  properties:
+  - type: MCPServer
+    url: mcp/lusha-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/lusha-tool-crosswalk.yml
+  - type: Documentation
+    url: https://docs.lusha.com/mcp-docs
 common:
-  - type: AgenticAccess
-    url: agentic-access/lusha-agentic-access.yml
-  - type: VulnerabilityDisclosure
-    url: security/lusha-vulnerability-disclosure.yml
-  - type: DomainSecurity
-    url: security/lusha-domain-security.yml
-  - type: Authentication
-    url: authentication/lusha-authentication.yml
-  - type: GitHubOrganization
-    url: https://github.com/lusha-oss
-  - type: LinkedIn
-    url: https://www.linkedin.com/company/lushadata
   - type: Website
     url: https://www.lusha.com/
   - type: DeveloperPortal
     url: https://docs.lusha.com/
-  - type: OpenAPI
+  - type: Documentation
     url: https://docs.lusha.com/apis/openapi
+  - type: APIReference
+    url: https://docs.lusha.com/apis/openapi
+  - type: GettingStarted
+    url: https://docs.lusha.com/guides/advanced-topics/new-getting-started
+  - type: Support
+    url: https://info.lusha.com/
+  - type: Blog
+    url: https://www.lusha.com/blog/
+  - type: GitHubOrganization
+    url: https://github.com/lusha-oss
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/lushadata
+  - type: Pricing
+    url: https://www.lusha.com/pricing/
+  - type: Login
+    url: https://dashboard.lusha.com/
+  - type: TermsOfService
+    url: https://lusha.com/legal/terms
+  - type: PrivacyPolicy
+    url: https://lusha.com/legal/privacy-notice/
+  - type: Postman
+    url: https://www.postman.com/lushateam/workspace/lusha-s-api/collection/28683568-fc849873-9ae1-47dd-8159-0d4deda04750
+  - type: OpenAPI
+    url: https://docs.lusha.com/_spec/apis/@v3/openapi.yaml
+  - type: MCPServer
+    url: mcp/lusha-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/lusha-tool-crosswalk.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: AgenticAccess
+    url: agentic-access/lusha-agentic-access.yml
+  - type: Authentication
+    url: authentication/lusha-authentication.yml
+  - type: OAuthScopes
+    url: scopes/lusha-scopes.yml
+  - type: Conventions
+    url: conventions/lusha-conventions.yml
+  - type: ErrorCatalog
+    url: errors/lusha-problem-types.yml
+  - type: DataModel
+    url: data-model/lusha-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/lusha-lifecycle.yml
+  - type: StatusPage
+    url: https://status.lusha.com
+  - type: Deprecation
+    url: https://docs.lusha.com/changelog
+  - type: ChangeLog
+    url: changelog/lusha-changelog.yml
+  - type: ChangeLog
+    url: https://docs.lusha.com/changelog
+  - type: Webhooks
+    url: asyncapi/lusha-webhooks.yml
+  - type: Conformance
+    url: conformance/lusha-conformance.yml
+  - type: Compliance
+    url: https://www.lusha.com/trust-center
+  - type: TrustCenter
+    url: security/lusha-trust-center.yml
+  - type: Security
+    url: https://www.lusha.com/.well-known/security.txt
+  - type: SecurityTxt
+    url: well-known/lusha-security.txt
+  - type: VulnerabilityDisclosure
+    url: security/lusha-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/lusha-domain-security.yml
+  - type: WellKnown
+    url: well-known/lusha-well-known.yml
+  - type: Packages
+    url: packages/lusha-packages.yml
+  - type: Console
+    url: sandbox/lusha-sandbox.yml
   - type: Plans
     url: plans/lusha-plans-pricing.yml
   - type: RateLimits
     url: rate-limits/lusha-rate-limits.yml
   - type: FinOps
     url: finops/lusha-finops.yml
-  - type: LlmsText
+  - type: LLMsTxt
+    url: llms/lusha-llms.txt
+  - type: LLMsTxt
     url: https://docs.lusha.com/llms.txt
-  - url: https://www.lusha.com/blog/
-    type: Blog
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 39
+  pass: local-v1
+  notes: >-
+    Replaced a scaffolded "best-effort OpenAPI generated from documentation" with
+    Lusha's REAL published OpenAPI 3.0.3, found at
+    https://docs.lusha.com/_spec/apis/@v3/openapi.yaml (Redocly portal bundle
+    path, discovered via the Gatsby page-data definitionId) — 48 paths, 58
+    operations, servers https://api.lusha.com, contact support@lusha.com, terms
+    lusha.com/legal/terms. The superseded scaffold and its 7 per-tag splits, whose
+    operationIds did not match the real API, were deleted; 13 refined per-tag
+    specs and 26 collections were regenerated from the harvested document. The V2
+    spec is archived verbatim at openapi/_original/lusha-v2-openapi.yaml.
