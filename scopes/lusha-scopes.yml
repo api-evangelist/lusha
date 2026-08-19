@@ -1,0 +1,51 @@
+generated: '2026-08-13'
+method: probed
+source: https://mcp.lusha.com/.well-known/oauth-authorization-server
+docs: https://docs.lusha.com/mcp-docs
+description: >-
+  The Lusha REST API has NO OAuth surface — it authenticates with a single
+  `api_key` header and therefore has no scopes (derive-oauth-scopes.py over the
+  OpenAPI correctly finds zero oauth2 schemes). OAuth exists only in front of the
+  MCP server, and it advertises exactly one coarse scope, `mcp`, which grants a
+  connected agent the whole published tool set. There is no read/write split, no
+  per-product scope, and no per-tool consent surface.
+applies_to: mcp
+schemes:
+- name: LushaMCPOAuth
+  type: oauth2
+  source: https://mcp.lusha.com/.well-known/oauth-protected-resource
+  resource: https://mcp.lusha.com
+  authorization_server: https://auth.lusha.com
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://auth.lusha.com/oauth-ui/authorize
+    tokenUrl: https://auth.lusha.com/oauth/token
+    refreshUrl: https://auth.lusha.com/oauth/token
+    revocationUrl: https://auth.lusha.com/oauth/revoke
+    registrationUrl: https://auth.lusha.com/oauth/register
+    pkce: S256
+    token_endpoint_auth_methods: [client_secret_post, client_secret_basic]
+  bearer_methods: [header]
+scopes:
+- scope: mcp
+  description: >-
+    Full access to the Lusha MCP tool surface for the authenticated user —
+    search, enrichment, prospecting, lookalikes, signals, recommendations and
+    account usage. Credit-consuming tools are covered by the same scope as
+    read-only filter tools.
+  flows: [authorizationCode]
+  sources: [https://mcp.lusha.com/.well-known/oauth-authorization-server]
+scope_count: 1
+gaps:
+- >-
+    A single scope means an agent granted MCP access can spend credits (contact
+    and company reveals at 1-5 credits per data point) with no narrower consent
+    step. A read-only / filters-only scope would let an operator hand an agent
+    discovery without spend.
+x-evidence:
+- url: https://mcp.lusha.com/.well-known/oauth-authorization-server
+  http_status: 200
+- url: https://mcp.lusha.com/.well-known/oauth-protected-resource
+  http_status: 200
+- url: https://auth.lusha.com/.well-known/oauth-protected-resource
+  http_status: 200

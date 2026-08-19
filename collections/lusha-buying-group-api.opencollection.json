@@ -1,0 +1,40 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Buying Group API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Buying Group",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Buying Group Contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/buying-group",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Identify the buying group within a set of target companies. Supply companies by `domain` or Lusha company `id` - the model scores and labels each returned contact with a persona role.\n\n**Personas:**\n- `decision_maker` — has budget or sign-off authority\n- `potential_champion` — likely internal advocate for the purchase\n- `end_user` — likely day-to-day user of the product\n\nPass `personas` to filter to specific roles, or omit it to get all three. Use `contactsLimit` to cap how many contacts are ret"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

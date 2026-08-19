@@ -1,0 +1,65 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.lusha.com/apis/openapi,
+  https://docs.lusha.com/tutorials/postman-environment-guide,
+  https://docs.lusha.com/tools/replay
+description: >-
+  Lusha publishes NO sandbox: there is no test mode, no test/live key separation,
+  no key prefixes, no magic test identifiers, no fixtures and no time simulation.
+  Every call is a live call against production data and spends real credits
+  (minimum 1 credit per request, even when nothing is returned). What does exist
+  is a browser try-it console embedded in the API reference and a public Postman
+  workspace — both of which run against production with a real API key.
+test_mode: false
+test_live_separation: false
+key_prefixes: []
+test_values: []
+test_clocks: false
+fixtures: false
+consoles:
+- name: Replay (Redocly try-it console)
+  type: browser-console
+  url: https://docs.lusha.com/apis/openapi
+  embedded_in: every operation page of the API reference
+  credentials: your live Lusha API key
+  verified: >-
+    Confirmed present by fetching an operation page
+    (https://docs.lusha.com/apis/openapi/enrich/enrichcontacts) and finding the
+    Redocly Replay console wired into the page.
+  caveat: >-
+    The narrative page at https://docs.lusha.com/tools/replay is unmodified
+    Redocly starter-template placeholder text about a fictional "Warp"
+    time-travel API — it does not describe Lusha. The console itself is real; the
+    page documenting it is not.
+- name: Postman workspace
+  type: collection
+  url: https://www.postman.com/lushateam/workspace/lusha-s-api/collection/28683568-fc849873-9ae1-47dd-8159-0d4deda04750
+  public: true
+  credentials: environment variable API_KEY holding a live Lusha key
+  note: >-
+    Guide describes it as "a sandboxed environment", but it is a request
+    collection against production — no test credentials are issued.
+  access_caveat: >-
+    Provider states API key access is limited to Scale users or an active Scale
+    trial, so a developer on a self-service plan cannot run the collection at all.
+safe_exploration:
+  free_operations:
+  - getContactFilterTypes
+  - getContactFilterValues
+  - getCompanyFilterTypes
+  - getCompanyFilterValues
+  - getContactSignalTypes
+  - getCompanySignalTypes
+  - getCompanySignalFilters
+  - getCompanySignalFilterValues
+  - getAccountUsage
+  note: >-
+    Filter- and type-discovery endpoints are documented as charging no credits
+    (the MCP tool descriptions say so explicitly), which makes them the only
+    genuinely safe operations to exercise while learning the API. Every search,
+    enrich, prospecting, lookalike, signals or buying-group call spends credits.
+gaps:
+- No test-mode key, so an integration cannot be developed or CI-tested without spending credits.
+- No published example/mock responses beyond the schema examples in the OpenAPI.
+- No webhook event simulator beyond testSubscription, which only proves delivery.

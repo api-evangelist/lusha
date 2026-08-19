@@ -4,8 +4,10 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Lusha
 providerId: lusha
 created: '2026-05-08'
-modified: '2026-05-08'
-reconciled: false
+generated: '2026-08-13'
+method: searched
+modified: '2026-08-13'
+reconciled: true
 tags:
 - Sales Intelligence
 - B2B
@@ -17,30 +19,150 @@ tags:
 - Quotas
 - Throttling
 description: >-
-  Lusha applies per-API-key rate limits and a monthly credit pool tied to the plan. The exact RPS
-  thresholds are not published on the docs landing page; the OpenAPI spec returns 429 with rate-limit
-  headers when exceeded.
-notes: Per-key + plan-based credit pool; specific RPS not publicly documented on landing page.
+  Lusha enforces per-plan rate limits across three simultaneous windows — per
+  minute, per hour and per day — and returns the full remaining/used/allowed
+  triple for each window on every response. The numeric ceilings vary by plan
+  and are not published (the docs point you at the help centre or your account
+  manager), with two exceptions the docs do state outright: the Webhooks family
+  is capped at 100 requests/minute per account, and bulk subscription create and
+  delete take at most 25 items per request. On exhaustion the API returns 429.
+notes: >-
+  Runtime signal is strong: nine rate-limit response headers, all three windows.
+  Numeric per-plan limits are gated behind the help centre / account manager, so
+  an agent must read the headers rather than a published table. Retry-After is
+  NOT documented; the docs prescribe client-side exponential backoff instead
+  (start 1s, double, cap 60s).
 sources:
-- https://docs.lusha.com/apis
+- https://docs.lusha.com/apis/openapi/section/rate-limiting
+- https://docs.lusha.com/apis/openapi
+- https://docs.lusha.com/user-guide/lushas-api/lusha-api-error-codes-reference
+- https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api
 responseCodes:
   throttled: 429
+  quota_exceeded: 402
+headers:
+- name: x-rate-limit-daily
+  description: Total requests allowed per day
+- name: x-daily-requests-left
+  description: Requests remaining in the daily quota
+- name: x-daily-usage
+  description: Requests made in the current daily period
+- name: x-rate-limit-hourly
+  description: Total requests allowed per hour
+- name: x-hourly-requests-left
+  description: Requests remaining in the hourly quota
+- name: x-hourly-usage
+  description: Requests made in the current hourly period
+- name: x-rate-limit-minute
+  description: Total requests allowed per minute
+- name: x-minute-requests-left
+  description: Requests remaining in the current minute window
+- name: x-minute-usage
+  description: Requests made in the current minute window
+retry_after: false
+retry_guidance: >-
+  Exponential backoff on 429 and 5xx — start at 1 second, double each retry, cap
+  at 60 seconds (docs: error codes reference).
 limits:
-- name: Per API key
-  scope: account
+- name: Webhooks API requests
+  scope: per-account
+  window: minute
+  limit: 100
   metric: requests
-  limit: see provider documentation
-  notes: Throttled with 429 responses; thresholds not published on landing page.
-- name: Monthly credits
-  scope: account
-  metric: credits
-  limit: plan-based
-  notes: Each enrichment consumes credits from the plan's monthly pool.
+  source: https://docs.lusha.com/apis/openapi
+  notes: Stated outright in the Webhooks section of the API reference.
+- name: Create Subscriptions batch size
+  scope: per-request
+  window: null
+  limit: 25
+  metric: items
+  source: https://docs.lusha.com/apis/openapi
+- name: Delete Subscriptions batch size
+  scope: per-request
+  window: null
+  limit: 25
+  metric: items
+  source: https://docs.lusha.com/apis/openapi
+- name: Standard endpoint limits (per minute)
+  scope: per-plan
+  window: minute
+  limit: null
+  metric: requests
+  notes: >-
+    Published as a header pair (x-rate-limit-minute / x-minute-requests-left);
+    the numeric ceiling depends on plan and is not published.
+- name: Standard endpoint limits (per hour)
+  scope: per-plan
+  window: hour
+  limit: null
+  metric: requests
+  notes: numeric ceiling not published; read x-rate-limit-hourly at runtime.
+- name: Standard endpoint limits (per day)
+  scope: per-plan
+  window: day
+  limit: null
+  metric: requests
+  notes: numeric ceiling not published; read x-rate-limit-daily at runtime.
+- name: Credit Usage API
+  scope: per-account
+  window: null
+  limit: null
+  metric: requests
+  notes: >-
+    Docs state the Credit Usage API carries different limits from standard
+    endpoints, without giving the figures.
+- name: Bulk request size
+  scope: per-request
+  window: null
+  limit: 100
+  metric: contacts-or-companies
+  source: https://docs.lusha.com/user-guide/plans-and-upgrades/lushas-pricing-system-2
+  notes: Maximum 100 contacts or companies per request; minimum 1 credit per request.
+- name: Buying Group companies per request
+  scope: per-request
+  window: null
+  limit: 25
+  metric: companies
+  source: https://docs.lusha.com/changelog
+- name: Signal Score entities per request
+  scope: per-request
+  window: null
+  limit: 100
+  metric: entities
+  source: https://docs.lusha.com/changelog
+- name: Tables entity IDs per add/remove call
+  scope: per-request
+  window: null
+  limit: 500
+  metric: entity-ids
+  source: https://docs.lusha.com/apis/openapi
+- name: Entities per table
+  scope: per-table
+  window: null
+  limit: 50000
+  metric: entities
+  source: https://docs.lusha.com/apis/openapi
+- name: Tables per account
+  scope: per-account
+  window: null
+  limit: 500
+  metric: tables
+  source: https://docs.lusha.com/apis/openapi
+limit_count: 13
 policies:
 - name: Backoff Strategy
-  description: Honor 429 with exponential backoff and Retry-After.
-- name: Bulk Endpoints
-  description: Use bulk lookups when available to reduce per-call overhead.
+  description: >-
+    Exponential backoff on 429/5xx per the docs (1s, doubling, 60s cap). No
+    Retry-After header is documented, so the client owns the schedule.
+- name: Read the window headers
+  description: >-
+    All three windows are reported on every response; an agent should gate on
+    x-minute-requests-left / x-hourly-requests-left / x-daily-requests-left
+    rather than on a published number.
+- name: Bulk over single
+  description: >-
+    Bulk requests (up to 100 entities) cost 1 credit per 1-25 results, so
+    batching lowers both request count and credit burn.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

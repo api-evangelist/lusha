@@ -1,0 +1,857 @@
+{
+  "item": [
+    {
+      "id": "021c1852-381c-484b-a746-64c8aaf3bd6d",
+      "name": "Search",
+      "description": {
+        "content": "**Search APIs:** Find contacts or companies using known identifiers.\n\nLook up contacts by `id`, `linkedinUrl`, `email`, or `firstName` + `lastName` + `companyName`/`companyDomain`. Look up companies by `id`, `name`, or `domain`.\n\nReturns a non-PII preview of each profile with a `has` field listing available data points and a `canReveal` field showing what can be unlocked via Enrich.\n\n> **Billing:** Charged per successful result via the `api_search` action.\n",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ecb84a19-26a3-427d-ba0c-474c9891e6e6",
+          "name": "Search Contacts",
+          "request": {
+            "name": "Search Contacts",
+            "description": {
+              "content": "Look up contacts by identifier. Returns a non-PII preview of each profile — no emails or phone numbers.\n\n**Accepted identifiers (one required per contact):**\n- Lusha contact `id`\n- `linkedinUrl`\n- `email`\n- `firstName` + `lastName` + `companyName` or `companyDomain`\n\nUp to 100 contacts per request. Each result includes:\n- `has` — data points available on this profile\n- `canReveal` — what you can unlock via Enrich Contacts, and the credit cost\n\nPass a `signals` filter to narrow results to contacts with recent activity (e.g. promotion, job change).\n\n> **Billing:** Charged per successful result via the `api_search` action.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "contacts",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"<string>\",\n      \"id\": \"<string>\",\n      \"linkedinUrl\": \"<string>\",\n      \"email\": \"<email>\",\n      \"firstName\": \"<string>\",\n      \"lastName\": \"<string>\",\n      \"companyName\": \"<string>\",\n      \"companyDomain\": \"<string>\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": \"<boolean>\"\n  },\n  \"signals\": {\n    \"types\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"startDate\": \"<date>\",\n    \"maxResultsPerSignal\": \"<integer>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "50b7fa8e-32e1-495d-89dd-e919d45b7886",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"companyName\": \"Lusha\",\n      \"companyDomain\": \"lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"linkedinUrl\": \"https://www.linkedin.com/in/shmulikwillinger\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"email\": \"gal.ashkelon@lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"id\": \"12345\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"6e4b1192-9440-42c4-9a3e-793ddef6d73c\",\n  \"results\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"id\": \"4415824633\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"jobTitle\": {\n        \"title\": \"Vice President of Partnerships\",\n        \"departments\": [\n          \"Business Development\"\n        ],\n        \"seniority\": \"Vice President\"\n      },\n      \"company\": {\n        \"id\": \"16303253\",\n        \"name\": \"Lusha\",\n        \"domain\": \"www.lusha.com\",\n        \"industry\": \"Technology, Information & Media\"\n      },\n      \"location\": {\n        \"country\": \"Israel\",\n        \"city\": \"Tel Aviv\"\n      },\n      \"socialLinks\": {\n        \"linkedin\": \"https://www.linkedin.com/in/orit-shilvock-6243bb5\"\n      },\n      \"has\": [\n        \"firstName\",\n        \"lastName\",\n        \"jobTitle\",\n        \"location\",\n        \"socialLinks\",\n        \"emails\"\n      ],\n      \"canReveal\": [\n        {\n          \"field\": \"emails\",\n          \"credits\": 1\n        }\n      ]\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"id\": \"4415824679\",\n      \"firstName\": \"Shmulik\",\n      \"lastName\": \"Willinger\",\n      \"jobTitle\": {\n        \"title\": \"Chief Architect\",\n        \"departments\": [\n          \"Engineering & Technical\"\n        ],\n        \"seniority\": \"C-Suite\"\n      },\n      \"company\": {\n        \"id\": \"16303253\",\n        \"name\": \"Lusha\",\n        \"domain\": \"www.lusha.com\",\n        \"industry\": \"Technology, Information & Media\"\n      },\n      \"location\": {\n        \"country\": \"Israel\",\n        \"city\": \"Tel Aviv\"\n      },\n      \"socialLinks\": {\n        \"linkedin\": \"https://www.linkedin.com/in/shmulikwillinger\"\n      },\n      \"has\": [\n        \"firstName\",\n        \"lastName\",\n        \"jobTitle\",\n        \"location\",\n        \"socialLinks\",\n        \"emails\"\n      ],\n      \"canReveal\": [\n        {\n          \"field\": \"emails\",\n          \"credits\": 1\n        }\n      ]\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"id\": \"4415824664\",\n      \"firstName\": \"Gal\",\n      \"lastName\": \"Ashkelon\",\n      \"jobTitle\": {\n        \"title\": \"Global Partner Program Manager\",\n        \"departments\": [\n          \"Business Development\"\n        ],\n        \"seniority\": \"Manager\"\n      },\n      \"company\": {\n        \"id\": \"16303253\",\n        \"name\": \"Lusha\",\n        \"domain\": \"www.lusha.com\",\n        \"industry\": \"Technology, Information & Media\"\n      },\n      \"location\": {\n        \"country\": \"Israel\",\n        \"city\": \"Tel Aviv\"\n      },\n      \"socialLinks\": {\n        \"linkedin\": \"https://www.linkedin.com/in/gal-ashkelon-39408557\"\n      },\n      \"has\": [\n        \"firstName\",\n        \"lastName\",\n        \"jobTitle\",\n        \"location\",\n        \"socialLinks\",\n        \"emails\"\n      ],\n      \"canReveal\": [\n        {\n          \"field\": \"emails\",\n          \"credits\": 1\n        }\n      ]\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"Contact not found\"\n      }\n    }\n  ],\n  \"billing\": {\n    \"creditsCharged\": 1,\n    \"resultsReturned\": 3\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "372ac4dd-0247-415b-ad35-24c93567b8e5",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"companyName\": \"Lusha\",\n      \"companyDomain\": \"lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"linkedinUrl\": \"https://www.linkedin.com/in/shmulikwillinger\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"email\": \"gal.ashkelon@lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"id\": \"12345\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5db6db0c-8f92-4596-9401-9cb6d59f5e2f",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"companyName\": \"Lusha\",\n      \"companyDomain\": \"lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"linkedinUrl\": \"https://www.linkedin.com/in/shmulikwillinger\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"email\": \"gal.ashkelon@lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"id\": \"12345\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ddb00d95-1f3e-4eb5-a9ae-66de8a718d6d",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"companyName\": \"Lusha\",\n      \"companyDomain\": \"lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"linkedinUrl\": \"https://www.linkedin.com/in/shmulikwillinger\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"email\": \"gal.ashkelon@lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"id\": \"12345\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8491d2da-4eda-484a-82e2-c6672dffb93f",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"companyName\": \"Lusha\",\n      \"companyDomain\": \"lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"linkedinUrl\": \"https://www.linkedin.com/in/shmulikwillinger\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"email\": \"gal.ashkelon@lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"id\": \"12345\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bab6c219-2059-4808-a65b-8406849c7892",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"my-ref-1\",\n      \"firstName\": \"Orit\",\n      \"lastName\": \"Shilvock\",\n      \"companyName\": \"Lusha\",\n      \"companyDomain\": \"lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-2\",\n      \"linkedinUrl\": \"https://www.linkedin.com/in/shmulikwillinger\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-3\",\n      \"email\": \"gal.ashkelon@lusha.com\"\n    },\n    {\n      \"clientReferenceId\": \"my-ref-4\",\n      \"id\": \"12345\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "3678"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1180d29f-7367-4847-8a0a-8cc0e84ce41d",
+          "name": "Search Companies",
+          "request": {
+            "name": "Search Companies",
+            "description": {
+              "content": "Look up companies by identifier. Returns a preview of each company profile.\n\n**Accepted identifiers (at least one required per company):**\n- Lusha company `id`\n- `name`\n- `domain`\n\nUp to 100 companies per request. Each result includes a `has` field listing the data available via Enrich Companies.\n\nPass a `signals` filter to narrow results to companies showing specific activity (e.g. headcount growth, hiring surge).\n\n> **Billing:** Charged per successful result via the `api_search` action.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"<string>\",\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"domain\": \"<string>\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": \"<boolean>\"\n  },\n  \"signals\": {\n    \"types\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"startDate\": \"<date>\",\n    \"maxResultsPerSignal\": \"<integer>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "dce98f44-7003-40c9-959f-ef6d96b5dd88",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"name\": \"Lusha\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"domain\": \"salesforce.com\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-3\",\n      \"id\": \"16303253\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"abd4a213-d33b-4565-b9b6-55c19c65cc47\",\n  \"results\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"id\": \"16303253\",\n      \"name\": \"Lusha\",\n      \"domain\": \"www.lusha.com\",\n      \"employeeCount\": {\n        \"exact\": 364,\n        \"min\": 201,\n        \"max\": 500\n      },\n      \"industry\": \"Technology, Information & Media\",\n      \"location\": {\n        \"city\": \"Boston\",\n        \"state\": \"Massachusetts\",\n        \"country\": \"United States\",\n        \"countryIso2\": \"US\",\n        \"continent\": \"North America\"\n      },\n      \"socialLinks\": {\n        \"linkedin\": \"https://www.linkedin.com/company/lushadata\"\n      },\n      \"has\": [\n        \"alternativeName\",\n        \"alternativeDomains\",\n        \"description\",\n        \"companyType\",\n        \"yearFounded\",\n        \"subIndustry\",\n        \"specialities\",\n        \"sicCodes\",\n        \"naicsCodes\",\n        \"additionalLocations\",\n        \"linkedinFollowers\",\n        \"funding\",\n        \"popularityTier\",\n        \"logoUrl\",\n        \"employeesByDepartment\",\n        \"employeesByLocation\",\n        \"employeesBySeniority\",\n        \"competitors\",\n        \"businessModel\",\n        \"emails\",\n        \"keywords\",\n        \"socialLinks\"\n      ],\n      \"canReveal\": [\n        {\n          \"field\": \"employeesByDepartment\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"employeesByLocation\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"employeesBySeniority\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"competitors\",\n          \"credits\": 1\n        }\n      ]\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"id\": \"12790225\",\n      \"name\": \"Salesforce\",\n      \"domain\": \"www.salesforce.com\",\n      \"employeeCount\": {\n        \"exact\": 88711,\n        \"min\": 100001,\n        \"max\": 10000000\n      },\n      \"industry\": \"Technology, Information & Media\",\n      \"location\": {\n        \"city\": \"San Francisco\",\n        \"state\": \"California\",\n        \"country\": \"United States\",\n        \"countryIso2\": \"US\",\n        \"continent\": \"North America\"\n      },\n      \"socialLinks\": {\n        \"linkedin\": \"https://www.linkedin.com/company/salesforce\"\n      },\n      \"has\": [\n        \"alternativeName\",\n        \"alternativeDomains\",\n        \"description\",\n        \"companyType\",\n        \"subIndustry\",\n        \"sicCodes\",\n        \"naicsCodes\",\n        \"additionalLocations\",\n        \"linkedinFollowers\",\n        \"revenueRange\",\n        \"intent\",\n        \"popularityTier\",\n        \"logoUrl\",\n        \"employeesByDepartment\",\n        \"employeesByLocation\",\n        \"employeesBySeniority\",\n        \"competitors\",\n        \"phones\",\n        \"emails\",\n        \"socialLinks\"\n      ],\n      \"canReveal\": [\n        {\n          \"field\": \"employeesByDepartment\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"employeesByLocation\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"employeesBySeniority\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"competitors\",\n          \"credits\": 1\n        },\n        {\n          \"field\": \"intent\",\n          \"credits\": 0\n        }\n      ]\n    }\n  ],\n  \"billing\": {\n    \"creditsCharged\": 1,\n    \"resultsReturned\": 3\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d7111fad-f040-44c1-b4e1-f9f78554fa25",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"name\": \"Lusha\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"domain\": \"salesforce.com\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-3\",\n      \"id\": \"16303253\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f8ed14af-f1d1-4848-8564-b824548e34bd",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"name\": \"Lusha\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"domain\": \"salesforce.com\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-3\",\n      \"id\": \"16303253\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "41e678a5-6dc4-45f3-9451-35ebcb321bc2",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"name\": \"Lusha\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"domain\": \"salesforce.com\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-3\",\n      \"id\": \"16303253\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2da17476-bad0-4545-8cef-085e20fb4acc",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"name\": \"Lusha\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"domain\": \"salesforce.com\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-3\",\n      \"id\": \"16303253\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0db8fb45-17e5-4945-b141-8e5aa9b8d0b8",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"comp-ref-1\",\n      \"name\": \"Lusha\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-2\",\n      \"domain\": \"salesforce.com\"\n    },\n    {\n      \"clientReferenceId\": \"comp-ref-3\",\n      \"id\": \"16303253\"\n    }\n  ],\n  \"options\": {\n    \"includePartialProfiles\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "3678"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "3678"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lusha.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api_key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "4b64fe41-ee00-413b-8b71-49d01fbed4c8",
+    "name": "Lusha API Documentation Search API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n\n\nContact Support:\n Name: Lusha Support\n Email: support@lusha.com",
+      "type": "text/plain"
+    }
+  }
+}

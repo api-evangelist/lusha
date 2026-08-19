@@ -1,12 +1,13 @@
-generated: '2026-07-11'
+generated: '2026-08-13'
 method: probed
 source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
 hosts:
 - host: www.lusha.com
   https: true
   tls_version: TLSv1.3
-  cert_expires: Aug 21 19:38:57 2026 GMT
-  hsts: null
+  cert_expires: Oct 20 06:10:11 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
 - host: docs.lusha.com
   https: true
   tls_version: TLSv1.3
@@ -15,18 +16,18 @@ hosts:
 - host: api.lusha.com
   https: true
   tls_version: TLSv1.3
-  cert_expires: Aug 18 08:31:40 2026 GMT
+  cert_expires: Oct 16 09:20:32 2026 GMT
   hsts: null
 domains:
 - domain: lusha.com
   dnssec: false
   caa:
-  - 0 issuewild "amazonaws.com"
-  - 0 issuewild "amazontrust.com"
-  - 0 issuewild "awstrust.com"
-  - 0 issuewild "letsencrypt.org"
-  - 0 issuewild "pki.goog"
-  - 0 issue "amazon.com"
+  - 0 issue "amazontrust.com"
+  - 0 issue "awstrust.com"
+  - 0 issue "digicert.com"
+  - 0 issue "godaddy.com"
+  - 0 issue "letsencrypt.org"
+  - 0 issue "pki.goog"
   spf: true
   dmarc: true
   dmarc_policy: reject

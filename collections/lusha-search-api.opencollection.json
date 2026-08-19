@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Search API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search Contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Look up contacts by identifier. Returns a non-PII preview of each profile — no emails or phone numbers.\n\n**Accepted identifiers (one required per contact):**\n- Lusha contact `id`\n- `linkedinUrl`\n- `email`\n- `firstName` + `lastName` + `companyName` or `companyDomain`\n\nUp to 100 contacts per request. Each result includes:\n- `has` — data points available on this profile\n- `canReveal` — what you can unlock via Enrich Contacts, and the credit cost\n\nPass a `signals` filter to narrow results to contact"
+        },
+        {
+          "info": {
+            "name": "Search Companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Look up companies by identifier. Returns a preview of each company profile.\n\n**Accepted identifiers (at least one required per company):**\n- Lusha company `id`\n- `name`\n- `domain`\n\nUp to 100 companies per request. Each result includes a `has` field listing the data available via Enrich Companies.\n\nPass a `signals` filter to narrow results to companies showing specific activity (e.g. headcount growth, hiring surge).\n\n> **Billing:** Charged per successful result via the `api_search` action.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

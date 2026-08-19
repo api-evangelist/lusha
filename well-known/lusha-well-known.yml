@@ -1,0 +1,125 @@
+generated: '2026-08-13'
+method: searched
+source: live probes of every Lusha host in apis.yml plus the OpenAPI servers[] host
+description: >-
+  /.well-known/ discovery surface probed across every Lusha host. The MCP host
+  (mcp.lusha.com) serves a real RFC 8414 authorization-server document, an
+  RFC 9728 protected-resource document and an OIDC discovery document (identical
+  body to the RFC 8414 one), all pointing at auth.lusha.com. An RFC 9116
+  security.txt is served on every host; www.lusha.com carries the canonical copy.
+  No agent card and no api-catalog anywhere.
+hosts:
+- host: https://www.lusha.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: lusha-security.txt
+    note: RFC 9116; Contact mailto:security@lusha.com, Expires 2027-05-01
+  - path: /.well-known/openid-configuration
+    status: 403
+    note: Cloudflare bot challenge ("Just a moment...") on the marketing host
+  - path: /.well-known/oauth-authorization-server
+    status: 403
+  - path: /.well-known/api-catalog
+    status: 403
+  - path: /.well-known/ai-plugin.json
+    status: 403
+  - path: /.well-known/agent-card.json
+    status: 403
+  - path: /.well-known/agent.json
+    status: 403
+- host: https://api.lusha.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: lusha-security-api-host.txt
+    note: >-
+      Richer variant served by the API gateway hosts (api./mcp./dashboard./auth.):
+      adds Canonical, Acknowledgments and Hiring, Expires 2026-12-31.
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://mcp.lusha.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    note: same body as the api.lusha.com variant
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: lusha-oauth-authorization-server.json
+    note: RFC 8414; issuer https://auth.lusha.com, PKCE S256, DCR registration endpoint
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    file: lusha-oauth-protected-resource.json
+    note: RFC 9728; resource https://mcp.lusha.com, scope "mcp"
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: lusha-openid-configuration.json
+    note: byte-identical to the oauth-authorization-server document
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://auth.lusha.com
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    note: same document as mcp.lusha.com
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    note: 'resource_name: Lusha OAuth Server'
+  - path: /.well-known/security.txt
+    status: 200
+  - path: /.well-known/openid-configuration
+    status: 401
+  - path: /.well-known/agent-card.json
+    status: 401
+  - path: /.well-known/agent.json
+    status: 401
+- host: https://docs.lusha.com
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    note: >-
+      Belongs to the Redocly docs platform (issuer https://auth.cloud.redocly.com),
+      not to Lusha — recorded, not saved, and not counted as a Lusha surface.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://dashboard.lusha.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+  - path: /.well-known/agent-card.json
+    status: 200
+    note: >-
+      FALSE POSITIVE — the dashboard is a single-page app whose catch-all answers
+      200 with the app's HTML shell for every /.well-known/* path. Not a document.
+  - path: /.well-known/agent.json
+    status: 200
+    note: same SPA catch-all HTML shell; rejected
+findings:
+  security_txt: true
+  oauth_metadata: true
+  openid_configuration: true
+  api_catalog: false
+  ai_plugin: false
+  agent_card: false

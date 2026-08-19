@@ -1,0 +1,2539 @@
+{
+  "item": [
+    {
+      "id": "ba3a91ea-4552-4f31-84f4-915e8c5585a3",
+      "name": "Signals",
+      "description": {
+        "content": "Real-world activity data for contacts and companies.\n\nSignals are available as standalone endpoints or as an optional `signals` filter on Search and Prospecting endpoints.\n\n\n**Contact signal types:** `promotion`, `companyChange`, `allSignals`\n\n----\n\n**Company signal types:** `headcountIncrease1m/3m/6m/12m`, `headcountDecrease1m/3m/6m/12m`, `surgeInHiring`, `surgeInHiringByDepartment`, `surgeInHiringByLocation`, `websiteTrafficIncrease`, `websiteTrafficDecrease`, `itSpendIncrease`, `itSpendDecrease`, `riskNews`, `commercialActivityNews`, `corporateStrategyNews`, `financialEventsNews`, `peopleNews`, `marketIntelligenceNews`, `productActivityNews`, `allSignals`\n\n----\n\n**Signal Score:** Use [Score Companies by Signal Activity](#operation/getCompanySignalScores) or [Score Contacts by Signal Activity](#operation/getContactSignalScores) to get a single aggregate momentum score ([0,1]) plus the active signal breakdown for a batch of entities, rather than a raw event list.\n\n----\n\nCredits are charged per matched signal per result via `showSignalsContact` or `showSignalsCompany`.\n\nPass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables) or [Companies Tables](#tag/Companies-Tables).\n",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "62584329-392b-4386-bb40-3479ada907df",
+          "name": "Contact Signals",
+          "request": {
+            "name": "Contact Signals",
+            "description": {
+              "content": "Retrieve signal events for a list of contacts — job changes and promotions.\n\nPass up to 100 contact `ids`. Use `signalTypes` to specify which events to return (`promotion`, `companyChange`, or `allSignals`). Optionally set a `startDate` to limit results to recent activity.\n\n> **Billing:** Charged per matched signal per result via the `showSignalsContact` action.\n\n> **Persisting to a table:** Pass `tableId` to also add these contacts to an existing table and populate the Signals column. See [Contacts Tables](#tag/Contacts-Tables).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "contacts",
+                "signals"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\n    \"<string>\"\n  ],\n  \"signalTypes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"startDate\": \"<date>\",\n  \"maxResultsPerSignal\": \"<integer>\",\n  \"tableId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "116919fa-6223-4a21-b312-709105427573",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"4389064624\",\n    \"4389064654\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"id\": \"115889\",\n      \"companyChange\": [\n        {\n          \"id\": \"115889\",\n          \"signalDate\": \"2025-02-01\",\n          \"previousCompany\": \"ZoomInfo\",\n          \"newCompany\": \"Lusha\"\n        }\n      ],\n      \"promotion\": []\n    }\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-03-01\",\n  \"billing\": {\n    \"creditsCharged\": 1,\n    \"resultsReturned\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7ebf9c07-5afd-4fb8-be66-d43030277c78",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"4389064624\",\n    \"4389064654\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ba95e19c-2eb1-452e-80d4-72c7ab77806e",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"4389064624\",\n    \"4389064654\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "af71d9f5-f13e-4193-a28b-21b89ebc26c4",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"4389064624\",\n    \"4389064654\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "191c33da-b936-4f52-8c03-daabea007da6",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"4389064624\",\n    \"4389064654\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fba79641-17d4-4080-9ac7-f03328ff123b",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"4389064624\",\n    \"4389064654\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "85a27b32-bff3-4597-b25c-273b9b593b74",
+          "name": "Company Signals",
+          "request": {
+            "name": "Company Signals",
+            "description": {
+              "content": "Retrieve signal events for a list of companies — hiring activity, headcount changes, web traffic, IT spend, and news.\n\nPass up to 100 company `ids`. Use `signalTypes` to specify which signals to return (or use `allSignals`). Optionally set a `startDate` to limit results to recent activity.\n\n> **Billing:** Charged per matched signal per result via the `showSignalsCompany` action.\n\n> **Persisting to a table:** Pass `tableId` to also add these companies to an existing table and populate the Signals column. See [Companies Tables](#tag/Companies-Tables).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "signals"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\n    \"<string>\"\n  ],\n  \"signalTypes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"startDate\": \"<date>\",\n  \"maxResultsPerSignal\": \"<integer>\",\n  \"tableId\": \"<string>\",\n  \"filters\": {\n    \"include\": {\n      \"intentCategories\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e482c673-ecd6-4a64-85a6-678467c19530",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"16303253\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"maxResultsPerSignal\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"id\": \"16303253\",\n      \"companyName\": \"Lusha\",\n      \"domain\": \"lusha.com\",\n      \"linkedinActivityIntent\": [\n        {\n          \"companyId\": 16303253,\n          \"activityPublicationDate\": \"2026-05-12\",\n          \"signalCategory\": \"Technology or Stack Discussion\",\n          \"intentTopics\": [\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            },\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            }\n          ],\n          \"author\": {\n            \"id\": \"4389064624\",\n            \"fullName\": \"Daniel Turgeman\",\n            \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n          },\n          \"contactsMentioned\": [\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            },\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            }\n          ],\n          \"companiesMentioned\": [\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            },\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            }\n          ],\n          \"activityUrl\": \"https://www.linkedin.com/feed/update/urn:li:activity:1234567890\",\n          \"activitySummary\": \"Discusses adopting a new cloud security stack ahead of Q3 rollout.\",\n          \"activityLikes\": 42,\n          \"activityComments\": 5,\n          \"activityShares\": 3,\n          \"activityType\": \"post\"\n        },\n        {\n          \"companyId\": 16303253,\n          \"activityPublicationDate\": \"2026-05-12\",\n          \"signalCategory\": \"Technology or Stack Discussion\",\n          \"intentTopics\": [\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            },\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            }\n          ],\n          \"author\": {\n            \"id\": \"4389064624\",\n            \"fullName\": \"Daniel Turgeman\",\n            \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n          },\n          \"contactsMentioned\": [\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            },\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            }\n          ],\n          \"companiesMentioned\": [\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            },\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            }\n          ],\n          \"activityUrl\": \"https://www.linkedin.com/feed/update/urn:li:activity:1234567890\",\n          \"activitySummary\": \"Discusses adopting a new cloud security stack ahead of Q3 rollout.\",\n          \"activityLikes\": 42,\n          \"activityComments\": 5,\n          \"activityShares\": 3,\n          \"activityType\": \"post\"\n        }\n      ]\n    },\n    {\n      \"id\": \"16303253\",\n      \"companyName\": \"Lusha\",\n      \"domain\": \"lusha.com\",\n      \"linkedinActivityIntent\": [\n        {\n          \"companyId\": 16303253,\n          \"activityPublicationDate\": \"2026-05-12\",\n          \"signalCategory\": \"Technology or Stack Discussion\",\n          \"intentTopics\": [\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            },\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            }\n          ],\n          \"author\": {\n            \"id\": \"4389064624\",\n            \"fullName\": \"Daniel Turgeman\",\n            \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n          },\n          \"contactsMentioned\": [\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            },\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            }\n          ],\n          \"companiesMentioned\": [\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            },\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            }\n          ],\n          \"activityUrl\": \"https://www.linkedin.com/feed/update/urn:li:activity:1234567890\",\n          \"activitySummary\": \"Discusses adopting a new cloud security stack ahead of Q3 rollout.\",\n          \"activityLikes\": 42,\n          \"activityComments\": 5,\n          \"activityShares\": 3,\n          \"activityType\": \"post\"\n        },\n        {\n          \"companyId\": 16303253,\n          \"activityPublicationDate\": \"2026-05-12\",\n          \"signalCategory\": \"Technology or Stack Discussion\",\n          \"intentTopics\": [\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            },\n            {\n              \"topic\": \"Cloud Security\",\n              \"category\": \"Technology\"\n            }\n          ],\n          \"author\": {\n            \"id\": \"4389064624\",\n            \"fullName\": \"Daniel Turgeman\",\n            \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n          },\n          \"contactsMentioned\": [\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            },\n            {\n              \"id\": \"4389064624\",\n              \"fullName\": \"Daniel Turgeman\",\n              \"linkedinUrl\": \"https://www.linkedin.com/in/daniel-turgeman-49676b161\"\n            }\n          ],\n          \"companiesMentioned\": [\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            },\n            {\n              \"id\": \"16303253\",\n              \"name\": \"Lusha\",\n              \"linkedinUrl\": \"https://www.linkedin.com/company/lushadata\"\n            }\n          ],\n          \"activityUrl\": \"https://www.linkedin.com/feed/update/urn:li:activity:1234567890\",\n          \"activitySummary\": \"Discusses adopting a new cloud security stack ahead of Q3 rollout.\",\n          \"activityLikes\": 42,\n          \"activityComments\": 5,\n          \"activityShares\": 3,\n          \"activityType\": \"post\"\n        }\n      ]\n    }\n  ],\n  \"startDate\": \"string\",\n  \"endDate\": \"string\",\n  \"tableWrite\": {\n    \"tableId\": \"482910\",\n    \"added\": 3,\n    \"alreadyPresent\": 2,\n    \"columnsCreated\": 0,\n    \"rowsProcessed\": 5,\n    \"rowsCharged\": 5,\n    \"rowsAlreadyPaidInTable\": 0,\n    \"creditsCharged\": 0\n  },\n  \"billing\": {\n    \"creditsCharged\": 3,\n    \"resultsReturned\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eb225a9b-ce2b-4309-a18b-b0a87cac6e62",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"16303253\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"maxResultsPerSignal\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "af8d87e2-9752-40bf-841c-35bfd14755a4",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"16303253\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"maxResultsPerSignal\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2e5ecc0b-7156-4f85-ad6d-ba52968cfa00",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"16303253\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"maxResultsPerSignal\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "361247ea-2b0b-4f95-aaaa-4d55e148bc9d",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"16303253\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"maxResultsPerSignal\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8dfb17b0-1566-44c1-a600-74be7cf2e114",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"16303253\"\n  ],\n  \"signalTypes\": [\n    \"allSignals\"\n  ],\n  \"startDate\": \"2025-01-01\",\n  \"maxResultsPerSignal\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0d5f07b9-9ca2-4514-ab8e-89d02f4d87e6",
+          "name": "Get Contact Signal Types",
+          "request": {
+            "name": "Get Contact Signal Types",
+            "description": {
+              "content": "Returns the full list of supported signal types for contacts.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "contacts",
+                "signals",
+                "types"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3d022f93-572d-44cd-951d-9ee5472ed2ab",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals",
+                    "types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"signalTypes\": [\n    \"allSignals\",\n    \"promotion\",\n    \"companyChange\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ce91b316-7270-477e-ab09-cfc2cba5bddf",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals",
+                    "types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1f10dc80-f770-4590-af27-415f7c303af9",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signals",
+                    "types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5050a287-8b81-414c-ba05-a858f8b0c310",
+          "name": "Get Company Signal Types",
+          "request": {
+            "name": "Get Company Signal Types",
+            "description": {
+              "content": "Returns the full list of supported signal types for companies.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "signals",
+                "types"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "63567c40-e422-4c07-8eb9-97ea859ded2e",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"signalTypes\": [\n    \"allSignals\",\n    \"linkedinActivityIntent\",\n    \"websiteTrafficDecrease\",\n    \"websiteTrafficIncrease\",\n    \"itSpendIncrease\",\n    \"itSpendDecrease\",\n    \"surgeInHiring\",\n    \"headcountIncrease1m\",\n    \"headcountIncrease3m\",\n    \"headcountIncrease6m\",\n    \"headcountIncrease12m\",\n    \"headcountDecrease1m\",\n    \"headcountDecrease3m\",\n    \"headcountDecrease6m\",\n    \"headcountDecrease12m\",\n    \"surgeInHiringByDepartment\",\n    \"surgeInHiringByLocation\",\n    \"riskNews\",\n    \"commercialActivityNews\",\n    \"corporateStrategyNews\",\n    \"financialEventsNews\",\n    \"peopleNews\",\n    \"marketIntelligenceNews\",\n    \"productActivityNews\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "095e9c4d-4e1b-40de-93f2-a26975e5933c",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "92962ebe-dd4d-4326-aef3-ea78d63d7506",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "df07a0ef-f21a-4d3c-93a7-4af525ae7407",
+          "name": "Get Company Signal Filters (Discovery)",
+          "request": {
+            "name": "Get Company Signal Filters (Discovery)",
+            "description": {
+              "content": "Returns all available filter types for company signals and whether each requires a search query.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "signals",
+                "filters"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7d5f30be-3d09-4ef5-a366-caffa5ddbf41",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"availableFilters\": [\n    {\n      \"filterType\": \"newsEventTypes\",\n      \"requiresQuery\": false\n    },\n    {\n      \"filterType\": \"hiringByDepartments\",\n      \"requiresQuery\": false\n    },\n    {\n      \"filterType\": \"hiringByLocations\",\n      \"requiresQuery\": true\n    },\n    {\n      \"filterType\": \"intentCategories\",\n      \"requiresQuery\": false\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aa184222-438e-4a9f-8741-bd0306fb1a24",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "618c6765-07e8-4abf-a92f-20a54e2273d6",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1d3bbae3-f8e1-42ec-a17d-ca759d24ced5",
+          "name": "Get Company Signal Filter Values",
+          "request": {
+            "name": "Get Company Signal Filter Values",
+            "description": {
+              "content": "Returns valid values for a single company signal filter type.\n\n| Filter type | Query required? |\n|---|---|\n| `newsEventTypes` | No |\n| `hiringByDepartments` | No |\n| `hiringByLocations` | Yes (2-256 chars) |\n| `intentCategories` | No — the `query` parameter is not supported for this filter type; passing one returns `400` |\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "signals",
+                "filters",
+                ":filterType"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "filterType",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c13a8a7e-f5e5-4470-9fae-fac3d60b4607",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters",
+                    ":filterType"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filterType",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"values\": {}\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e8ac749c-d23a-45e4-859a-7caa8f5f0dc0",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters",
+                    ":filterType"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filterType",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "307c8eac-c3c8-4a51-8d6e-34a8f7a3490a",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters",
+                    ":filterType"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filterType",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f8f837e9-458a-4cd0-a50e-8091df4a4cb8",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signals",
+                    "filters",
+                    ":filterType"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filterType",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "46b1a828-2a65-4ff1-9dae-768a8eaaf4fe",
+          "name": "Score Companies by Signal Activity",
+          "request": {
+            "name": "Score Companies by Signal Activity",
+            "description": {
+              "content": "Score companies by their active buying signals. Returns the aggregate Signal Score - a `[0, 1]` value reflecting the fraction of the company's active signals - plus the active signal breakdown.\n\nAccepts up to 100 companies, each identified by exactly one of `id`, `domain`, `name`, or `email`. All identifiers are resolved to Lusha company IDs server-side before scoring.\n\nEach result is one of:\n- A **scored entry** - `signalScore`, `signalTypes`, and `noActiveSignals`.\n- A **`NOT_FOUND`** entry - the company service could not resolve the supplied identifier.\n- A **`NO_SCORE`** entry - the company resolved, but the scoring engine returned nothing for it.\n\n> **Billing:** 1 credit is charged per scored row via `signal_score_company_reveal`. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free (`billing.creditsCharged` is `0`). Error rows (`NOT_FOUND` / `NO_SCORE`) are never charged.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "signal-score"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"<string>\",\n      \"id\": \"<string>\",\n      \"domain\": \"<string>\",\n      \"name\": \"<string>\",\n      \"email\": \"<email>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1609db97-4788-49e8-955b-0689dd8bf252",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"domain\": \"www.microsoft.com\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"name\": \"Apple\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"5d6f13d2-f6b0-4e55-85d5-04e17f932c1a\",\n  \"results\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\",\n      \"name\": \"Acme Corp\",\n      \"domain\": \"www.acmecorp.io\",\n      \"signalScore\": 0.42,\n      \"signalTypes\": [\n        \"hiringSignalIncrease\",\n        \"websiteVisit\"\n      ],\n      \"noActiveSignals\": false\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"id\": \"v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01\",\n      \"name\": \"Microsoft\",\n      \"domain\": \"www.microsoft.com\",\n      \"signalScore\": 0,\n      \"signalTypes\": [],\n      \"noActiveSignals\": true\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"domain\": \"nope-xyz.com\",\n      \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"Company not found\"\n      }\n    }\n  ],\n  \"billing\": {\n    \"creditsCharged\": 2,\n    \"resultsReturned\": 2\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7eca7699-1fa9-4454-8d2f-624a10424059",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"domain\": \"www.microsoft.com\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"name\": \"Apple\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7ace4167-5ca0-4bc2-9eec-e377ddcb7309",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"domain\": \"www.microsoft.com\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"name\": \"Apple\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cca1cb10-06e3-451f-989a-41ebad7a92ae",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"domain\": \"www.microsoft.com\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"name\": \"Apple\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4d3245a0-9f8b-49af-9e82-4c905b02da3b",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"domain\": \"www.microsoft.com\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"name\": \"Apple\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a4c70cd0-83cf-40dd-b879-29e08e3594ee",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companies\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"domain\": \"www.microsoft.com\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"name\": \"Apple\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "16bc5d77-2bd0-46e7-9779-8bdce97ade12",
+          "name": "Score Contacts by Signal Activity",
+          "request": {
+            "name": "Score Contacts by Signal Activity",
+            "description": {
+              "content": "Score contacts by their active buying signals. Returns the aggregate Signal Score - a `[0, 1]` value - plus the active signal breakdown per contact.\n\nAccepts up to 100 contacts. Each contact is resolved to a Lusha person ID and company ID server-side (identity only - no PII is revealed) before scoring. Provide one of:\n- `id` (encrypted Lusha contact ID)\n- `linkedinUrl`\n- `email`\n- `firstName` + `lastName` + (`companyName` or `companyDomain`)\n\nEach result is one of:\n- A **scored entry** - `signalScore`, `signalTypes`, and `noActiveSignals`.\n- A **`NOT_FOUND`** entry - identity resolution failed for the supplied identifier.\n- A **`NO_SCORE`** entry - the contact resolved, but the scoring engine returned nothing for it.\n\n> **Note:** A full outage of the identity-resolution provider is never masked as `NOT_FOUND` - it returns a retryable `502` instead, so callers can retry rather than treating the batch as authoritatively unresolved.\n\n> **Billing:** 1 credit is charged per scored row via `signal_score_contact_reveal`. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free (`billing.creditsCharged` is `0`). Error rows (`NOT_FOUND` / `NO_SCORE`) are never charged.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "contacts",
+                "signal-score"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"<string>\",\n      \"id\": \"<string>\",\n      \"linkedinUrl\": \"<string>\",\n      \"email\": \"<email>\",\n      \"firstName\": \"<string>\",\n      \"lastName\": \"<string>\",\n      \"companyName\": \"<string>\",\n      \"companyDomain\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "5c43304a-cffb-4fbf-8cc1-e05b1b420545",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"5d6f13d2-f6b0-4e55-85d5-04e17f932c1a\",\n  \"results\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\",\n      \"fullName\": \"Jane Doe\",\n      \"company\": {\n        \"id\": \"v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01\",\n        \"name\": \"Acme Corp\",\n        \"domain\": \"acme.com\"\n      },\n      \"signalScore\": 0.3,\n      \"signalTypes\": [\n        \"promotion\"\n      ],\n      \"noActiveSignals\": false\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"Contact not found\"\n      }\n    }\n  ],\n  \"billing\": {\n    \"creditsCharged\": 1,\n    \"resultsReturned\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "05c1d9a8-4354-475e-a026-60d4bcd23ef9",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "032ed99f-52bb-40c4-be4a-467e24a3458e",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1119629e-3ece-414d-80e0-58417a0647ca",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d649ab26-02e0-4df1-a0f1-2383fde47a3b",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a1af5bbd-48ba-4a10-8d9e-0e1093dfe9e9",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "7247"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "7247"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6d142164-8c8a-4d86-908e-0dd121f80116",
+              "name": "Bad gateway - upstream identity resolution provider is unavailable. Retryable.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "signal-score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"clientReferenceId\": \"ref-1\",\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\"\n    },\n    {\n      \"clientReferenceId\": \"ref-2\",\n      \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n    },\n    {\n      \"clientReferenceId\": \"ref-3\",\n      \"firstName\": \"Jane\",\n      \"lastName\": \"Doe\",\n      \"companyDomain\": \"acme.com\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 502,\n  \"message\": \"Identity resolution provider is temporarily unavailable. Retry with backoff.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lusha.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api_key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ac452449-bf3b-496f-8937-bf5521596e42",
+    "name": "Lusha API Documentation Signals API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n\n\nContact Support:\n Name: Lusha Support\n Email: support@lusha.com",
+      "type": "text/plain"
+    }
+  }
+}

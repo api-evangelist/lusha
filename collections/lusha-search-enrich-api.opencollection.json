@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Search & Enrich API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Search & Enrich",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search and Enrich Contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/search-and-enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find contacts and reveal their full data in a single call. Combines Search and Enrich into one request.\n\nProvide contact identifiers the same way you would for Search Contacts. Use the `reveal` field to control what gets unlocked (`emails`, `phones`, or both).\n\nUp to 100 contacts per request.\n\n> **Billing:** Two charges apply — one for the search (`api_search`) and one per revealed field. The `billing.creditsCharged` in the response reflects the total.\n"
+        },
+        {
+          "info": {
+            "name": "Search and Enrich Companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/search-and-enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find companies and reveal their full data in a single call. Combines Search and Enrich into one request.\n\nProvide company identifiers the same way you would for Search Companies. Up to 100 companies per request.\n\n> **Billing:** Same as Enrich Companies — charged per successful result via the `reveal_company` action.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

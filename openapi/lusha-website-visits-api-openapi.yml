@@ -1,0 +1,613 @@
+openapi: 3.2.0
+info:
+  title: Lusha API Documentation Website Visits API
+  version: ''
+  x-logo:
+    url: https://www.lusha.com/logo.png
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
+  description: "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n"
+  contact:
+    name: Lusha Support
+    url: https://api.lusha.com
+    email: support@lusha.com
+  termsOfService: https://lusha.com/legal/terms
+  x-privacy-policy:
+    name: Privacy Policy
+    url: https://lusha.com/legal/privacy-notice/
+servers:
+- url: https://api.lusha.com
+  description: Production server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Website Visits
+  description: "Retrieve companies ranked by website-visit signals for your tracked domains.\n\n Domains must be configured for tracking in the dashboard. Each result combines a V3 company firmographic preview with behavioral visit metrics (score, sessions, unique visitors, avg session length, and more).\n"
+  x-tag-expanded: true
+paths:
+  /v3/companies/website-visits:
+    post:
+      tags:
+      - Website Visits
+      summary: Get Website Visitors
+      x-badges:
+      - name: Beta
+        color: purple
+      operationId: getWebsiteVisits
+      description: 'Returns companies ranked by website-visit signals for your tracked domains and date range.
+
+
+        Domains must be configured for tracking in the Lusha dashboard — they are resolved to site IDs server-side. Each result combines a V3 company firmographic preview (same shape as Search Companies) with behavioral visit metrics.
+
+
+        **Notes:**
+
+        - Date range must be ≤ 3 months
+
+        - If any requested domain is not configured for tracking, the entire request fails with `400`
+
+        - `limit` accepts 1–150
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebsiteVisitsRequest'
+            example:
+              domains:
+              - lusha.com
+              - google.com
+              startDate: '2026-01-01'
+              endDate: '2026-03-18'
+              pagination:
+                size: 25
+                page: 0
+              sort:
+                by: score
+                order: desc
+              filters:
+                scoreBands:
+                - hot
+                - warm
+                score:
+                  min: 50
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteVisitsResponse'
+              example:
+                requestId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                results:
+                - id: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
+                  name: Lusha
+                  domain: www.lusha.com
+                  industry: Software Development
+                  employeeCount:
+                    min: 201
+                    max: 500
+                  location:
+                    city: Tel Aviv
+                    country: Israel
+                    countryIso2: IL
+                  socialLinks:
+                    linkedin: https://www.linkedin.com/company/lusha
+                  has:
+                  - competitors
+                  - socialLinks
+                  canReveal:
+                  - field: competitors
+                    credits: 1
+                  score: 87
+                  scoreBand: hot
+                  totalSessions: 12
+                  uniqueVisitors: 5
+                  avgSessionMinutes: 4.2
+                  daysVisited: 8
+                  highIntentPageviews: 10
+                  daysSinceLastVisit: 6
+                  lastVisit: '2026-03-20'
+                  visitorCountry: US
+                pagination:
+                  size: 25
+                  page: 0
+                  total: 142
+                billing:
+                  creditsCharged: 0
+                  resultsReturned: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  schemas:
+    WebsiteVisitsIntRange:
+      type: object
+      description: Integer range filter (non-negative)
+      properties:
+        min:
+          type: integer
+          minimum: 0
+        max:
+          type: integer
+          minimum: 0
+    WebsiteVisitsFilters:
+      type: object
+      properties:
+        scoreBands:
+          type: array
+          items:
+            type: string
+            enum:
+            - cold
+            - warm
+            - hot
+          description: Restrict to specific score bands.
+          example:
+          - hot
+          - warm
+        visitorCountries:
+          type: object
+          description: ISO 3166-1 alpha-2 country code filters.
+          properties:
+            include:
+              type: array
+              items:
+                type: string
+              example:
+              - US
+              - GB
+            exclude:
+              type: array
+              items:
+                type: string
+              example:
+              - CN
+        score:
+          allOf:
+          - $ref: '#/components/schemas/WebsiteVisitsIntRange'
+          description: Score range (1–100).
+        totalSessions:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        avgSessionMinutes:
+          $ref: '#/components/schemas/WebsiteVisitsFloatRange'
+        uniqueVisitors:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        daysVisited:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        highIntentPageviews:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        daysSinceLastVisit:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+    V3CanRevealItem:
+      type: object
+      description: Indicates a data type that can be revealed and its credit cost
+      properties:
+        field:
+          type: string
+          enum:
+          - emails
+          - phones
+          example: emails
+        credits:
+          type: integer
+          description: Credit cost (0 when already revealed for this account)
+          example: 1
+    WebsiteVisitsFloatRange:
+      type: object
+      description: Float range filter (non-negative)
+      properties:
+        min:
+          type: number
+          minimum: 0
+        max:
+          type: number
+          minimum: 0
+    WebsiteVisitsCompanyResult:
+      allOf:
+      - $ref: '#/components/schemas/V3CompanyPreview'
+      - type: object
+        description: Firmographic preview plus behavioral visit metrics.
+        properties:
+          score:
+            type: number
+            description: Display score (0–100).
+            example: 87
+          scoreBand:
+            type: string
+            enum:
+            - cold
+            - warm
+            - hot
+            description: Qualitative score band.
+            example: hot
+          totalSessions:
+            type: number
+            description: Total sessions in the window.
+            example: 12
+          uniqueVisitors:
+            type: number
+            description: Distinct visitors in the window.
+            example: 5
+          avgSessionMinutes:
+            type: number
+            description: Average session length in minutes.
+            example: 4.2
+          daysVisited:
+            type: number
+            description: Distinct days with activity.
+            example: 8
+          highIntentPageviews:
+            type: number
+            description: High-intent pageviews in the window.
+            example: 10
+          daysSinceLastVisit:
+            type: number
+            description: Days since the most recent visit.
+            example: 6
+          lastVisit:
+            type: string
+            format: date
+            description: Date of the last visit in the window.
+            example: '2026-03-20'
+          visitorCountry:
+            type: string
+            description: Primary visitor country (ISO 3166-1 alpha-2). Omitted if unavailable.
+            example: US
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    WebsiteVisitsRequest:
+      type: object
+      required:
+      - domains
+      - startDate
+      - endDate
+      - pagination
+      properties:
+        domains:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Domains configured for tracking in the Lusha dashboard.
+          example:
+          - lusha.com
+          - google.com
+        startDate:
+          type: string
+          format: date
+          description: Window start date (YYYY-MM-DD).
+          example: '2026-01-01'
+        endDate:
+          type: string
+          format: date
+          description: Window end date (YYYY-MM-DD). Range must be ≤ 3 months.
+          example: '2026-03-18'
+        pagination:
+          type: object
+          required:
+          - page
+          - size
+          properties:
+            size:
+              type: integer
+              minimum: 1
+              maximum: 150
+              example: 25
+            page:
+              type: integer
+              minimum: 0
+              example: 0
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              description: Field to sort by (e.g. `score`).
+              example: score
+            order:
+              type: string
+              enum:
+              - asc
+              - desc
+              example: desc
+        filters:
+          $ref: '#/components/schemas/WebsiteVisitsFilters'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    V3CompanyPreview:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: comp-ref-1
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: www.lusha.com
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 364
+            min:
+              type: integer
+              example: 201
+            max:
+              type: integer
+              example: 500
+        industry:
+          type: string
+          example: Technology, Information & Media
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+              example: London
+            state:
+              type: string
+              example: England
+            stateCode:
+              type: string
+              description: Free field. ISO/postal state or region code, when available.
+              example: MA
+            country:
+              type: string
+              example: United Kingdom
+            countryIso2:
+              type: string
+              example: GB
+            continent:
+              type: string
+              example: Europe
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/lushadata
+        has:
+          type: array
+          items:
+            type: string
+          description: 'Available data points that can be revealed via Enrich Companies. Includes base firmographic fields plus new revealable fields: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, businessModel, phones, emails, keywords, socialLinks, estimatedAnnualItSpend, monthlyWebsiteTraffic.
+
+            '
+          example:
+          - alternativeName
+          - alternativeDomains
+          - description
+          - companyType
+          - yearFounded
+          - subIndustry
+          - specialities
+          - sicCodes
+          - naicsCodes
+          - additionalLocations
+          - linkedinFollowers
+          - popularityTier
+          - logoUrl
+          - employeesByDepartment
+          - employeesByLocation
+          - employeesBySeniority
+          - competitors
+          - businessModel
+          - phones
+          - emails
+          - keywords
+          - socialLinks
+          - estimatedAnnualItSpend
+          - monthlyWebsiteTraffic
+        canReveal:
+          type: array
+          description: 'Data fields that can be revealed via Enrich Companies, with the credit cost per field. A cost of 0 means the field has already been revealed for this account.
+
+            '
+          items:
+            $ref: '#/components/schemas/V3CanRevealItem'
+          example:
+          - field: employeesByDepartment
+            credits: 1
+          - field: employeesByLocation
+            credits: 1
+          - field: employeesBySeniority
+            credits: 1
+          - field: competitors
+            credits: 1
+          - field: intent
+            credits: 0
+          - field: estimatedAnnualItSpend
+            credits: 1
+          - field: monthlyWebsiteTraffic
+            credits: 1
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - headcountIncrease3m
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    WebsiteVisitsResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebsiteVisitsCompanyResult'
+        pagination:
+          $ref: '#/components/schemas/WebsiteVisitsPagination'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    WebsiteVisitsPagination:
+      type: object
+      required:
+      - page
+      - size
+      - total
+      properties:
+        size:
+          type: integer
+          example: 25
+        page:
+          type: integer
+          example: 0
+        total:
+          type: integer
+          description: Total results across all pages.
+          example: 142
+  responses:
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    PaymentRequired:
+      description: Payment required - insufficient credits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        x-rate-limit-daily:
+          description: Total requests allowed per day
+          schema:
+            type: integer
+        x-daily-requests-left:
+          description: Requests remaining in daily quota
+          schema:
+            type: integer
+        x-rate-limit-hourly:
+          description: Total requests allowed per hour
+          schema:
+            type: integer
+        x-hourly-requests-left:
+          description: Requests remaining in hourly quota
+          schema:
+            type: integer
+        x-rate-limit-minute:
+          description: Total requests allowed per minute
+          schema:
+            type: integer
+        x-minute-requests-left:
+          description: Requests remaining in current minute window
+          schema:
+            type: integer
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
+      description: 'Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+
+        Include this key in the `api_key` header for all requests.
+
+        '

@@ -1,0 +1,1077 @@
+openapi: 3.2.0
+info:
+  title: Lusha API Documentation Contacts Tables API
+  version: ''
+  x-logo:
+    url: https://www.lusha.com/logo.png
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
+  description: "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n"
+  contact:
+    name: Lusha Support
+    url: https://api.lusha.com
+    email: support@lusha.com
+  termsOfService: https://lusha.com/legal/terms
+  x-privacy-policy:
+    name: Privacy Policy
+    url: https://lusha.com/legal/privacy-notice/
+servers:
+- url: https://api.lusha.com
+  description: Production server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Contacts Tables
+  description: '**Contacts Tables API:** Create and manage persistent tables of contacts inside Lusha.
+
+
+    Tables are spreadsheets with configurable columns — default Lusha fields, enrichment data, Signals, AI insights, premium data points, CRM fields, and custom fields. Populate a table directly through the endpoints below, or pass `tableId` on Prospecting, Enrich, Signals, or Lookalike calls to persist those results automatically.
+
+
+    Every surface that touches table data — this API, MCP, and the Workspace UI — reads and writes the same underlying data. Changes made through one surface are reflected on the others.
+
+
+    **Working with tables:**
+
+    - **Tables** — create, list, get status, update (rename/archive/visibility), delete
+
+    - **Entities** — add, remove, or read the rows in a table
+
+    - **Columns** — list, remove, or run a column across a table''s rows
+
+
+    **Owner resolution:** `owner.email` resolves to a user on your account and determines table ownership. **Required on every call when authenticating with an API key** — omitting it returns `400`. Optional for OAuth/token callers, since the caller is already identified by the token. Sent in the body as `owner: { email }` on `POST`/`PATCH` calls (and on `DELETE .../entities`, which carries a body); sent as a `?email=` query parameter on other `GET`/`DELETE` calls, which have no body.
+
+
+    **Billing:**
+
+    - Adding contacts to a table is free.
+
+    - Reading entities (`GET .../entities`) charges per row returned.
+
+    - Create / List / Get / Update / Delete / List Columns / Remove Column / Remove Entities are free.
+
+    - Running a column charges per row per the column''s tier (contact enrichment per row with data; signal/AI/score per row per run).
+
+    - Non-public-API-plan accounts always resolve to `0` credits charged.
+
+
+    **Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account.
+
+
+    See also: [Companies Tables](#tag/Companies-Tables).
+
+    '
+  x-tag-expanded: true
+paths:
+  /v3/contacts/tables:
+    post:
+      tags:
+      - Contacts Tables
+      summary: Create Contacts Table
+      operationId: createContactsTable
+      description: 'Create a new, empty contacts table, optionally seeded with an initial list of contact IDs.
+
+
+        > **Billing:** Free.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableCreateRequest'
+            example:
+              name: VP Sales US Tech Q2
+              visibility: private
+              owner:
+                email: user@example.com
+              ids:
+              - '10042851'
+              - '10042852'
+      responses:
+        '201':
+          description: Table created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/TableNameConflict'
+  /v3/contacts/tables/list:
+    post:
+      tags:
+      - Contacts Tables
+      summary: List Contacts Tables
+      operationId: listContactsTables
+      description: 'List contacts tables owned by the given user, plus any tables shared with the account.
+
+
+        > **Billing:** Free.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableListRequest'
+            example:
+              owner:
+                email: user@example.com
+              page: 0
+              size: 10
+              status: active
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v3/contacts/tables/{table_id}:
+    get:
+      tags:
+      - Contacts Tables
+      summary: Get Contacts Table
+      operationId: getContactsTable
+      description: 'Get a table''s metadata and current processing status.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      - $ref: '#/components/parameters/OwnerEmailQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+    patch:
+      tags:
+      - Contacts Tables
+      summary: Update Contacts Table
+      operationId: updateContactsTable
+      description: 'Rename a table, change its visibility, or reassign its owner. All fields except `owner` are optional — send only what changes.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableUpdateRequest'
+            example:
+              name: postman-renamed
+              visibility: shared
+              owner:
+                email: user@example.com
+      responses:
+        '200':
+          description: Table updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+    delete:
+      tags:
+      - Contacts Tables
+      summary: Delete Contacts Table
+      operationId: deleteContactsTable
+      description: 'Permanently delete a table and all its data. This cannot be undone.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      - $ref: '#/components/parameters/OwnerEmailQuery'
+      responses:
+        '200':
+          description: Table deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tableId:
+                    type: string
+                    example: '482910'
+                  status:
+                    type: string
+                    example: deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+  /v3/contacts/tables/{table_id}/entities:
+    get:
+      tags:
+      - Contacts Tables
+      summary: Get Contacts Table Entities
+      operationId: getContactsTableEntities
+      description: 'Read a page of rows in the table, with all column values and per-cell status.
+
+
+        > **Billing:** Charged per row returned via `export_api`.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      - $ref: '#/components/parameters/OwnerEmailQuery'
+      - name: page
+        in: query
+        schema:
+          type: integer
+          maximum: 100
+          default: 0
+      - name: size
+        in: query
+        schema:
+          type: integer
+          default: 100
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitiesGetResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+    post:
+      tags:
+      - Contacts Tables
+      summary: Add Entities to Contacts Table
+      operationId: addContactsTableEntities
+      description: 'Add up to 500 contact IDs to an existing table. `entityIds` accepts either the encrypted Lusha token (`v{N}.…`, as returned by Search/Enrich/Get Entities) or the legacy numeric `personId` — an ID that''s neither returns `400`. Already-present IDs are reported as `alreadyPresent` and not re-added; unresolvable IDs are not an error, they come back in `invalidIds` with a `200`.
+
+
+        Optionally pass `companyIds` — one `lushaCompanyId` per contact, index-aligned with `entityIds` — to help pair company-level enrichment to the right company for each contact.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntitiesAddRequest'
+            example:
+              entityIds:
+              - '10042854'
+              - '10042855'
+              - '10042856'
+              companyIds:
+              - '16303253'
+              - '16303253'
+              - '12790225'
+              owner:
+                email: user@example.com
+      responses:
+        '200':
+          description: Entities added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitiesAddResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+    delete:
+      tags:
+      - Contacts Tables
+      summary: Remove Entities from Contacts Table
+      operationId: removeContactsTableEntities
+      description: 'Remove specific contact IDs from a table.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntitiesRemoveRequest'
+            example:
+              entityIds:
+              - '10042851'
+              - '10042852'
+              owner:
+                email: user@example.com
+      responses:
+        '200':
+          description: Entities removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitiesRemoveResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+  /v3/contacts/tables/{table_id}/columns:
+    get:
+      tags:
+      - Contacts Tables
+      summary: List Contacts Table Columns
+      operationId: listContactsTableColumns
+      description: 'List the columns on a table, with type and aggregated per-cell status counts.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      - $ref: '#/components/parameters/OwnerEmailQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnsListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/TableNotFound'
+  /v3/contacts/tables/{table_id}/columns/{column_id}:
+    delete:
+      tags:
+      - Contacts Tables
+      summary: Remove Column from Contacts Table
+      operationId: removeContactsTableColumn
+      description: 'Remove a column and delete all of its cell data across the table. Default Lusha columns cannot be removed.
+
+
+        > **Billing:** Free.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      - $ref: '#/components/parameters/ColumnIdPath'
+      - $ref: '#/components/parameters/OwnerEmailQuery'
+      responses:
+        '200':
+          description: Column removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tableId:
+                    type: string
+                  columnId:
+                    type: string
+                  removed:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/ColumnNotFound'
+  /v3/contacts/tables/{table_id}/columns/{column_id}/run:
+    post:
+      tags:
+      - Contacts Tables
+      summary: Run Column on Contacts Table
+      operationId: runContactsTableColumn
+      description: 'Populate or refresh a column''s data for some or all rows in the table. This is **asynchronous** — the call returns immediately with `status: "processing"`; poll Get Contacts Table for `isProcessing` and per-column row-status counts to know when it''s done, then read the values via Get Contacts Table Entities.
+
+
+        **`runScope` values:**
+
+        - `all` — every row, including already-processed ones (re-runs / refreshes). Most expensive.
+
+        - `missing` — only rows that have never been run for this column. Cheapest, safe to call repeatedly.
+
+        - `specific` — only the `entityIds` you pass. Also how you implement "run for this page" — fetch the page via Get Contacts Table Entities, then pass those IDs here.
+
+
+        > **Billing:** Charged per row processed, per the column''s credit tier. Re-running with `all` charges again for rows that already have data.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TableIdPath'
+      - $ref: '#/components/parameters/ColumnIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColumnsRunRequest'
+            example:
+              runScope: specific
+              entityIds:
+              - '10042851'
+              - '10042852'
+              owner:
+                email: user@example.com
+      responses:
+        '200':
+          description: Column run started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnsRunResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/ColumnNotFound'
+components:
+  schemas:
+    EntitiesRemoveRequest:
+      type: object
+      required:
+      - entityIds
+      - owner
+      properties:
+        entityIds:
+          type: array
+          items:
+            type: string
+          description: 'Accepts either the encrypted token (`v{N}.…`, as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in `invalidIds` in the exact form you sent them.
+
+            '
+          example:
+          - '10042851'
+          - '10042852'
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+    TableResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TableStatusData'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    EntitiesAddResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            added:
+              type: integer
+              example: 20
+            alreadyPresent:
+              type: integer
+              example: 5
+            invalidIds:
+              type: array
+              description: IDs that couldn't be resolved. Not an error — the call still returns `200`.
+              items:
+                type: string
+              example: []
+            addedBy:
+              $ref: '#/components/schemas/AddedBy'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    EntityColumnValue:
+      type: object
+      description: 'One column''s value on a single row, as returned by Get Entities. This shape is a passthrough from the underlying Workspace service — the fields shown here (`id`, `name`, `type`, `sourceType`, `value`, `status`) are representative, not an exhaustive schema.
+
+        '
+      properties:
+        id:
+          type: string
+          example: f8c1a2b3
+        name:
+          type: string
+          example: company_name
+        type:
+          type: string
+          example: string
+        sourceType:
+          type: string
+          example: lusha
+        value:
+          description: The cell's data. Shape depends on the column type.
+          example: Google
+        status:
+          $ref: '#/components/schemas/CellStatus'
+    EntitiesAddRequest:
+      type: object
+      required:
+      - entityIds
+      - owner
+      properties:
+        entityIds:
+          type: array
+          items:
+            type: string
+          maxItems: 500
+          description: 'Lusha IDs as strings — `personId` for contacts, `lushaCompanyId` for companies. Accepts either the encrypted token (`v{N}.…`, as returned by Search/Enrich/Get Entities) or the legacy numeric ID. An ID that is neither a valid token nor numeric returns `400`.
+
+            '
+          example:
+          - '10042854'
+          - '10042855'
+          - '10042856'
+        companyIds:
+          type: array
+          items:
+            type: string
+          description: 'Contacts tables only. One `lushaCompanyId` per contact (encrypted token or numeric), index-aligned with `entityIds`, to help pair company-level enrichment to the right company for each contact. Ignored on companies tables.
+
+            '
+          example:
+          - '16303253'
+          - '16303253'
+          - '12790225'
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+    TableUpdateRequest:
+      type: object
+      required:
+      - owner
+      description: '`name`, `visibility`, and `archived` are all optional — send any subset; omitted fields stay unchanged. Sending none of them is a no-op. A partial update re-reads the persisted table first, so fields you don''t send are never clobbered.
+
+        '
+      properties:
+        name:
+          type: string
+          example: renamed
+        visibility:
+          type: string
+          enum:
+          - private
+          - shared
+          example: shared
+        archived:
+          type: boolean
+          description: Set `true` to archive the table (hides it from default List Tables results), `false` to restore it.
+          example: true
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+    OwnerInfo:
+      type: object
+      description: 'Resolved owner of the table. `id` is always present; `email` and `name` are resolved best-effort within the API key''s account and may be omitted if resolution fails (in which case the object contains only `id`). Replaces the removed top-level `ownerId` field - this is a breaking change from the prior response shape.
+
+        '
+      properties:
+        id:
+          type: integer
+          example: 12345
+        email:
+          type: string
+          format: email
+          example: owner@lusha.com
+        name:
+          type: string
+          example: Ada Lovelace
+    TableListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableMetadata'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    EntitiesRemoveResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            removed:
+              type: integer
+              example: 10
+            invalidIds:
+              type: array
+              items:
+                type: string
+              example: []
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    TableMetadata:
+      type: object
+      description: TableDto — static metadata for a table.
+      properties:
+        tableId:
+          type: string
+          example: '482910'
+        name:
+          type: string
+          example: VP Sales US Tech Q2
+        entityType:
+          type: string
+          enum:
+          - contacts
+          - companies
+          example: contacts
+        visibility:
+          type: string
+          enum:
+          - private
+          - shared
+          example: private
+        status:
+          type: string
+          enum:
+          - active
+          - archived
+          - deleted
+          description: 'Lifecycle state. `active` and `archived` are filterable via the List Tables `status` field; `deleted` is not a filterable status.
+
+            '
+          example: active
+        owner:
+          $ref: '#/components/schemas/OwnerInfo'
+        createdBy:
+          $ref: '#/components/schemas/CreatedBy'
+        workspaceUrl:
+          type: string
+          example: https://workspace.lusha.com/tables/482910
+    RunScope:
+      type: string
+      enum:
+      - all
+      - missing
+      - specific
+      description: 'Controls which rows a column operation applies to. `all` re-runs every row, including already-processed ones. `missing` only runs rows that don''t have a value for this column yet. `specific` requires `entityIds`.
+
+        '
+    ColumnSummary:
+      type: object
+      description: ColumnDto — a column's definition plus aggregated per-cell status counts.
+      properties:
+        columnId:
+          type: string
+          example: c1
+        name:
+          type: string
+          example: Job title
+        type:
+          type: string
+          enum:
+          - lusha
+          - crm
+          - signal
+          - ai
+          - score
+          example: lusha
+        key:
+          type:
+          - string
+          - 'null'
+          example: jobTitle
+        isDefault:
+          type: boolean
+          description: Default Lusha columns cannot be removed.
+          example: false
+        addedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        rowsNotRun:
+          type: integer
+        rowsProcessing:
+          type: integer
+        rowsSuccess:
+          type: integer
+        rowsNoData:
+          type: integer
+        rowsFailed:
+          type: integer
+    TableListRequest:
+      type: object
+      required:
+      - owner
+      properties:
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+        page:
+          type: integer
+          minimum: 0
+          maximum: 100
+          default: 0
+        size:
+          type: integer
+          default: 100
+        name:
+          type: string
+          description: Optional filter — matches tables whose name contains this text.
+          example: Q3
+        status:
+          type: string
+          enum:
+          - active
+          - archived
+          description: '`deleted` is not a filterable status.'
+    ColumnsListResponse:
+      type: object
+      description: Response for List Columns — `data` is a bare array of ColumnDto.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnSummary'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    EntitiesGetResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableEntity'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ColumnsRunResponse:
+      type: object
+      description: 'Run is asynchronous — this response confirms the run was accepted. Poll Get Table for per-column row-status counts to know when it''s finished.
+
+        '
+      properties:
+        data:
+          type: object
+          properties:
+            columnId:
+              type: string
+              example: c1
+            runScope:
+              $ref: '#/components/schemas/RunScope'
+            status:
+              type: string
+              example: processing
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    TableStatusData:
+      type: object
+      description: Response payload for Get Table — TableDto fields plus live entity/column counts.
+      allOf:
+      - $ref: '#/components/schemas/TableMetadata'
+      - type: object
+        properties:
+          entityCount:
+            type: integer
+            example: 5
+          isProcessing:
+            type: boolean
+            description: Whether any column run is currently in progress on this table.
+            example: false
+          columns:
+            type: array
+            items:
+              $ref: '#/components/schemas/ColumnSummary'
+    AddedBy:
+      type: object
+      description: Where and by whom a row was added to the table.
+      properties:
+        surface:
+          type: string
+          enum:
+          - api
+          - mcp
+          - workspace
+          example: api
+    ColumnsRunRequest:
+      type: object
+      required:
+      - runScope
+      - owner
+      properties:
+        runScope:
+          $ref: '#/components/schemas/RunScope'
+        entityIds:
+          type: array
+          items:
+            type: string
+          description: Required when `runScope` is `specific`.
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+    CellStatus:
+      type: string
+      enum:
+      - not_run
+      - processing
+      - success
+      - no_data
+      - failed
+      description: 'Current state of a single cell''s data. `no_data` means the run succeeded but found nothing — distinct from `failed`, which means the run itself errored.
+
+        '
+    TableOwner:
+      type: object
+      description: 'Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) — omitting it returns `400`. Optional for OAuth/token callers, since the caller is already identified by the token; still accepted if you want to act on behalf of another owner.
+
+        '
+      properties:
+        email:
+          type: string
+          format: email
+          description: Must resolve to an existing user on the account tied to your API key.
+          example: user@example.com
+    V3PaginationResponse:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 25
+        total:
+          type: integer
+    CreatedBy:
+      type: object
+      description: Where and by whom the table was created.
+      properties:
+        surface:
+          type: string
+          enum:
+          - api
+          - mcp
+          - workspace
+          example: api
+        createdByUserId:
+          type: integer
+          example: 12345
+    TableEntity:
+      type: object
+      description: 'A single row. `id` is the **encrypted** Lusha ID (`v{N}.…`) — `personId` for contacts, `lushaCompanyId` for companies — in the same format used across V3, so it round-trips directly into Add Entities, Remove Entities, and Enrich. Internal fields (`accountId`, `companyLid`, `lushaCompanyId`, `personId`, `companyDetails`) are not returned. Remaining per-row fields under `columns` are owned by the Workspace service; this shape is representative, not an exhaustive schema.
+
+        '
+      properties:
+        id:
+          type: string
+          description: Encrypted Lusha ID.
+          example: v1.aB3kZ9example
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityColumnValue'
+    TableCreateRequest:
+      type: object
+      required:
+      - name
+      - owner
+      properties:
+        name:
+          type: string
+          example: postman-companies
+        visibility:
+          type: string
+          enum:
+          - private
+          - shared
+          default: private
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+        ids:
+          type: array
+          description: Optional initial entity IDs to seed the table with.
+          items:
+            type: string
+          example:
+          - '10042851'
+          - '10042852'
+  responses:
+    ColumnNotFound:
+      description: Not found - column does not exist on the given table
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            message: 'COLUMN_NOT_FOUND: Column not found'
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    TableNameConflict:
+      description: Conflict - a table with this name already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 409
+            message: 'TABLE_NAME_CONFLICT: A table with this name already exists'
+    TableNotFound:
+      description: Not found - table does not exist or is not accessible to this account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            message: 'TABLE_NOT_FOUND: Table not found'
+  parameters:
+    ColumnIdPath:
+      name: column_id
+      in: path
+      required: true
+      description: The column's ID.
+      schema:
+        type: string
+      example: col_signals_funding
+    TableIdPath:
+      name: table_id
+      in: path
+      required: true
+      description: The table's ID.
+      schema:
+        type: string
+      example: '482910'
+    OwnerEmailQuery:
+      name: email
+      in: query
+      required: false
+      description: Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body.
+      schema:
+        type: string
+        format: email
+      example: user@example.com
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
+      description: 'Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+
+        Include this key in the `api_key` header for all requests.
+
+        '

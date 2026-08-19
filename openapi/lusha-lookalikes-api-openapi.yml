@@ -1,0 +1,641 @@
+openapi: 3.2.0
+info:
+  title: Lusha API Documentation Lookalikes API
+  version: ''
+  x-logo:
+    url: https://www.lusha.com/logo.png
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
+  description: "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n"
+  contact:
+    name: Lusha Support
+    url: https://api.lusha.com
+    email: support@lusha.com
+  termsOfService: https://lusha.com/legal/terms
+  x-privacy-policy:
+    name: Privacy Policy
+    url: https://lusha.com/legal/privacy-notice/
+servers:
+- url: https://api.lusha.com
+  description: Production server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Lookalikes
+  description: '**Lookalike APIs:** Use AI-powered recommendations to discover contacts and companies similar to your best existing customers. The Contact Lookalikes and Company Lookalikes endpoints return paginated results you can pipe directly into Enrich for full data.
+
+
+    Pass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables) or [Companies Tables](#tag/Companies-Tables).
+
+    '
+  x-tag-expanded: true
+paths:
+  /v3/contacts/lookalike:
+    post:
+      tags:
+      - Lookalikes
+      summary: Contact Lookalikes
+      operationId: getContactLookalikes
+      description: 'Find contacts similar to a set of seed contacts using AI-powered recommendations.
+
+
+        Provide 5-100 seed contacts via LinkedIn URLs, emails, Lusha IDs, or name + company. The API returns contacts who share similar roles, seniority, and company profiles.
+
+
+        **Pagination without duplicates:**
+
+        On your first request, omit `dedupeSessionId` — the server generates one and returns it. Pass it on every subsequent request to get more results without repeating contacts already seen. Sessions are retained for 30 days.
+
+
+        Use the `exclude` field to always filter out specific contacts (e.g. existing customers).
+
+
+        Results are lightweight previews. Use Enrich Contacts with the returned `id` to get emails and phones.
+
+
+        > **Billing:** Charged per result via the `lookalikeContact` action.
+
+
+        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactLookalikesRequest'
+            examples:
+              firstRequest:
+                summary: First request (server generates dedupeSessionId)
+                value:
+                  seeds:
+                    linkedinUrls:
+                    - https://www.linkedin.com/in/orit-shilvock-6243bb5
+                    emails:
+                    - gal.ashkelon@lusha.com
+                    ids:
+                    - '1234'
+                  exclude:
+                    emails:
+                    - existing@customer.com
+                  limit: 25
+              secondRequest:
+                summary: Second request (get more using dedupeSessionId)
+                value:
+                  dedupeSessionId: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+                  seeds:
+                    linkedinUrls:
+                    - https://www.linkedin.com/in/shmulikwillinger
+                  limit: 25
+      responses:
+        '200':
+          description: Successfully retrieved contact lookalikes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactLookalikesResponse'
+              example:
+                dedupeSessionId: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+                results:
+                - id: '9659196'
+                  firstName: Sarah
+                  lastName: Johnson
+                meta:
+                  returned: 1
+                  hasMore: true
+                billing:
+                  creditsCharged: 3
+                  resultsReturned: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '402':
+          description: Insufficient credits
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '410':
+          description: dedupeSessionId is invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DedupeSessionInvalidError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /v3/companies/lookalike:
+    post:
+      tags:
+      - Lookalikes
+      summary: Company Lookalikes
+      operationId: getCompanyLookalikes
+      description: 'Find companies similar to a set of seed companies using AI-powered recommendations.
+
+
+        Provide 5-100 seed companies via domains or LinkedIn URLs. The API returns companies with similar size, industry, and profile.
+
+
+        **Pagination without duplicates:**
+
+        On your first request, omit `dedupeSessionId` — the server generates one and returns it. Pass it on every subsequent request to get more results without repeating companies already seen. Sessions are retained for 30 days.
+
+
+        Use the `exclude` field to always filter out specific companies (e.g. existing customers or competitors).
+
+
+        Results are lightweight previews. Use Enrich Companies with the returned `id` to get full firmographic data.
+
+
+        > **Billing:** Charged per result via the `lookalikeCompany` action.
+
+
+        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. See [Companies Tables](#tag/Companies-Tables).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyLookalikesRequest'
+            examples:
+              firstRequest:
+                summary: First request (server generates dedupeSessionId)
+                value:
+                  seeds:
+                    domains:
+                    - sap.com
+                    - oracle.com
+                    linkedinUrls:
+                    - https://www.linkedin.com/company/google
+                  exclude:
+                    domains:
+                    - existingcustomer.com
+                  limit: 100
+              secondRequest:
+                summary: Second request (get more using dedupeSessionId)
+                value:
+                  dedupeSessionId: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+                  seeds:
+                    domains:
+                    - sap.com
+                  limit: 100
+      responses:
+        '200':
+          description: Successfully retrieved company lookalikes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyLookalikesResponse'
+              example:
+                dedupeSessionId: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+                results:
+                - id: '12345'
+                  name: Marriott International
+                  domain: marriott.com
+                meta:
+                  returned: 1
+                  hasMore: true
+                billing:
+                  creditsCharged: 3
+                  resultsReturned: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '402':
+          description: Insufficient credits
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '410':
+          description: dedupeSessionId is invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    CompanyIdentifiersBatch:
+      type: object
+      properties:
+        domains:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - sap.com
+          - oracle.com
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - https://www.linkedin.com/company/sap
+      minProperties: 1
+    ContactIdentifiersBatch:
+      type:
+      - object
+      - 'null'
+      additionalProperties: false
+      properties:
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - https://www.linkedin.com/in/orit-shilvock-6243bb5
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactItem'
+          maxItems: 100
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          maxItems: 100
+          example:
+          - gal.ashkelon@lusha.com
+        ids:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          description: Lusha contact IDs as strings (preferred)
+          example:
+          - '1234'
+          - '4567'
+        contactIds:
+          type: array
+          items:
+            type: integer
+          maxItems: 100
+          description: Lusha contact IDs as numbers (legacy; prefer ids)
+          example:
+          - 1234
+          - 4567
+    CompanyLookalikesResponse:
+      type: object
+      required:
+      - dedupeSessionId
+      - results
+      - meta
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3LookAlikeCompanyResult'
+        meta:
+          $ref: '#/components/schemas/CompanyLookalikesMeta'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ContactItem:
+      type: object
+      additionalProperties: false
+      required:
+      - firstName
+      - lastName
+      description: At least one of companyDomain or companyName is required.
+      properties:
+        firstName:
+          type: string
+          example: Miri
+        lastName:
+          type: string
+          example: Tamir
+        companyDomain:
+          type: string
+          example: lusha.com
+        companyName:
+          type: string
+          example: Lusha
+    TableWrite:
+      type: object
+      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
+
+        '
+      properties:
+        tableId:
+          type: string
+          example: '482910'
+        added:
+          type: integer
+          description: Number of new entities added to the table by this call.
+          example: 3
+        alreadyPresent:
+          type: integer
+          description: Number of entities from this call that were already in the table.
+          example: 2
+        columnsCreated:
+          type: integer
+          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
+          example: 0
+        rowsProcessed:
+          type: integer
+          description: Number of rows the column-run touched as part of this call.
+          example: 5
+        rowsCharged:
+          type: integer
+          description: Number of those rows that incurred a credit charge.
+          example: 5
+        rowsAlreadyPaidInTable:
+          type: integer
+          description: Number of those rows that were already paid for in this table and were not re-charged.
+          example: 0
+        creditsCharged:
+          type: integer
+          description: Credits charged specifically for this table write.
+          example: 0
+    V3LookAlikeCompanyResult:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Marriott International
+        domain:
+          type: string
+          example: marriott.com
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 255334
+        industry:
+          type: string
+          example: Hospitality
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: United States
+            state:
+              type: string
+              example: Maryland
+            city:
+              type: string
+              example: Bethesda
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/marriott-international
+    ContactLookalikesResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - dedupeSessionId
+      - results
+      - meta
+      properties:
+        dedupeSessionId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3LookAlikeContactResult'
+        meta:
+          $ref: '#/components/schemas/ContactLookalikesMeta'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ContactLookalikesRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - seeds
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        seeds:
+          $ref: '#/components/schemas/ContactIdentifiersBatch'
+        exclude:
+          $ref: '#/components/schemas/ContactIdentifiersBatch'
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
+        tableId:
+          type: string
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '482910'
+    CompanyLookalikesRequest:
+      type: object
+      required:
+      - seeds
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        seeds:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        exclude:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
+        tableId:
+          type: string
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '583021'
+    DedupeSessionInvalidError:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          example: DEDUPE_SESSION_INVALID
+        message:
+          type: string
+          example: The provided dedupeSessionId is invalid or expired. Generate a new request without dedupeSessionId to start a fresh run.
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    ContactLookalikesMeta:
+      type: object
+      additionalProperties: false
+      required:
+      - returned
+      - hasMore
+      properties:
+        returned:
+          type: integer
+          example: 25
+        hasMore:
+          type: boolean
+          example: true
+    V3LookAlikeContactResult:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '4389064624'
+        firstName:
+          type: string
+          example: Yehuda
+        lastName:
+          type: string
+          example: Rapp
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/in/yehuda-rapp-53909b99
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '16303253'
+            name:
+              type: string
+              example: Lusha
+            domain:
+              type: string
+              example: www.lusha.com
+        jobTitle:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Senior Solutions Engineer
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Engineering & Technical
+            seniority:
+              type: string
+              example: Senior
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: Israel
+            state:
+              type: string
+              example: Tel Aviv District
+            city:
+              type: string
+              example: Tel Aviv
+    CompanyLookalikesMeta:
+      type: object
+      required:
+      - returned
+      - hasMore
+      properties:
+        returned:
+          type: integer
+          example: 1
+        hasMore:
+          type: boolean
+          example: true
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
+      description: 'Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+
+        Include this key in the `api_key` header for all requests.
+
+        '

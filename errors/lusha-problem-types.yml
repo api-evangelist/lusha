@@ -1,0 +1,138 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  openapi/lusha-*-api-openapi.yml (4xx/5xx responses),
+  https://docs.lusha.com/apis/openapi/section/error-codes,
+  https://docs.lusha.com/user-guide/lushas-api/lusha-api-error-codes-reference
+format: custom-json
+format_note: >-
+  NOT RFC 9457. No operation returns application/problem+json — every error body
+  is application/json in Lusha's own envelope. There is no `type` URI, no
+  registry of problem types, and two different envelope shapes coexist.
+envelopes:
+- name: standard
+  shape: '{ "statusCode": <int>, "message": <string>, "errors": [<string>] }'
+  fields:
+  - {name: statusCode, type: number, description: HTTP status code}
+  - {name: message, type: string, description: human-readable error message}
+  - {name: errors, type: 'string[]', required: false, description: per-field validation detail}
+  applies_to: all endpoints except the Tables families
+  schema: '#/components/schemas/ErrorResponse'
+- name: tables
+  shape: '{ "message": <string>, "code": <int>, ... }'
+  applies_to: [Contacts Tables, Companies Tables]
+  note: >-
+    Documented explicitly by the provider as a different shape from the rest of
+    the API — `code` carries the HTTP status, not a symbolic error code.
+problems:
+- status: 400
+  title: Bad Request
+  description: Request is malformed, missing a required field, or contains an invalid value.
+  remediation: >-
+    Read the `message` (and `errors[]` when present) to find the offending field;
+    verify formats — valid email addresses, ISO 2-letter country codes.
+  occurrences_in_spec: 39
+- status: 401
+  title: Unauthorized
+  description: API key is missing, invalid, revoked or expired.
+  remediation: >-
+    Pass the key in the `api_key` request header. Verify the key is active at
+    https://dashboard.lusha.com/api/manage-api-keys.
+  occurrences_in_spec: 54
+  note: >-
+    The help-centre error article tells callers to use `Authorization: Bearer`,
+    which contradicts the API reference and the OpenAPI securityScheme (apiKey in
+    header, name `api_key`). The spec is authoritative; this is a provider docs
+    defect worth reporting.
+- status: 402
+  title: Payment Required
+  description: Insufficient credits, or payment needed on the account.
+  remediation: Top up or upgrade the plan; check remaining balance with getAccountUsage.
+  occurrences_in_spec: 16
+- status: 403
+  title: Forbidden
+  description: >-
+    Account inactive, or the endpoint is not included in the plan. Self-service
+    plans (Pro/Premium) reach enrichment only; Prospecting and Filters are Scale.
+  remediation: >-
+    Confirm plan entitlements in the dashboard, or contact support@lusha.com for
+    an inactive account.
+  occurrences_in_spec: 50
+- status: 404
+  title: Not Found
+  description: Endpoint or resource does not exist (e.g. account webhook secret not yet created).
+  occurrences_in_spec: 22
+- status: 409
+  title: Conflict
+  description: A table with this name already exists (TABLE_NAME_CONFLICT).
+  occurrences_in_spec: 2
+- status: 410
+  title: Gone
+  description: dedupeSessionId is invalid or expired.
+  source_schema: '#/components/schemas/DedupeSessionInvalidError'
+  occurrences_in_spec: 2
+- status: 422
+  title: Unprocessable Entity
+  description: >-
+    Request is well formed but cannot be processed (e.g. invalid email format,
+    unsupported country code).
+  remediation: Check the response body for the failing field.
+  occurrences_in_spec: 0
+  note: documented in the help-centre reference but not modelled in the v3 OpenAPI.
+- status: 429
+  title: Too Many Requests
+  description: Rate limit or daily quota exceeded (minute, hour or day window).
+  remediation: >-
+    Back off exponentially — 1s, doubling, 60s cap. No Retry-After header is
+    published; read x-minute-requests-left / x-hourly-requests-left /
+    x-daily-requests-left instead.
+  occurrences_in_spec: 17
+- status: 451
+  title: Unavailable For Legal Reasons
+  description: Request blocked due to GDPR regulations.
+  occurrences_in_spec: 0
+  note: documented in the API reference error table but not modelled in the spec.
+- status: 499
+  title: Client Closed Request
+  description: Request timed out before completing.
+  occurrences_in_spec: 0
+  note: documented in the API reference error table but not modelled in the spec.
+- status: 500
+  title: Internal Server Error
+  description: Failure on Lusha's side.
+  remediation: Retry with exponential backoff; check https://status.lusha.com.
+  occurrences_in_spec: 14
+- status: 502
+  title: Bad Gateway
+  description: >-
+    Identity-resolution provider outage on POST /v3/contacts/signal-score —
+    returned as a retryable 502 rather than being masked as NOT_FOUND.
+  source_operation: openapi/lusha-signals-api-openapi.yml#getContactSignalScores
+  occurrences_in_spec: 1
+- status: 503
+  title: Service Unavailable
+  description: API temporarily down or under maintenance.
+  occurrences_in_spec: 0
+  note: documented in the help-centre reference but not modelled in the spec.
+symbolic_codes:
+- code: TABLE_NOT_FOUND
+  status: 404
+  meaning: The table_id does not exist or is not accessible to this account.
+- code: COLUMN_NOT_FOUND
+  status: 404
+  meaning: The column_id does not exist on the given table.
+- code: TABLE_NAME_CONFLICT
+  status: 409
+  meaning: A table with this name already exists.
+per_item_codes:
+- code: NOT_FOUND
+  meaning: The supplied identifier did not resolve to an entity.
+  applies_to: [getCompanySignalScores, getContactSignalScores]
+- code: NO_SCORE
+  meaning: The entity resolved but the scoring engine returned nothing for it.
+  applies_to: [getCompanySignalScores, getContactSignalScores]
+handling_guidance:
+- Verify the API key is correct and active.
+- Read the `message` field for specific troubleshooting detail.
+- On 429, wait before retrying.
+- On 5xx, use exponential backoff.

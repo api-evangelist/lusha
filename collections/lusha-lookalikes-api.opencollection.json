@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Lookalikes API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Lookalikes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Contact Lookalikes",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/lookalike",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find contacts similar to a set of seed contacts using AI-powered recommendations.\n\nProvide 5-100 seed contacts via LinkedIn URLs, emails, Lusha IDs, or name + company. The API returns contacts who share similar roles, seniority, and company profiles.\n\n**Pagination without duplicates:**\nOn your first request, omit `dedupeSessionId` — the server generates one and returns it. Pass it on every subsequent request to get more results without repeating contacts already seen. Sessions are retained for 3"
+        },
+        {
+          "info": {
+            "name": "Company Lookalikes",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/lookalike",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Find companies similar to a set of seed companies using AI-powered recommendations.\n\nProvide 5-100 seed companies via domains or LinkedIn URLs. The API returns companies with similar size, industry, and profile.\n\n**Pagination without duplicates:**\nOn your first request, omit `dedupeSessionId` — the server generates one and returns it. Pass it on every subsequent request to get more results without repeating companies already seen. Sessions are retained for 30 days.\n\nUse the `exclude` field to al"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

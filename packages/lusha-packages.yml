@@ -1,0 +1,71 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  registry.npmjs.org, pypi.org, api.github.com/orgs/lusha-oss,
+  https://docs.lusha.com/mcp-docs
+description: >-
+  Lusha publishes no first-party REST client SDK in any language registry. The
+  only first-party packages are agent/automation integrations: the MCP server
+  (npm) and an n8n community node. The docs site carries "Warp SDK" and
+  "Warp CLI" pages under /tools — those are unmodified Redocly starter-template
+  placeholder content about a fictional time-travel API (packages `adco-warp-sdk`
+  / `adco-warp-cli`), not Lusha software, and are deliberately NOT recorded here.
+packages:
+- language: javascript
+  registry: npm
+  name: '@lusha-org/mcp'
+  url: https://www.npmjs.com/package/@lusha-org/mcp
+  install: npx @lusha-org/mcp@latest
+  official: true
+  version: 1.2.0
+  published: '2025-08-24'
+  repository: https://github.com/lusha-oss/lusha-public-api-mcp
+  kind: mcp-server
+  note: >-
+    Local stdio MCP server. The npm release is ~12 months behind the source repo
+    (lusha-oss/lusha-public-api-mcp last pushed 2026-03-04) and behind the hosted
+    server at https://mcp.lusha.com, which is the current agent surface.
+- language: javascript
+  registry: npm
+  name: n8n-nodes-lusha
+  url: https://www.npmjs.com/package/n8n-nodes-lusha
+  install: npm install n8n-nodes-lusha
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/lusha-oss/n8n-nodes-lusha
+  kind: workflow-node
+  note: >-
+    Package name resolves on registry.npmjs.org (HTTP 200) but the document
+    returned no dist-tags/time block on probe, so no version or publish date
+    could be read — recorded as an honest gap rather than a guess. Source repo
+    (lusha-oss, "Complete Lusha API integration for n8n") last pushed
+    2026-08-11.
+- language: javascript
+  registry: github
+  name: lusha-oss/lusha-gemini-extension
+  url: https://github.com/lusha-oss/lusha-gemini-extension
+  install: gemini extensions install lusha-oss/lusha-gemini-extension
+  official: true
+  version: null
+  published: null
+  kind: cli-extension
+  note: >-
+    Gemini CLI extension documented at https://docs.lusha.com/mcp-docs; ships the
+    /lusha:prospect and /lusha:enrich slash commands. Distributed from GitHub, not
+    a package registry, so there is no metadata endpoint to read a version from;
+    the install command is unpinned and floats to the default branch.
+registries_checked:
+- registry: npm
+  queries: ['@lusha-org/mcp', 'lusha', '@lusha-org/sdk', 'lusha-api', 'n8n-nodes-lusha']
+  note: >-
+    `lusha` (0.0.1-beta.44, 2023-02-26, description "Description of your plugin",
+    no repository) shows no evidence of first-party ownership and is excluded.
+- registry: pypi
+  queries: [lusha, lusha-api]
+  result: 404
+- registry: github
+  org: lusha-oss
+  repos: [lusha-public-api-mcp, n8n-nodes-lusha, lusha-mcp-plugin]
+sdk_count: 0
+official_sdks: false

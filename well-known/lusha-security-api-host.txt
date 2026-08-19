@@ -1,0 +1,6 @@
+Acknowledgments: https://www.lusha.com/.well-known/humans.txt
+Canonical: https://www.lusha.com/.well-known/security.txt
+Contact: mailto:security@lusha.com
+Expires: 2026-12-31T01:04:00Z
+Hiring: https://www.lusha.com/careers
+Preferred-Languages: en

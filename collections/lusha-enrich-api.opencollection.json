@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Enrich API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Enrich",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Enrich Contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reveal full contact data for contacts you've already found via Search Contacts.\n\nPass up to 100 contact `ids` (from the search response). Use the `reveal` field to control what gets unlocked:\n- `emails` — work and personal email addresses\n- `phones` — mobile and direct phone numbers\n- Omit `reveal` to get both by default\n\n---\n\n###  Waterfall Reveal\nFall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts.\n\nIf **Data Waterfal"
+        },
+        {
+          "info": {
+            "name": "Enrich Companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reveal full company data for companies you've already found via Search Companies.\n\nPass up to 100 company `ids` (from the search response). Each enriched result includes:\n- Firmographics: size, revenue range, year founded, company type\n- Industry: primary industry, sub-industry, SIC/NAICS codes\n- Locations: HQ and additional office sites\n- Technologies, funding rounds, buyer intent topics\n- LinkedIn followers, logo URL, social links\n\n> **Billing:** Charged per successful result via the `reveal_c"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

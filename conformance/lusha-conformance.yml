@@ -1,0 +1,126 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  openapi/lusha-*-api-openapi.yml, well-known/lusha-well-known.yml,
+  https://docs.lusha.com/apis/openapi,
+  https://docs.lusha.com/user-guide/security/lusha-security-overview,
+  https://www.lusha.com/trust-center
+description: >-
+  Which cross-cutting standards the Lusha surface actually conforms to. The REST
+  API is a plain JSON API with header API-key auth — no OAuth, no OIDC, no
+  RFC 9457, no RFC 8594. The standards posture lives almost entirely on the AGENT
+  side: the MCP server implements MCP over streamable HTTP with a full RFC 8414 /
+  RFC 9728 / RFC 7591 OAuth 2.1 discovery chain.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    Provider publishes OpenAPI 3.0.3 at https://docs.lusha.com/_spec/apis/@v3/openapi.yaml
+    (58 operations, all with operationIds, summaries and tags).
+- id: openapi-3.1
+  conforms: false
+  evidence: published document declares openapi 3.0.3
+- id: asyncapi
+  conforms: false
+  evidence: no AsyncAPI document published; /asyncapi.yaml returns 404
+- id: json-schema
+  conforms: partial
+  evidence: OpenAPI 3.0 schema objects only (JSON Schema draft-4 flavoured subset)
+- id: rest
+  conforms: true
+  evidence: resource paths under /v3/ and /api/, JSON request/response, standard status codes
+- id: json-api
+  conforms: false
+  evidence: bespoke response envelopes, not application/vnd.api+json
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No operation returns application/problem+json; errors use a bespoke
+    { statusCode, message, errors[] } envelope, and Tables use a second shape.
+- id: oauth2
+  conforms: partial
+  evidence: >-
+    Not on the REST API (apiKey header only). The MCP server at mcp.lusha.com is
+    an OAuth 2.1 protected resource with authorization_code + refresh_token,
+    PKCE S256 and dynamic client registration at auth.lusha.com.
+- id: rfc8414-oauth-server-metadata
+  conforms: true
+  evidence: https://mcp.lusha.com/.well-known/oauth-authorization-server returns 200
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: https://mcp.lusha.com/.well-known/oauth-protected-resource returns 200
+- id: rfc7591-dynamic-client-registration
+  conforms: true
+  evidence: registration_endpoint https://auth.lusha.com/oauth/register advertised in metadata
+- id: oidc
+  conforms: false
+  evidence: >-
+    /.well-known/openid-configuration on mcp.lusha.com returns the OAuth 2.0
+    authorization-server document byte-for-byte — no id_token, no userinfo
+    endpoint, no jwks_uri — so it is not an OpenID Provider.
+- id: saml-2.0
+  conforms: true
+  evidence: >-
+    SSO for the platform (not the API) via SAML 2.0 on the Scale plan; Okta and
+    custom IdP setup documented.
+- id: mcp
+  conforms: true
+  evidence: >-
+    Hosted streamable-HTTP MCP server at https://mcp.lusha.com with 22 published
+    tools; official connectors in the Claude, ChatGPT and Codex directories.
+- id: a2a
+  conforms: false
+  evidence: no agent card at /.well-known/agent-card.json or /.well-known/agent.json on any host
+- id: rfc9116-security-txt
+  conforms: true
+  evidence: /.well-known/security.txt served on www., api., mcp., dashboard. and auth. hosts
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: no Sunset/Deprecation header support documented
+- id: rfc6585-rate-limiting
+  conforms: partial
+  evidence: >-
+    Returns 429 and nine vendor-prefixed x-*-rate-limit headers across minute,
+    hour and day windows, but not the IETF draft RateLimit-* header names and no
+    Retry-After.
+- id: idempotency
+  conforms: false
+  evidence: no idempotency key parameter in any operation and no mention in the docs
+- id: pagination
+  conforms: true
+  evidence: offset/page+size pagination on list and search operations, plus a dedupeSessionId
+- id: webhooks-hmac
+  conforms: true
+  evidence: X-Lusha-Signature HMAC-SHA256 over "<timestamp>.<payload>", HTTPS required
+- id: gdpr
+  conforms: true
+  evidence: >-
+    GDPR compliance program documented; 451 Unavailable For Legal Reasons is a
+    modelled API response; a contact opt-out webhook exists for erasure requests.
+- id: soc2-type-ii
+  conforms: true
+  evidence: >-
+    "Lusha holds a SOC 2 Type II certification" — docs security overview; full
+    report released to Scale-plan customers or accounts over $10,000, under NDA.
+- id: iso-27001
+  conforms: unknown
+  evidence: not named in the sources read
+- id: hipaa
+  conforms: false
+  evidence: not applicable to B2B contact data; not claimed
+- id: pci-dss
+  conforms: false
+  evidence: not claimed; Lusha does not process card data through this API
+compliance_program:
+  trust_center: https://www.lusha.com/trust-center
+  certifications: [SOC 2 Type II]
+  regulations: [GDPR, CCPA-adjacent data-subject opt-out]
+  documents_available: [security overview, privacy policy, sub-processor list]
+  gated_documents:
+  - {document: SOC 2 Type II report, gate: Scale plan or >$10,000 account}
+  - {document: penetration test report, gate: NDA required}
+  note: >-
+    The trust-center URL is cited by Lusha's own documentation; direct fetch of
+    https://www.lusha.com/trust-center returned HTTP 403 (Cloudflare bot
+    challenge), so the certification list is read from the docs host, not from
+    the trust centre page itself.

@@ -1,0 +1,73 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.lusha.com/changelog, https://docs.lusha.com/apis/openapi,
+  https://docs.lusha.com/apis/v2/openapi, https://status.lusha.com,
+  https://docs.lusha.com/tutorials/v3-migration-guide,
+  https://docs.lusha.com/tutorials/person-api-v1-deprecation
+description: >-
+  Lusha versions the API in the URI path (/v3/, and the legacy /v2/ family) and
+  publishes a semver-numbered dated changelog with a version-support matrix. The
+  docs portal serves both the V3 spec and a "V2 (Soon to be deprecated)" spec
+  side by side. There is a real Atlassian Statuspage but no published SLA and no
+  formal deprecation POLICY document — deprecations are announced per endpoint
+  in migration guides and the changelog, with dates.
+versioning:
+  scheme: uri-path
+  current: v3
+  previous: v2
+  docs: https://docs.lusha.com/tutorials/v3-migration-guide
+  release_scheme: semver
+  support_matrix:
+  - {version: 2.9.x, status: current, support: full}
+  - {version: 2.x, status: recent, support: full}
+  - {version: 1.x, status: legacy, support: security-only}
+deprecation:
+  policy_url: https://docs.lusha.com/changelog
+  policy_document: false
+  sunset_header: false
+  note: >-
+    No RFC 8594 Sunset/Deprecation header support is documented and no standing
+    deprecation policy page exists. Deprecations are announced individually with
+    a named date — Person API V1 was announced for deprecation by 2025-01-14 in
+    its own migration guide, and the Decision Makers endpoint was removed in
+    2.9.0 (2026-08-12) with Buying Group named as the replacement.
+  announced:
+  - subject: Lusha API V2
+    status: soon-to-be-deprecated
+    evidence: >-
+      docs version selector labels the V2 reference "V2 (Soon to be deprecated)";
+      spec archived at openapi/_original/lusha-v2-openapi.yaml
+    date: null
+  - subject: Person API V1
+    status: deprecated
+    date: '2025-01-14'
+    replacement: Person API V2
+    url: https://docs.lusha.com/tutorials/person-api-v1-deprecation
+  - subject: Decision Makers endpoint
+    status: removed
+    date: '2026-08-12'
+    replacement: POST /v3/contacts/buying-group
+    url: https://docs.lusha.com/changelog
+sla:
+  url: null
+  uptime_target: null
+  note: no public SLA or uptime commitment found on the docs or marketing surface
+status_page: https://status.lusha.com
+status_page_details:
+  platform: Atlassian Statuspage
+  api: https://status.lusha.com/api/v2/summary.json
+  page_id: swcqqk7psrfy
+  components: [Lusha services]
+  probed_status: 200
+beta_surfaces:
+- name: Tables API
+  status: beta
+  evidence: changelog version-support table marks Tables API as beta on 2.9.x
+deprecated_operations: []
+deprecated_operations_note: >-
+  No operation in the harvested v3 spec carries `deprecated: true`; retirement is
+  handled by removing the endpoint and announcing it in the changelog.
+retention:
+  webhook_audit_logs_successful_days: 90
+  webhook_audit_logs_failed_days: 180

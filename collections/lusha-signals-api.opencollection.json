@@ -1,0 +1,141 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Signals API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Signals",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Contact Signals",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/signals",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve signal events for a list of contacts — job changes and promotions.\n\nPass up to 100 contact `ids`. Use `signalTypes` to specify which events to return (`promotion`, `companyChange`, or `allSignals`). Optionally set a `startDate` to limit results to recent activity.\n\n> **Billing:** Charged per matched signal per result via the `showSignalsContact` action.\n\n> **Persisting to a table:** Pass `tableId` to also add these contacts to an existing table and populate the Signals column. See [Cont"
+        },
+        {
+          "info": {
+            "name": "Company Signals",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/signals",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve signal events for a list of companies — hiring activity, headcount changes, web traffic, IT spend, and news.\n\nPass up to 100 company `ids`. Use `signalTypes` to specify which signals to return (or use `allSignals`). Optionally set a `startDate` to limit results to recent activity.\n\n> **Billing:** Charged per matched signal per result via the `showSignalsCompany` action.\n\n> **Persisting to a table:** Pass `tableId` to also add these companies to an existing table and populate the Signals"
+        },
+        {
+          "info": {
+            "name": "Get Contact Signal Types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/signals/types"
+          },
+          "docs": "Returns the full list of supported signal types for contacts.\n"
+        },
+        {
+          "info": {
+            "name": "Get Company Signal Types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/signals/types"
+          },
+          "docs": "Returns the full list of supported signal types for companies.\n"
+        },
+        {
+          "info": {
+            "name": "Get Company Signal Filters (Discovery)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/signals/filters"
+          },
+          "docs": "Returns all available filter types for company signals and whether each requires a search query.\n"
+        },
+        {
+          "info": {
+            "name": "Get Company Signal Filter Values",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/signals/filters/:filterType",
+            "params": [
+              {
+                "name": "filterType",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns valid values for a single company signal filter type.\n\n| Filter type | Query required? |\n|---|---|\n| `newsEventTypes` | No |\n| `hiringByDepartments` | No |\n| `hiringByLocations` | Yes (2-256 chars) |\n| `intentCategories` | No — the `query` parameter is not supported for this filter type; passing one returns `400` |\n"
+        },
+        {
+          "info": {
+            "name": "Score Companies by Signal Activity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/signal-score",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Score companies by their active buying signals. Returns the aggregate Signal Score - a `[0, 1]` value reflecting the fraction of the company's active signals - plus the active signal breakdown.\n\nAccepts up to 100 companies, each identified by exactly one of `id`, `domain`, `name`, or `email`. All identifiers are resolved to Lusha company IDs server-side before scoring.\n\nEach result is one of:\n- A **scored entry** - `signalScore`, `signalTypes`, and `noActiveSignals`.\n- A **`NOT_FOUND`** entry - "
+        },
+        {
+          "info": {
+            "name": "Score Contacts by Signal Activity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/signal-score",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Score contacts by their active buying signals. Returns the aggregate Signal Score - a `[0, 1]` value - plus the active signal breakdown per contact.\n\nAccepts up to 100 contacts. Each contact is resolved to a Lusha person ID and company ID server-side (identity only - no PII is revealed) before scoring. Provide one of:\n- `id` (encrypted Lusha contact ID)\n- `linkedinUrl`\n- `email`\n- `firstName` + `lastName` + (`companyName` or `companyDomain`)\n\nEach result is one of:\n- A **scored entry** - `signal"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,126 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.lusha.com/apis/openapi (Authentication, Rate Limiting, Error Codes
+  sections), openapi/lusha-*-api-openapi.yml, https://docs.lusha.com/changelog
+description: >-
+  Cross-cutting request/response semantics for the Lusha v3 API. Notable for what
+  is ABSENT as much as what is present: there is no idempotency contract, no
+  request-id/trace header, no cursor pagination and no RFC 9457 error format —
+  but rate-limit signalling is unusually complete (nine headers across three
+  windows) and webhook delivery is HMAC-signed.
+authentication:
+  style: api-key
+  header: api_key
+  scheme_name: ApiKeyAuth
+  location: header
+  issuance: https://dashboard.lusha.com/api/manage-api-keys
+  transport: HTTPS only
+  server_side_only: true
+  agent_surface_auth:
+    mcp_oauth: https://auth.lusha.com (scope "mcp", PKCE S256, DCR)
+    mcp_api_key_header: x-api-key
+  detail: authentication/lusha-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  evidence: >-
+    No `Idempotency-Key` (or equivalent) parameter appears in any of the 58
+    operations in the harvested OpenAPI, and the docs never mention idempotency.
+    Retries of write operations — subscription creation, table entity add/remove,
+    column runs — are not deduplicated by contract. The one safety property the
+    provider does state is billing-side: a data point already revealed for a
+    contact is not charged again, and webhook redeliveries are not re-charged.
+pagination:
+  style: offset-page
+  in: request-body (v3 POST endpoints) and query (webhook list endpoints)
+  params:
+  - {name: pagination.page, type: integer, note: 'zero-based; Tables cap page at 0-100'}
+  - {name: pagination.size, type: integer, default: 100, note: 'Buying Group range 10-100; Tables default 100'}
+  - {name: page, type: integer, in: query}
+  - {name: size, type: integer, in: query}
+  - {name: limit, type: integer, in: query}
+  - {name: offset, type: integer, in: query}
+  cursor: false
+  session_token:
+    name: dedupeSessionId
+    purpose: >-
+      Prospecting search sessions carry a dedupe session id so successive pages do
+      not repeat entities; an expired or invalid id returns 410 Gone.
+batching:
+  max_entities_per_request: 100
+  bulk_credit_rule: 1 credit per 1-25 results
+  buying_group_companies_per_request: 25
+  signal_score_entities_per_request: 100
+  tables_entity_ids_per_call: 500
+  webhook_subscription_items_per_request: 25
+field_selection:
+  style: explicit reveal list
+  params:
+  - name: reveal
+    description: >-
+      Names the fields (e.g. emails, phones) to unlock on an enrich call. Fields
+      not named are not revealed and not charged.
+  - name: waterfallReveal
+    description: >-
+      Subset of `reveal` allowed to fall through to enabled third-party providers
+      when Lusha has no match. Billed at the provider's own rate.
+  preview_fields:
+  - {name: has, description: data points available on this profile}
+  - {name: canReveal, description: data points that can be unlocked via Enrich}
+  expansion: false
+  sparse_fieldsets: false
+metadata:
+  client_reference:
+    field: clientReferenceId
+    description: >-
+      Optional per-item correlation id echoed back on the matching result (Buying
+      Group and other bulk request bodies).
+  custom_metadata_object: false
+request_tracing:
+  request_id_header: false
+  note: >-
+    No x-request-id / correlation header is documented or returned. The Kong
+    gateway does emit a `request_id` in its own 404 body for unrouted paths, but
+    that is gateway noise, not an API contract.
+versioning:
+  style: uri-path
+  current: /v3/
+  legacy: /v2/ (labelled "soon to be deprecated" in the docs version selector)
+  release_versioning: semver, announced in a dated changelog
+  detail: lifecycle/lusha-lifecycle.yml
+error_envelope:
+  format: custom-json
+  rfc9457: false
+  standard_shape: '{ "statusCode": number, "message": string, "errors"?: string[] }'
+  tables_shape: '{ "message": string, "code": number }'
+  detail: errors/lusha-problem-types.yml
+rate_limit_signalling:
+  windows: [minute, hour, day]
+  headers:
+  - x-rate-limit-minute
+  - x-minute-requests-left
+  - x-minute-usage
+  - x-rate-limit-hourly
+  - x-hourly-requests-left
+  - x-hourly-usage
+  - x-rate-limit-daily
+  - x-daily-requests-left
+  - x-daily-usage
+  exhausted_status: 429
+  retry_after: false
+  backoff: exponential, 1s doubling to a 60s cap (provider guidance)
+  detail: rate-limits/lusha-rate-limits.yml
+webhook_conventions:
+  signature_header: X-Lusha-Signature
+  timestamp_header: X-Lusha-Timestamp
+  algorithm: HMAC-SHA256
+  signed_payload: '<timestamp> + "." + JSON.stringify(payload)'
+  secret_scope: per-account (single secret, regenerable, invalidates all subscriptions)
+  https_required: true
+  acknowledgment_required: true
+  detail: asyncapi/lusha-webhooks.yml
+content:
+  request: application/json
+  response: application/json
+  transport: HTTPS only

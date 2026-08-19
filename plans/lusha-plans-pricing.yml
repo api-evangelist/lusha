@@ -4,7 +4,9 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Lusha
 providerId: lusha
 created: '2026-05-08'
-modified: '2026-05-08'
+generated: '2026-08-13'
+method: searched
+modified: '2026-08-13'
 reconciled: true
 tags:
 - Sales Intelligence
@@ -15,70 +17,121 @@ tags:
 - Intent
 - Plans
 description: >-
-  Lusha sells seat-based plans (Pro, Premium, Scale) with credit allowances for contact reveals and
-  API access; an enterprise tier adds bulk API throughput and admin controls. API access is included
-  starting at higher seat tiers; pricing is published on the website but exact API credit pools are
-  negotiated.
-notes: Plan tiers visible on lusha.com; API quotas tied to seat tier and add-ons.
+  Lusha sells seat-based subscriptions with a single unified credit balance that
+  every product draws on — platform, browser extension, AI assistant and API
+  alike. API access is plan-gated rather than metered separately: self-service
+  plans (Pro / Premium) reach only the contact and company enrichment endpoints,
+  while the Prospecting and Filters APIs — and API key issuance itself — are
+  Scale-plan (or active Scale trial) features; Signals and Lookalike APIs carry
+  further per-account entitlements arranged with an account manager. Calling an
+  endpoint outside your plan returns 403. Credit consumption per call IS
+  published in detail (below); per-seat list prices are on the marketing pricing
+  page, which serves a Cloudflare bot challenge to automated clients.
+notes: >-
+  Upgraded from the 2026-05-08 bulk-sweep placeholder. The credit-cost tables and
+  the plan-gating rules are read verbatim from Lusha's own docs; the per-seat
+  dollar prices were NOT captured because https://www.lusha.com/pricing/ returned
+  HTTP 403 (Cloudflare "Just a moment...") on probe. plan_count reflects the
+  named tiers the docs reference, not a scrape of the pricing page.
 sources:
+- https://docs.lusha.com/user-guide/plans-and-upgrades/lushas-pricing-system-2
+- https://docs.lusha.com/user-guide/lushas-api/lusha-api-error-codes-reference
+- https://docs.lusha.com/tutorials/postman-environment-guide
+- https://docs.lusha.com/apis/openapi
 - https://www.lusha.com/pricing/
-- https://docs.lusha.com/
+pricing_model: seat-subscription + unified credit balance
+credit_model:
+  categories:
+  - Essential Prospecting
+  - Workflow Automations
+  - Sales Intelligence
+  - Client Engagement
+  data_point_costs:
+  - data_point: email
+    credits: 1
+  - data_point: phone number
+    credits: 5
+  - data_point: company info
+    credits: 1
+  result_costs:
+  - request_type: single
+    basis: per result (1 contact/company)
+    credits: 1
+  - request_type: bulk
+    basis: up to 25 results
+    credits: 1
+  signal_costs:
+  - signal: Growth Surge in Hiring
+    credits: 1
+    per: company
+  - signal: Growth in Headcount
+    credits: 1
+    per: company
+  - signal: Job Change
+    credits: 1
+    per: contact
+  rules:
+  - Minimum 1 credit per API request, even when no results or data points are returned.
+  - Maximum 100 contacts or companies per request.
+  - A data point already revealed for a contact is not charged again on later requests.
+  - Failed lookups are not charged (same rule applies to MCP tool calls).
+  - Webhook signal deliveries charge credits once per signal; delivery retries are free.
+  - Waterfall-resolved fields are billed at the third-party provider's own rate, which
+    can exceed a standard Lusha reveal.
+plan_count: 4
 plans:
 - id: lusha-free
   name: Free
   type: free
-  description: Free tier with limited monthly contact credits; no API access.
-  entries:
-  - label: Contact Credits
-    name: credits
-    type: flat
-    metric: month
-    limit: -1
-    timeFrame: monthly
-    geo: global
-    unit: 1
-    price: 0
-    userMultiplied: false
-  elements:
-  - name: Limited monthly credits
-  - name: UI/extension only
+  description: >-
+    Free tier with a limited monthly credit allowance. No API key issuance — the
+    docs restrict API keys to Scale users or an active Scale trial.
+  api_access: false
+  price: 0
+  currency: USD
+  billing_period: monthly
 - id: lusha-pro
   name: Pro
   type: paid
-  description: Per-seat plan with monthly credit allowance.
-  entries:
-  - label: Seat
-    name: seat
-    type: flat
-    metric: seat-month
-    limit: -1
-    timeFrame: monthly
-    geo: global
-    unit: 1
-    price: see https://www.lusha.com/pricing/
-    userMultiplied: true
-  elements:
-  - name: Higher credit pool
-  - name: Browser extension
-- id: lusha-scale-enterprise
-  name: Scale / Enterprise
+  description: >-
+    Self-service per-seat plan. Docs classify Pro/Premium as self-service plans
+    with access to contact and company enrichment endpoints only.
+  api_access: partial
+  api_scope: [enrichment]
+  price: null
+  currency: USD
+  billing_period: monthly
+  price_note: list price not captured — pricing page returned HTTP 403 to the probe
+- id: lusha-premium
+  name: Premium
+  type: paid
+  description: >-
+    Self-service per-seat plan, same API posture as Pro — enrichment endpoints
+    only; Prospecting and Filters return 403.
+  api_access: partial
+  api_scope: [enrichment]
+  price: null
+  currency: USD
+  billing_period: monthly
+  price_note: list price not captured — pricing page returned HTTP 403 to the probe
+- id: lusha-scale
+  name: Scale
   type: enterprise
-  description: Higher-tier plans with API access, integrations, and bulk credit allotments.
-  entries:
-  - label: Seat + API
-    name: seat_api
-    type: flat
-    metric: seat-month
-    limit: -1
-    timeFrame: monthly
-    geo: global
-    unit: 1
-    price: contact sales
-    userMultiplied: true
+  description: >-
+    Full API tier. Adds Prospecting and Filters APIs, API key generation, SSO
+    (SAML 2.0), and eligibility for the full SOC 2 Type II report. Signals and
+    Lookalike entitlements are confirmed per account with an account manager.
+  api_access: true
+  api_scope: [enrichment, prospecting, filters, signals, lookalikes, webhooks, tables]
+  price: null
+  currency: USD
+  billing_period: annual
+  price_note: contact sales; not published
   elements:
   - name: API key generation
-  - name: CRM integrations
-  - name: Admin controls
+  - name: Prospecting + Filters APIs
+  - name: SSO / SAML 2.0
+  - name: SOC 2 Type II report access
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

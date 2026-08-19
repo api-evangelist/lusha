@@ -1,23 +1,352 @@
-generated: '2026-07-15'
+generated: '2026-08-13'
 method: generated
-source: openapi/lusha-openapi.yml
+source: openapi/lusha-account-api-openapi.yml, openapi/lusha-buying-group-api-openapi.yml, openapi/lusha-companies-tables-api-openapi.yml,
+  openapi/lusha-contacts-tables-api-openapi.yml, openapi/lusha-enrich-api-openapi.yml, openapi/lusha-filters-api-openapi.yml,
+  openapi/lusha-lookalikes-api-openapi.yml, openapi/lusha-prospecting-api-openapi.yml, openapi/lusha-search-api-openapi.yml,
+  openapi/lusha-search-enrich-api-openapi.yml, openapi/lusha-signals-api-openapi.yml, openapi/lusha-webhooks-api-openapi.yml,
+  openapi/lusha-website-visits-api-openapi.yml
 description: Recommended x-agentic-access execution contracts, classified heuristically from
   the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
   audience per deployment. See research/curity/agentic-governance/.
 summary:
-  operations: 32
+  operations: 58
   by_action_class:
-    acting: 18
-    connected: 14
+    connected: 20
+    acting: 38
   by_consequence:
-    write: 17
-    read: 14
-    physical: 1
+    read: 20
+    write: 38
   human_in_the_loop_required: 0
 operations:
-- path: /v3/contacts/search
+- path: /v3/account/usage
+  method: get
+  operationId: getAccountUsage
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/contacts/buying-group
   method: post
-  operationId: searchContacts
+  operationId: getContactsBuyingGroup
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables
+  method: post
+  operationId: createCompaniesTable
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/list
+  method: post
+  operationId: listCompaniesTables
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/{table_id}
+  method: get
+  operationId: getCompaniesTable
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/companies/tables/{table_id}
+  method: patch
+  operationId: updateCompaniesTable
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/{table_id}
+  method: delete
+  operationId: deleteCompaniesTable
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/{table_id}/entities
+  method: get
+  operationId: getCompaniesTableEntities
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/companies/tables/{table_id}/entities
+  method: post
+  operationId: addCompaniesTableEntities
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/{table_id}/entities
+  method: delete
+  operationId: removeCompaniesTableEntities
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/{table_id}/columns
+  method: get
+  operationId: listCompaniesTableColumns
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/companies/tables/{table_id}/columns/{column_id}
+  method: delete
+  operationId: removeCompaniesTableColumn
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/tables/{table_id}/columns/{column_id}/run
+  method: post
+  operationId: runCompaniesTableColumn
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables
+  method: post
+  operationId: createContactsTable
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/list
+  method: post
+  operationId: listContactsTables
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/{table_id}
+  method: get
+  operationId: getContactsTable
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/contacts/tables/{table_id}
+  method: patch
+  operationId: updateContactsTable
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/{table_id}
+  method: delete
+  operationId: deleteContactsTable
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/{table_id}/entities
+  method: get
+  operationId: getContactsTableEntities
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/contacts/tables/{table_id}/entities
+  method: post
+  operationId: addContactsTableEntities
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/{table_id}/entities
+  method: delete
+  operationId: removeContactsTableEntities
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/{table_id}/columns
+  method: get
+  operationId: listContactsTableColumns
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/contacts/tables/{table_id}/columns/{column_id}
+  method: delete
+  operationId: removeContactsTableColumn
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/tables/{table_id}/columns/{column_id}/run
+  method: post
+  operationId: runContactsTableColumn
   x-agentic-access:
     action-class: acting
     consequence: write
@@ -47,9 +376,129 @@ operations:
       - abnormal
       - high-value
     audit: required
-- path: /v3/contacts/search-and-enrich
+- path: /v3/companies/enrich
   method: post
-  operationId: searchAndEnrichContacts
+  operationId: enrichCompanies
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/prospecting/filters
+  method: get
+  operationId: getContactFilterTypes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/contacts/prospecting/filters/{filterType}
+  method: get
+  operationId: getContactFilterValues
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/companies/prospecting/filters
+  method: get
+  operationId: getCompanyFilterTypes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/companies/prospecting/filters/{filterType}
+  method: get
+  operationId: getCompanyFilterValues
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/contacts/lookalike
+  method: post
+  operationId: getContactLookalikes
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/lookalike
+  method: post
+  operationId: getCompanyLookalikes
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/prospecting
+  method: post
+  operationId: prospectingContacts
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/prospecting
+  method: post
+  operationId: prospectingCompanies
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/search
+  method: post
+  operationId: searchContacts
   x-agentic-access:
     action-class: acting
     consequence: write
@@ -79,9 +528,9 @@ operations:
       - abnormal
       - high-value
     audit: required
-- path: /v3/companies/enrich
+- path: /v3/contacts/search-and-enrich
   method: post
-  operationId: enrichCompanies
+  operationId: searchAndEnrichContacts
   x-agentic-access:
     action-class: acting
     consequence: write
@@ -98,70 +547,6 @@ operations:
 - path: /v3/companies/search-and-enrich
   method: post
   operationId: searchAndEnrichCompanies
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /v3/contacts/prospecting
-  method: post
-  operationId: prospectContacts
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /v3/companies/prospecting
-  method: post
-  operationId: prospectCompanies
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /v3/contacts/lookalike
-  method: post
-  operationId: lookalikeContacts
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /v3/companies/lookalike
-  method: post
-  operationId: lookalikeCompanies
   x-agentic-access:
     action-class: acting
     consequence: write
@@ -209,7 +594,7 @@ operations:
     audit: required
 - path: /v3/contacts/signals/types
   method: get
-  operationId: listContactSignalTypes
+  operationId: getContactSignalTypes
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -219,7 +604,7 @@ operations:
     audit: none
 - path: /v3/companies/signals/types
   method: get
-  operationId: listCompanySignalTypes
+  operationId: getCompanySignalTypes
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -229,7 +614,7 @@ operations:
     audit: none
 - path: /v3/companies/signals/filters
   method: get
-  operationId: listCompanySignalFilters
+  operationId: getCompanySignalFilters
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -247,56 +632,38 @@ operations:
     token:
       max-ttl: 3600
     audit: none
-- path: /v3/contacts/prospecting/filters
-  method: get
-  operationId: listContactProspectingFilters
+- path: /v3/companies/signal-score
+  method: post
+  operationId: getCompanySignalScores
   x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
     token:
-      max-ttl: 3600
-    audit: none
-- path: /v3/contacts/prospecting/filters/{filterType}
-  method: get
-  operationId: getContactProspectingFilterValues
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/contacts/signal-score
+  method: post
+  operationId: getContactSignalScores
   x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
     token:
-      max-ttl: 3600
-    audit: none
-- path: /v3/companies/prospecting/filters
-  method: get
-  operationId: listCompanyProspectingFilters
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
-- path: /v3/companies/prospecting/filters/{filterType}
-  method: get
-  operationId: getCompanyProspectingFilterValues
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
-- path: /api/subscriptions
-  method: get
-  operationId: listSubscriptions
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
 - path: /api/subscriptions
   method: post
   operationId: createSubscription
@@ -313,9 +680,19 @@ operations:
       - abnormal
       - high-value
     audit: required
+- path: /api/subscriptions
+  method: get
+  operationId: listSubscriptions
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /api/subscriptions/{id}
   method: get
-  operationId: getSubscription
+  operationId: getSubscriptionById
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -344,13 +721,11 @@ operations:
   operationId: testSubscription
   x-agentic-access:
     action-class: acting
-    consequence: physical
+    consequence: write
     subject: required
     audience: null
     token:
-      max-ttl: 300
-      exchange: true
-      purpose-required: true
+      max-ttl: 900
     escalation:
       human-in-the-loop: conditional
       triggers:
@@ -373,25 +748,9 @@ operations:
       - abnormal
       - high-value
     audit: required
-- path: /api/subscriptions/opt-out
-  method: post
-  operationId: subscribeOptOut
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
 - path: /api/audit-logs
   method: get
-  operationId: listAuditLogs
+  operationId: getAuditLogs
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -411,7 +770,7 @@ operations:
     audit: none
 - path: /api/account/secret
   method: get
-  operationId: getWebhookSecret
+  operationId: getAccountSecret
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -421,7 +780,7 @@ operations:
     audit: none
 - path: /api/account/secret/regenerate
   method: post
-  operationId: regenerateWebhookSecret
+  operationId: regenerateAccountSecret
   x-agentic-access:
     action-class: acting
     consequence: write
@@ -435,13 +794,35 @@ operations:
       - abnormal
       - high-value
     audit: required
-- path: /v3/account/usage
-  method: get
-  operationId: getAccountUsage
+- path: /api/subscriptions/opt-out
+  method: post
+  operationId: createOptOutSubscription
   x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
     token:
-      max-ttl: 3600
-    audit: none
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3/companies/website-visits
+  method: post
+  operationId: getWebsiteVisits
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required

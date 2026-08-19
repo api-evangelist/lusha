@@ -1,0 +1,294 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Contacts Tables API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Contacts Tables",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/tables",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new, empty contacts table, optionally seeded with an initial list of contact IDs.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "List Contacts Tables",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/tables/list",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "List contacts tables owned by the given user, plus any tables shared with the account.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "Get Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              },
+              {
+                "name": "email",
+                "value": "user@example.com",
+                "type": "query",
+                "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+              }
+            ]
+          },
+          "docs": "Get a table's metadata and current processing status.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "Update Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Rename a table, change its visibility, or reassign its owner. All fields except `owner` are optional — send only what changes.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "Delete Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              },
+              {
+                "name": "email",
+                "value": "user@example.com",
+                "type": "query",
+                "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+              }
+            ]
+          },
+          "docs": "Permanently delete a table and all its data. This cannot be undone.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "Get Contacts Table Entities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id/entities",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              },
+              {
+                "name": "email",
+                "value": "user@example.com",
+                "type": "query",
+                "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Read a page of rows in the table, with all column values and per-cell status.\n\n> **Billing:** Charged per row returned via `export_api`.\n"
+        },
+        {
+          "info": {
+            "name": "Add Entities to Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id/entities",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add up to 500 contact IDs to an existing table. `entityIds` accepts either the encrypted Lusha token (`v{N}.…`, as returned by Search/Enrich/Get Entities) or the legacy numeric `personId` — an ID that's neither returns `400`. Already-present IDs are reported as `alreadyPresent` and not re-added; unresolvable IDs are not an error, they come back in `invalidIds` with a `200`.\n\nOptionally pass `companyIds` — one `lushaCompanyId` per contact, index-aligned with `entityIds` — to help pair company-lev"
+        },
+        {
+          "info": {
+            "name": "Remove Entities from Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id/entities",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Remove specific contact IDs from a table.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "List Contacts Table Columns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id/columns",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              },
+              {
+                "name": "email",
+                "value": "user@example.com",
+                "type": "query",
+                "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+              }
+            ]
+          },
+          "docs": "List the columns on a table, with type and aggregated per-cell status counts.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "Remove Column from Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id/columns/:column_id",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              },
+              {
+                "name": "column_id",
+                "value": "col_signals_funding",
+                "type": "path",
+                "description": "The column's ID."
+              },
+              {
+                "name": "email",
+                "value": "user@example.com",
+                "type": "query",
+                "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+              }
+            ]
+          },
+          "docs": "Remove a column and delete all of its cell data across the table. Default Lusha columns cannot be removed.\n\n> **Billing:** Free.\n"
+        },
+        {
+          "info": {
+            "name": "Run Column on Contacts Table",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/tables/:table_id/columns/:column_id/run",
+            "params": [
+              {
+                "name": "table_id",
+                "value": "482910",
+                "type": "path",
+                "description": "The table's ID."
+              },
+              {
+                "name": "column_id",
+                "value": "col_signals_funding",
+                "type": "path",
+                "description": "The column's ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Populate or refresh a column's data for some or all rows in the table. This is **asynchronous** — the call returns immediately with `status: \"processing\"`; poll Get Contacts Table for `isProcessing` and per-column row-status counts to know when it's done, then read the values via Get Contacts Table Entities.\n\n**`runScope` values:**\n- `all` — every row, including already-processed ones (re-runs / refreshes). Most expensive.\n- `missing` — only rows that have never been run for this column. Cheapes"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

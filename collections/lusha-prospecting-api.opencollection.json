@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Prospecting API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Prospecting",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Prospecting Contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/contacts/prospecting",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search for contacts that match your Ideal Customer Profile using rich filter criteria.\n\n**Filter by contact attributes:**\n- Job title, seniority, department\n- Location (city, state, country, continent)\n- Existing data points (e.g. only contacts with a known work email)\n- Signal activity (promotion, job change)\n\n**Filter by company attributes:**\n- Size, revenue, industry, technologies\n- Location, intent topics, funding\n\nUse the returned contact `id` values with Enrich Contacts to reveal emails an"
+        },
+        {
+          "info": {
+            "name": "Prospecting Companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/prospecting",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search for companies that match your target market using rich filter criteria.\n\n**Filter by:**\n- Size, revenue range, industry, sub-industry\n- Technologies in use\n- Locations (HQ country, state, city)\n- SIC and NAICS codes\n- Buyer intent topics\n- Signal activity (headcount changes, hiring surges, news events, LinkedIn activity intent)\n\nUse the returned company `id` values with Enrich Companies to get full firmographic data.\n\n> **Billing:** Charged per result via `api_search`. If signals are requ"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

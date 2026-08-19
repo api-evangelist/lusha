@@ -1,0 +1,453 @@
+{
+  "item": [
+    {
+      "id": "5321492e-0807-4c0a-94c3-0976a85117c6",
+      "name": "Website Visits",
+      "description": {
+        "content": "Retrieve companies ranked by website-visit signals for your tracked domains.\n\n Domains must be configured for tracking in the dashboard. Each result combines a V3 company firmographic preview with behavioral visit metrics (score, sessions, unique visitors, avg session length, and more).\n",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "8e8f3ae1-77a8-402a-b65d-147be2c0950c",
+          "name": "Get Website Visitors",
+          "request": {
+            "name": "Get Website Visitors",
+            "description": {
+              "content": "Returns companies ranked by website-visit signals for your tracked domains and date range.\n\nDomains must be configured for tracking in the Lusha dashboard — they are resolved to site IDs server-side. Each result combines a V3 company firmographic preview (same shape as Search Companies) with behavioral visit metrics.\n\n**Notes:**\n- Date range must be ≤ 3 months\n- If any requested domain is not configured for tracking, the entire request fails with `400`\n- `limit` accepts 1–150\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "website-visits"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domains\": [\n    \"<string>\"\n  ],\n  \"startDate\": \"<date>\",\n  \"endDate\": \"<date>\",\n  \"pagination\": {\n    \"page\": \"<integer>\",\n    \"size\": \"<integer>\"\n  },\n  \"sort\": {\n    \"by\": \"<string>\",\n    \"order\": \"<string>\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"visitorCountries\": {\n      \"include\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"exclude\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"score\": {\n      \"min\": \"<integer>\",\n      \"max\": \"<integer>\"\n    },\n    \"totalSessions\": {\n      \"min\": \"<integer>\",\n      \"max\": \"<integer>\"\n    },\n    \"avgSessionMinutes\": {\n      \"min\": \"<number>\",\n      \"max\": \"<number>\"\n    },\n    \"uniqueVisitors\": {\n      \"min\": \"<integer>\",\n      \"max\": \"<integer>\"\n    },\n    \"daysVisited\": {\n      \"min\": \"<integer>\",\n      \"max\": \"<integer>\"\n    },\n    \"highIntentPageviews\": {\n      \"min\": \"<integer>\",\n      \"max\": \"<integer>\"\n    },\n    \"daysSinceLastVisit\": {\n      \"min\": \"<integer>\",\n      \"max\": \"<integer>\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "2e61c061-0923-4d7e-bb04-9780d3bff663",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "website-visits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domains\": [\n    \"lusha.com\",\n    \"google.com\"\n  ],\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-03-18\",\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0\n  },\n  \"sort\": {\n    \"by\": \"score\",\n    \"order\": \"desc\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"hot\",\n      \"warm\"\n    ],\n    \"score\": {\n      \"min\": 50\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"results\": [\n    {\n      \"id\": \"v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345\",\n      \"name\": \"Lusha\",\n      \"domain\": \"www.lusha.com\",\n      \"industry\": \"Software Development\",\n      \"employeeCount\": {\n        \"min\": 201,\n        \"max\": 500\n      },\n      \"location\": {\n        \"city\": \"Tel Aviv\",\n        \"country\": \"Israel\",\n        \"countryIso2\": \"IL\"\n      },\n      \"socialLinks\": {\n        \"linkedin\": \"https://www.linkedin.com/company/lusha\"\n      },\n      \"has\": [\n        \"competitors\",\n        \"socialLinks\"\n      ],\n      \"canReveal\": [\n        {\n          \"field\": \"competitors\",\n          \"credits\": 1\n        }\n      ],\n      \"score\": 87,\n      \"scoreBand\": \"hot\",\n      \"totalSessions\": 12,\n      \"uniqueVisitors\": 5,\n      \"avgSessionMinutes\": 4.2,\n      \"daysVisited\": 8,\n      \"highIntentPageviews\": 10,\n      \"daysSinceLastVisit\": 6,\n      \"lastVisit\": \"2026-03-20\",\n      \"visitorCountry\": \"US\"\n    }\n  ],\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0,\n    \"total\": 142\n  },\n  \"billing\": {\n    \"creditsCharged\": 0,\n    \"resultsReturned\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b269e33f-cab8-449d-af63-800901805e67",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "website-visits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domains\": [\n    \"lusha.com\",\n    \"google.com\"\n  ],\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-03-18\",\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0\n  },\n  \"sort\": {\n    \"by\": \"score\",\n    \"order\": \"desc\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"hot\",\n      \"warm\"\n    ],\n    \"score\": {\n      \"min\": 50\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a2328f09-2b78-4728-944f-61bea0711533",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "website-visits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domains\": [\n    \"lusha.com\",\n    \"google.com\"\n  ],\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-03-18\",\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0\n  },\n  \"sort\": {\n    \"by\": \"score\",\n    \"order\": \"desc\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"hot\",\n      \"warm\"\n    ],\n    \"score\": {\n      \"min\": 50\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8f08afb0-0532-4af4-b6d7-cfd1879430ba",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "website-visits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domains\": [\n    \"lusha.com\",\n    \"google.com\"\n  ],\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-03-18\",\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0\n  },\n  \"sort\": {\n    \"by\": \"score\",\n    \"order\": \"desc\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"hot\",\n      \"warm\"\n    ],\n    \"score\": {\n      \"min\": 50\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "098591bc-93c4-4c16-95e1-5ad0477e2b5e",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "website-visits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domains\": [\n    \"lusha.com\",\n    \"google.com\"\n  ],\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-03-18\",\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0\n  },\n  \"sort\": {\n    \"by\": \"score\",\n    \"order\": \"desc\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"hot\",\n      \"warm\"\n    ],\n    \"score\": {\n      \"min\": 50\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5b58d473-acd4-4f1e-83dc-fba5a3fc811b",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "website-visits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domains\": [\n    \"lusha.com\",\n    \"google.com\"\n  ],\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-03-18\",\n  \"pagination\": {\n    \"size\": 25,\n    \"page\": 0\n  },\n  \"sort\": {\n    \"by\": \"score\",\n    \"order\": \"desc\"\n  },\n  \"filters\": {\n    \"scoreBands\": [\n      \"hot\",\n      \"warm\"\n    ],\n    \"score\": {\n      \"min\": 50\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "2275"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "2275"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "2275"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "2275"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "2275"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "2275"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lusha.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api_key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "9a594f04-6f2f-401b-8094-221bf6fa7014",
+    "name": "Lusha API Documentation Website Visits API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n\n\nContact Support:\n Name: Lusha Support\n Email: support@lusha.com",
+      "type": "text/plain"
+    }
+  }
+}

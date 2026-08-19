@@ -1,0 +1,36 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Account API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Account",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Account Usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/account/usage"
+          },
+          "docs": "Returns a full snapshot of your account status:\n- **Credits** — total, used, and remaining for the current billing cycle\n- **Rate limits** — current usage and reset times for daily, hourly, and per-minute windows\n- **Plan** — your current plan category and renewal dates\n- **Pricing** — credit cost per action type across all public API endpoints\n\n> **Rate limit:** This endpoint is limited to 5 requests per minute.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

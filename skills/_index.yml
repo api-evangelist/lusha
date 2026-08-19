@@ -1,0 +1,40 @@
+generated: '2026-08-13'
+method: generated
+source: >-
+  openapi/lusha-*-api-openapi.yml (every operationId below is verified present in
+  the harvested spec), conventions/lusha-conventions.yml, errors/lusha-problem-types.yml,
+  rate-limits/lusha-rate-limits.yml, plans/lusha-plans-pricing.yml
+note: >-
+  Lusha publishes no AGENTS.md and no skill files of its own — probed
+  /AGENTS.md, /agents.md, /skills and /.well-known/skills.json on docs.lusha.com,
+  all 404. These are API Evangelist-authored operating instructions grounded in
+  the provider's real operations and published billing/limit rules.
+skills:
+- file: lusha-search-and-enrich-contacts.md
+  name: Search and enrich a contact with Lusha
+  api: openapi/lusha-search-api-openapi.yml
+  operations: [searchContacts, enrichContacts, searchAndEnrichContacts, getAccountUsage]
+- file: lusha-prospect-target-accounts.md
+  name: Build a target account and contact list with Lusha Prospecting
+  api: openapi/lusha-prospecting-api-openapi.yml
+  operations: [getCompanyFilterTypes, getCompanyFilterValues, getContactFilterTypes,
+    getContactFilterValues, prospectingCompanies, prospectingContacts, enrichContacts,
+    enrichCompanies]
+- file: lusha-monitor-buying-signals.md
+  name: Monitor buying signals for a set of accounts
+  api: openapi/lusha-signals-api-openapi.yml
+  operations: [getContactSignalTypes, getCompanySignalTypes, getCompanySignalFilters,
+    getCompanySignalFilterValues, getContactSignals, getCompanySignals, getCompanySignalScores,
+    getContactSignalScores]
+- file: lusha-webhook-subscriptions.md
+  name: Receive Lusha signals over webhooks
+  api: openapi/lusha-webhooks-api-openapi.yml
+  operations: [getAccountSecret, regenerateAccountSecret, createSubscription, listSubscriptions,
+    getSubscriptionById, updateSubscription, testSubscription, deleteSubscriptions,
+    createOptOutSubscription, getAuditLogs, getAuditLogStats]
+- file: lusha-buying-group-and-tables.md
+  name: Map a buying group and persist it to a Lusha table
+  api: openapi/lusha-buying-group-api-openapi.yml
+  operations: [getContactsBuyingGroup, enrichContacts, createContactsTable, listContactsTables,
+    getContactsTable, addContactsTableEntities, getContactsTableEntities, listContactsTableColumns,
+    runContactsTableColumn, removeContactsTableEntities, deleteContactsTable]

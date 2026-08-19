@@ -1,0 +1,40 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Website Visits API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Website Visits",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Website Visitors",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lusha.com/v3/companies/website-visits",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Returns companies ranked by website-visit signals for your tracked domains and date range.\n\nDomains must be configured for tracking in the Lusha dashboard — they are resolved to site IDs server-side. Each result combines a V3 company firmographic preview (same shape as Search Companies) with behavioral visit metrics.\n\n**Notes:**\n- Date range must be ≤ 3 months\n- If any requested domain is not configured for tracking, the entire request fails with `400`\n- `limit` accepts 1–150\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

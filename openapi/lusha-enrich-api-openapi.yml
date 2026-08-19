@@ -1,0 +1,1338 @@
+openapi: 3.2.0
+info:
+  title: Lusha API Documentation Enrich API
+  version: ''
+  x-logo:
+    url: https://www.lusha.com/logo.png
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
+  description: "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n"
+  contact:
+    name: Lusha Support
+    url: https://api.lusha.com
+    email: support@lusha.com
+  termsOfService: https://lusha.com/legal/terms
+  x-privacy-policy:
+    name: Privacy Policy
+    url: https://lusha.com/legal/privacy-notice/
+servers:
+- url: https://api.lusha.com
+  description: Production server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Enrich
+  description: '**Enrich APIs:** Retrieve full profile data for contacts or companies by ID.
+
+
+    Pass IDs from Search results to reveal emails, phones, and full firmographic data.
+
+
+    > **Billing:** Charged per revealed field via per-datapoint pricing (`revealEmail`, `revealPhone`, `reveal_company`).
+
+    '
+  x-tag-expanded: true
+paths:
+  /v3/contacts/enrich:
+    post:
+      tags:
+      - Enrich
+      summary: Enrich Contacts
+      operationId: enrichContacts
+      description: "Reveal full contact data for contacts you've already found via Search Contacts.\n\nPass up to 100 contact `ids` (from the search response). Use the `reveal` field to control what gets unlocked:\n- `emails` — work and personal email addresses\n- `phones` — mobile and direct phone numbers\n- Omit `reveal` to get both by default\n\n---\n\n###  Waterfall Reveal\nFall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts.\n\nIf **Data Waterfall** is enabled on your account, with specific providers turned on under **Account > Waterfall**, the waterfall runs automatically on every Enrich Contacts call - you don't need to pass anything to trigger it.\n\n\nPass `waterfallEnabled: false` to opt a specific call out:\n\n  ```json\n                  \"reveal\": [\"emails\", \"phones\"],\n                  \"waterfallEnabled\": false\n  ```\n\n- `reveal` controls **which fields** come back.\n- `waterfallEnabled` controls whether the waterfall runs for this call at all. Defaults to `true` whenever Data Waterfall is enabled on your account; pass `false` to disable it just for this call.\n- Provider order isn't configurable - Lusha manages that internally.\n- If Data Waterfall is off or no providers are enabled on your account, `waterfallEnabled` has no effect either way.\n---\n> **Tip:** If `canReveal.credits` is `0` in the search response, that data has already been revealed for your account — re-enriching it is free.\n\n> **Billing:** Charged per revealed field (email or phone) via per-datapoint pricing.\n\n> **Persisting to a table:** Pass `tableId` to also add these contacts to an existing table and populate the Work email / Phone columns. See [Contacts Tables](#tag/Contacts-Tables).\n"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/V3ContactsEnrichRequest'
+            examples:
+              standard:
+                summary: Standard reveal (waterfall runs automatically if enabled on your account)
+                value:
+                  ids:
+                  - '4389064654'
+                  - '4389064624'
+                  reveal:
+                  - emails
+                  - phones
+              waterfallDisabled:
+                summary: Opt this call out of the waterfall
+                value:
+                  ids:
+                  - '4389064654'
+                  - '4389064624'
+                  reveal:
+                  - emails
+                  - phones
+                  waterfallEnabled: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V3ContactsEnrichResponse'
+              example:
+                requestId: 71581363-f73d-46e1-9115-ecbd771b964b
+                results:
+                - id: '4389064654'
+                  firstName: Daniel
+                  lastName: Turgeman
+                  fullName: Daniel Turgeman
+                  jobTitle:
+                    title: Technical Product Manager
+                    departments:
+                    - Product
+                    seniority: Manager
+                  location:
+                    country: Israel
+                    countryIso2: IL
+                    city: Tel Aviv
+                    continent: Asia
+                    coordinates:
+                    - 34.78057098388672
+                    - 32.08087921142578
+                    isEuContact: false
+                  tags: []
+                  emails:
+                  - email: daniel.t@lusha.com
+                    type: work
+                    confidence: A+
+                    updateDate: '2026-04-23'
+                  phones: []
+                  company:
+                    id: '16303253'
+                    name: Lusha
+                    domain: www.lusha.com
+                    industry: Technology, Information & Media
+                  socialLinks:
+                    linkedin: https://www.linkedin.com/in/daniel-turgeman-49676b161
+                  previousEmployment: []
+                  updateDate: '2026-04-23'
+                billing:
+                  creditsCharged: 2
+                  resultsReturned: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /v3/companies/enrich:
+    post:
+      tags:
+      - Enrich
+      summary: Enrich Companies
+      operationId: enrichCompanies
+      description: 'Reveal full company data for companies you''ve already found via Search Companies.
+
+
+        Pass up to 100 company `ids` (from the search response). Each enriched result includes:
+
+        - Firmographics: size, revenue range, year founded, company type
+
+        - Industry: primary industry, sub-industry, SIC/NAICS codes
+
+        - Locations: HQ and additional office sites
+
+        - Technologies, funding rounds, buyer intent topics
+
+        - LinkedIn followers, logo URL, social links
+
+
+        > **Billing:** Charged per successful result via the `reveal_company` action.
+
+
+        > **Persisting to a table:** Pass `tableId` to also add these companies to an existing table and populate the relevant enrichment columns. See [Companies Tables](#tag/Companies-Tables).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/V3CompaniesEnrichRequest'
+            example:
+              ids:
+              - '16303253'
+              - '12790225'
+              reveal:
+              - employeesByLocation
+              - employeesByDepartment
+              - employeesBySeniority
+              - competitors
+              - intent
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V3CompaniesEnrichResponse'
+              example:
+                requestId: 5e8f5993-a0a3-4510-bc90-7b4506272c68
+                results:
+                - id: '16303253'
+                  name: Lusha
+                  alternativeName: lusha
+                  domain: www.lusha.com
+                  alternativeDomains:
+                  - lusha.com
+                  description: Lusha is the leader in Sales Streaming – a new sales paradigm that streams top leads straight to salespeople and handles all the outreach, so they can escape the lead grind and just sell.
+                  companyType: Private Company
+                  yearFounded: 2016
+                  employeeCount:
+                    exact: 364
+                    min: 201
+                    max: 500
+                  industry: Technology, Information & Media
+                  subIndustry: Software Development
+                  specialities:
+                  - data accuracy
+                  - data enrichment
+                  - lead discovery
+                  - lead generation
+                  - prospecting
+                  - sales enablement
+                  - sales intelligence
+                  - software development
+                  sicCodes:
+                  - code: 7371
+                    description: Custom computer programming services
+                  naicsCodes:
+                  - code: 541511
+                    description: Custom Computer Programming Services
+                  location:
+                    city: Boston
+                    state: Massachusetts
+                    country: United States
+                    countryIso2: US
+                    continent: North America
+                    zipCode: 02199
+                  additionalLocations:
+                  - city: New York City
+                    state: New York
+                    country: United States
+                    countryIso2: US
+                    continent: North America
+                  socialLinks:
+                    linkedin: https://www.linkedin.com/company/lushadata
+                    facebook: https://www.facebook.com/lusha
+                    x: https://x.com/lusha
+                  linkedinFollowers: 64339
+                  funding:
+                    rounds:
+                    - currency: USD
+                      roundAmount: 205000000
+                      roundType: Private Equity Round
+                      roundDate: Nov 10, 2021
+                    - currency: USD
+                      roundAmount: 40000000
+                      roundType: Private Equity Round
+                      roundDate: Feb 10, 2021
+                    totalRounds: 2
+                    totalRoundsAmount: 245000000
+                    currency: USD
+                    isIpo: false
+                    lastRoundType: Private Equity Round
+                    lastRoundAmount: 205000000
+                    lastRoundDate: Nov 10, 2021
+                  technologies:
+                  - amazon
+                  - google analytics
+                  popularityTier: 1
+                  logoUrl: https://logo.lusha.co/brightdata/year=2024/month=05/day=03/j_lvq47h0g13te1b3wpu.e7b0795e7affc9953dadd43e6fce99a2c5260043.file_lvq4cfwv17kcb9m4ej.logo_cached.jpg
+                  employeesByDepartment:
+                  - department: Business Development
+                    count: 14
+                  - department: Consulting
+                    count: 10
+                  - department: Customer Service
+                    count: 28
+                  - department: Engineering & Technical
+                    count: 95
+                  - department: Finance
+                    count: 14
+                  - department: General Management
+                    count: 41
+                  - department: Human Resources
+                    count: 16
+                  - department: Information Technology
+                    count: 13
+                  - department: Legal
+                    count: 7
+                  - department: Marketing
+                    count: 31
+                  - department: Operations
+                    count: 22
+                  - department: Other
+                    count: 35
+                  - department: Product
+                    count: 38
+                  - department: Research & Analytics
+                    count: 42
+                  - department: Sales
+                    count: 72
+                  employeesByLocation:
+                  - country: Israel
+                    state: null
+                    count: 301
+                  - country: United States
+                    state: null
+                    count: 45
+                  - country: United States
+                    state: Massachusetts
+                    count: 30
+                  - country: Brazil
+                    state: null
+                    count: 22
+                  - country: France
+                    state: null
+                    count: 10
+                  employeesBySeniority:
+                  - seniority: C-Suite
+                    count: 12
+                  - seniority: Director
+                    count: 35
+                  - seniority: Founder
+                    count: 33
+                  - seniority: Intern
+                    count: 1
+                  - seniority: Manager
+                    count: 141
+                  - seniority: Non-Manager
+                    count: 163
+                  - seniority: Partner
+                    count: 6
+                  - seniority: Senior
+                    count: 59
+                  - seniority: Vice President
+                    count: 9
+                  competitors:
+                  - id: '2497917'
+                    name: Clearbit
+                    domain: clearbit.com
+                  - id: '9781263'
+                    name: Hunter.io
+                    domain: hunter.io
+                  - id: '40857684'
+                    name: MCJ Solutions Inc
+                    domain: zoominfo.com
+                  - id: '157961346'
+                    name: PMc
+                    domain: apollo.io
+                  businessModel:
+                  - B2B
+                  emails:
+                  - email: Support@Lusha.com
+                  keywords:
+                  - contact information
+                  - data accuracy
+                  - data enrichment
+                  - lead discovery
+                  - lead generation
+                  - prospecting
+                  - sales cadence
+                  - sales enablement
+                  - sales intelligence
+                  - sales playlist
+                  - sales streaming
+                  - software development
+                - id: '12790225'
+                  name: Salesforce
+                  alternativeName: salesforce
+                  domain: www.salesforce.com
+                  alternativeDomains:
+                  - salesforce.com
+                  description: 'We''re the #1 AI CRM—where humans with agents drive customer success together with AI, data, and Customer 360 apps on one platform.'
+                  companyType: Public Company
+                  employeeCount:
+                    exact: 88711
+                    min: 100001
+                    max: 10000000
+                  industry: Technology, Information & Media
+                  subIndustry: Software Development
+                  sicCodes:
+                  - code: 7371
+                    description: Custom computer programming services
+                  naicsCodes:
+                  - code: 541511
+                    description: Custom Computer Programming Services
+                  location:
+                    city: San Francisco
+                    state: California
+                    country: United States
+                    countryIso2: US
+                    continent: North America
+                    zipCode: '94105'
+                  additionalLocations:
+                  - country: United States
+                    countryIso2: US
+                    continent: North America
+                  - city: Chicago
+                    state: Illinois
+                    country: United States
+                    countryIso2: US
+                    continent: North America
+                  - city: London
+                    country: United Kingdom
+                    countryIso2: GB
+                    continent: Europe
+                  - city: Tel Aviv
+                    country: Israel
+                    countryIso2: IL
+                    continent: Asia
+                  socialLinks:
+                    linkedin: https://www.linkedin.com/company/salesforce
+                  linkedinFollowers: 6417067
+                  revenueRange:
+                    min: 10000000000
+                    max: 100000000000
+                  intent:
+                    detectedTopics:
+                    - topicName: Cognism Limited
+                      metadata:
+                        topicScore: 85
+                        topicTrend: '+24'
+                    topicCount: 1
+                  technologies:
+                  - amazon
+                  - paypal
+                  - google analytics
+                  popularityTier: 1
+                  logoUrl: https://logo.lusha.co/brightdata/year=2024/month=05/day=20/j_lwej8xik12ncr6ge4u.9e1ec373903019beff129694cb926761f065e9af.file_lwejc8mispkz3m1ng.logo_cached.jpg
+                  employeesByDepartment:
+                  - department: Business Development
+                    count: 2820
+                  - department: Consulting
+                    count: 4963
+                  - department: Engineering & Technical
+                    count: 29167
+                  - department: Finance
+                    count: 2126
+                  - department: Marketing
+                    count: 4793
+                  - department: Operations
+                    count: 6117
+                  - department: Sales
+                    count: 22316
+                  employeesByLocation:
+                  - country: United States
+                    state: null
+                    count: 46090
+                  - country: United States
+                    state: California
+                    count: 9928
+                  - country: India
+                    state: null
+                    count: 18527
+                  - country: United Kingdom
+                    state: null
+                    count: 3682
+                  - country: Ireland
+                    state: null
+                    count: 3226
+                  employeesBySeniority:
+                  - seniority: C-Suite
+                    count: 1039
+                  - seniority: Director
+                    count: 11538
+                  - seniority: Manager
+                    count: 18836
+                  - seniority: Non-Manager
+                    count: 49493
+                  - seniority: Senior
+                    count: 20509
+                  - seniority: Vice President
+                    count: 3104
+                  competitors:
+                  - id: '4269625'
+                    name: iGroup Vietnam - Solutions for Enterprise
+                    domain: monday.com
+                  - id: '7237482'
+                    name: Pipedrive
+                    domain: pipedrive.com
+                  - id: '9740086'
+                    name: Microsoft
+                    domain: microsoft.com
+                  - id: '156097472'
+                    name: Hub Spot
+                    domain: hubspot.com
+                  phones:
+                  - number: +1 800-420-7332
+                  emails:
+                  - email: datasubjectrequest@salesforce.com
+                billing:
+                  creditsCharged: 10
+                  resultsReturned: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  schemas:
+    V3EmailAddress:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: orit.shilvock@lusha.com
+        type:
+          type: string
+          enum:
+          - work
+          - private
+          - unknown
+          example: work
+        confidence:
+          type:
+          - string
+          - 'null'
+          example: A+
+        updateDate:
+          type: string
+          format: date
+          example: '2026-04-23'
+    V3SicCode:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 7371
+        description:
+          type: string
+          example: Custom computer programming services
+    V3ContactTag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+          example: '#FF5733'
+    V3NaicsCode:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 541511
+        description:
+          type: string
+          example: Custom Computer Programming Services
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    TableWrite:
+      type: object
+      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
+
+        '
+      properties:
+        tableId:
+          type: string
+          example: '482910'
+        added:
+          type: integer
+          description: Number of new entities added to the table by this call.
+          example: 3
+        alreadyPresent:
+          type: integer
+          description: Number of entities from this call that were already in the table.
+          example: 2
+        columnsCreated:
+          type: integer
+          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
+          example: 0
+        rowsProcessed:
+          type: integer
+          description: Number of rows the column-run touched as part of this call.
+          example: 5
+        rowsCharged:
+          type: integer
+          description: Number of those rows that incurred a credit charge.
+          example: 5
+        rowsAlreadyPaidInTable:
+          type: integer
+          description: Number of those rows that were already paid for in this table and were not re-charged.
+          example: 0
+        creditsCharged:
+          type: integer
+          description: Credits charged specifically for this table write.
+          example: 0
+    V3EnrichedContactCompanyRef:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: www.lusha.com
+        industry:
+          type: string
+          example: Technology, Information & Media
+    V3ContactsEnrichRequest:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 100
+          example:
+          - '4389064654'
+          - '4389064624'
+        reveal:
+          type: array
+          items:
+            type: string
+            enum:
+            - emails
+            - phones
+          example:
+          - emails
+          - phones
+        waterfallEnabled:
+          type: boolean
+          default: true
+          description: 'Whether this call is allowed to fall through to your enabled
+
+            third-party providers when Lusha''s own data has no match, for the fields
+
+            requested via `reveal`. Defaults to `true` whenever Data Waterfall is
+
+            enabled on your account (Account > Waterfall) - pass `false` to opt this
+
+            specific call out. Has no effect if Data Waterfall or no providers are
+
+            enabled on your account. Provider order isn''t configurable - Lusha manages
+
+            that internally.
+
+            '
+          example: false
+        tableId:
+          type: string
+          description: Optional. If provided, these contacts are also added to this table (if not already present) and the revealed fields' columns are populated. See the Tables API.
+          example: '482910'
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
+    V3CompaniesEnrichRequest:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 100
+          description: Company IDs from search results (strings)
+          example:
+          - '16303253'
+          - '12790225'
+        reveal:
+          type: array
+          items:
+            type: string
+            enum:
+            - employeesByDepartment
+            - employeesByLocation
+            - employeesBySeniority
+            - competitors
+            - intent
+            - estimatedAnnualItSpend
+            - monthlyWebsiteTraffic
+          description: 'Additional data fields to reveal. Each field is charged separately per result.
+
+            - `employeesByDepartment` — breakdown of employees by department
+
+            - `employeesByLocation` — breakdown of employees by country/state
+
+            - `employeesBySeniority` — breakdown of employees by seniority level
+
+            - `competitors` — list of competitor company IDs
+
+            - `intent` — buyer intent topics
+
+            - `estimatedAnnualItSpend` — estimated annual IT spend. 1 credit per company, charged only when a non-null value is returned.
+
+            - `monthlyWebsiteTraffic` — monthly website traffic and month-over-month change. 1 credit per company, charged only when a non-null value is returned.
+
+            '
+          example:
+          - employeesByDepartment
+          - employeesByLocation
+          - employeesBySeniority
+          - competitors
+          - intent
+          - estimatedAnnualItSpend
+          - monthlyWebsiteTraffic
+        tableId:
+          type: string
+          description: Optional. If provided, these companies are also added to this table (if not already present) and the revealed fields' columns are populated. See the Tables API.
+          example: '583021'
+    V3EnrichedCompany:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        alternativeName:
+          type: string
+          example: lusha
+        domain:
+          type: string
+          example: www.lusha.com
+        alternativeDomains:
+          type: array
+          items:
+            type: string
+          example:
+          - lusha.com
+        description:
+          type: string
+          example: Lusha is the leader in Sales Streaming.
+        companyType:
+          type: string
+          example: Private Company
+        yearFounded:
+          type: number
+          example: 2016
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 364
+            min:
+              type: integer
+              example: 201
+            max:
+              type: integer
+              example: 500
+        industry:
+          type: string
+          example: Technology, Information & Media
+        subIndustry:
+          type: string
+          example: Software Development
+        specialities:
+          type: array
+          items:
+            type: string
+          example:
+          - data enrichment
+          - sales intelligence
+        industryTags:
+          type: array
+          items:
+            type: string
+          example:
+          - saas
+          - b2b
+        sicCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SicCode'
+        naicsCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3NaicsCode'
+        companyOffering:
+          type: string
+          description: Free field. Short description of what the company sells or does.
+          example: Cloud-based CRM software for small businesses
+        emailDomain:
+          type: string
+          description: Free field. Primary domain used for company email addresses.
+          example: lusha.com
+        additionalIndustries:
+          type: array
+          description: Free field. Up to 2 secondary industry classifications beyond the primary `industry`/`subIndustry`.
+          maxItems: 2
+          items:
+            type: object
+            properties:
+              industry:
+                type: string
+                example: Financial Services
+              subIndustry:
+                type: string
+                example: Insurance
+        estimatedAnnualItSpend:
+          type:
+          - object
+          - 'null'
+          description: 'Revealed via reveal: ["estimatedAnnualItSpend"] in Enrich Companies. Charged 1 credit when non-null.'
+          properties:
+            value:
+              type: number
+              example: 500000
+            currency:
+              type: string
+              example: USD
+            valueUsd:
+              type: number
+              example: 500000
+        monthlyWebsiteTraffic:
+          type:
+          - object
+          - 'null'
+          description: 'Revealed via reveal: ["monthlyWebsiteTraffic"] in Enrich Companies. Charged 1 credit when non-null.'
+          properties:
+            visits:
+              type: number
+              example: 128450
+            momChangePercent:
+              type: number
+              example: 4.3
+            month:
+              type: string
+              example: 2026-06
+        location:
+          $ref: '#/components/schemas/V3CompanyLocation'
+        additionalLocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CompanyLocation'
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/lushadata
+            facebook:
+              type:
+              - string
+              - 'null'
+              description: 'Company Facebook page URL. Included automatically when available - no `reveal` entry needed. Omitted from the response when not available (never returned empty). Free field - no credits charged. Available on all plans.
+
+                '
+              example: https://www.facebook.com/lusha
+            x:
+              type:
+              - string
+              - 'null'
+              description: 'Company X (formerly Twitter) profile URL. Included automatically when available - no `reveal` entry needed. Omitted from the response when not available (never returned empty). Free field - no credits charged. Available on all plans.
+
+                '
+              example: https://x.com/lusha
+        linkedinFollowers:
+          type: number
+          example: 64339
+        revenueRange:
+          type: object
+          properties:
+            min:
+              type: number
+              example: 10000000
+            max:
+              type: number
+              example: 50000000
+        funding:
+          description: Funding payload when present
+        intent:
+          description: Intent payload when present
+        technologies:
+          type: array
+          items:
+            type: string
+          example:
+          - react
+          - node.js
+          - aws
+        popularityTier:
+          type: number
+          example: 1
+        logoUrl:
+          type: string
+          example: https://logo.lusha.co/logo.jpg
+        employeesByDepartment:
+          type: array
+          description: 'Breakdown of employees by department. Revealed via `reveal: ["employeesByDepartment"]` in Enrich Companies.
+
+            '
+          items:
+            type: object
+            properties:
+              department:
+                type: string
+                description: Department name
+                example: Engineering & Technical
+              count:
+                type: integer
+                description: Number of employees in this department
+                example: 14
+          example:
+          - department: Engineering & Technical
+            count: 14
+          - department: Operations
+            count: 40
+          - department: Other
+            count: 104
+        employeesByLocation:
+          type: array
+          description: 'Breakdown of employees by country and state. Revealed via `reveal: ["employeesByLocation"]` in Enrich Companies.
+
+            '
+          items:
+            type: object
+            properties:
+              country:
+                type: string
+                description: Country name
+                example: United States
+              state:
+                type:
+                - string
+                - 'null'
+                description: State or region (null when not available)
+                example: Colorado
+              count:
+                type: integer
+                description: Number of employees in this location
+                example: 54
+          example:
+          - country: United States
+            state: Colorado
+            count: 54
+          - country: United States
+            state: Texas
+            count: 44
+          - country: United States
+            state: null
+            count: 162
+        employeesBySeniority:
+          type: array
+          description: 'Breakdown of employees by seniority level. Revealed via `reveal: ["employeesBySeniority"]` in Enrich Companies.
+
+            '
+          items:
+            type: object
+            properties:
+              seniority:
+                type: string
+                description: Seniority level
+                example: Manager
+              count:
+                type: integer
+                description: Number of employees at this seniority level
+                example: 39
+          example:
+          - seniority: Non-Manager
+            count: 122
+          - seniority: Manager
+            count: 39
+          - seniority: Vice President
+            count: 3
+        competitors:
+          type: array
+          description: 'List of competitor companies. Revealed via `reveal: ["competitors"]` in Enrich Companies. Use Enrich Companies with the returned IDs to get full firmographic data on each competitor.
+
+            '
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Lusha company ID of the competitor
+                example: '2497917'
+              name:
+                type: string
+                description: Company name of the competitor
+                example: Clearbit
+              domain:
+                type: string
+                description: Primary domain of the competitor
+                example: clearbit.com
+          example:
+          - id: '2497917'
+            name: Clearbit
+            domain: clearbit.com
+          - id: '9781263'
+            name: Hunter.io
+            domain: hunter.io
+          - id: '40857684'
+            name: MCJ Solutions Inc
+            domain: zoominfo.com
+        businessModel:
+          type: array
+          description: Company business model classification (e.g. B2B, B2C)
+          items:
+            type: string
+          example:
+          - B2B
+        phone:
+          type: string
+          description: Company phone number
+          example: (480) 729-6394
+        email:
+          type: string
+          description: Company contact email address
+          example: info@cobbmechanical.com
+        keywords:
+          type: array
+          description: Keywords associated with the company (normalized from specialities and description)
+          items:
+            type: string
+          example:
+          - construction
+          - hvac
+          - plumbing
+          - mechanical system
+        specialitiesRefactored:
+          type: array
+          description: Normalized version of the specialities list
+          items:
+            type: string
+          example:
+          - construction
+          - hvac
+          - industrial piping
+          - mechanical systems
+          - plumbing
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          example: '+14155551234'
+        type:
+          type: string
+          enum:
+          - mobile
+          - direct
+          - work
+          - unknown
+          example: mobile
+        doNotCall:
+          type: boolean
+          example: false
+        updateDate:
+          type: string
+          format: date
+          example: '2026-04-23'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    V3ContactsEnrichResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3EnrichedContact'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3CompanyLocation:
+      type: object
+      properties:
+        city:
+          type: string
+          example: London
+        state:
+          type: string
+          example: England
+        stateCode:
+          type: string
+          description: Free field. ISO/postal state or region code, when available.
+          example: MA
+        country:
+          type: string
+          example: United Kingdom
+        countryIso2:
+          type: string
+          example: GB
+        continent:
+          type: string
+          example: Europe
+        zipCode:
+          type: string
+          description: Postal/ZIP code (present on HQ location when available)
+          example: '80904'
+    V3EnrichedContact:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '4389064704'
+        firstName:
+          type: string
+          example: Orit
+        lastName:
+          type: string
+          example: Shilvock
+        fullName:
+          type: string
+          example: Orit Shilvock
+        jobTitle:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Vice President of Partnerships
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Business Development
+            seniority:
+              type: string
+              example: Vice President
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: Israel
+            countryIso2:
+              type: string
+              example: IL
+            state:
+              type: string
+              example: Tel Aviv District
+            city:
+              type: string
+              example: Tel Aviv
+            continent:
+              type: string
+              example: Asia
+            coordinates:
+              type: array
+              items:
+                type: number
+              example:
+              - 34.78057098388672
+              - 32.08087921142578
+            isEuContact:
+              type: boolean
+              example: false
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3ContactTag'
+        emails:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3EmailAddress'
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3PhoneNumber'
+        company:
+          $ref: '#/components/schemas/V3EnrichedContactCompanyRef'
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/in/orit-shilvock-6243bb5
+            xUrl:
+              type: string
+              example: https://twitter.com/lushaofficial
+        previousEmployment:
+          type: array
+          items:
+            type: object
+            properties:
+              company:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  domain:
+                    type: string
+              jobTitle:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  departments:
+                    type: array
+                    items:
+                      type: string
+                  seniority:
+                    type: string
+        updateDate:
+          type: string
+          format: date
+          example: '2026-04-23'
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3CompaniesEnrichResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3EnrichedCompany'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        x-rate-limit-daily:
+          description: Total requests allowed per day
+          schema:
+            type: integer
+        x-daily-requests-left:
+          description: Requests remaining in daily quota
+          schema:
+            type: integer
+        x-rate-limit-hourly:
+          description: Total requests allowed per hour
+          schema:
+            type: integer
+        x-hourly-requests-left:
+          description: Requests remaining in hourly quota
+          schema:
+            type: integer
+        x-rate-limit-minute:
+          description: Total requests allowed per minute
+          schema:
+            type: integer
+        x-minute-requests-left:
+          description: Requests remaining in current minute window
+          schema:
+            type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    PaymentRequired:
+      description: Payment required - insufficient credits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
+      description: 'Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+
+        Include this key in the `api_key` header for all requests.
+
+        '

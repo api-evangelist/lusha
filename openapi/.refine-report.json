@@ -1,26 +1,32 @@
 {
   "provider": "lusha",
   "sources": [
-    "lusha-account-api-openapi.yml",
-    "lusha-enrichment-api-openapi.yml",
-    "lusha-filters-api-openapi.yml",
-    "lusha-lookalike-api-openapi.yml",
-    "lusha-prospecting-api-openapi.yml",
-    "lusha-signals-api-openapi.yml",
-    "lusha-webhooks-api-openapi.yml"
+    "lusha-openapi.yml"
   ],
   "outputs": [
     "lusha-account-api-openapi.yml",
-    "lusha-enrichment-api-openapi.yml",
+    "lusha-buying-group-api-openapi.yml",
+    "lusha-companies-tables-api-openapi.yml",
+    "lusha-contacts-tables-api-openapi.yml",
+    "lusha-enrich-api-openapi.yml",
     "lusha-filters-api-openapi.yml",
-    "lusha-lookalike-api-openapi.yml",
+    "lusha-lookalikes-api-openapi.yml",
     "lusha-prospecting-api-openapi.yml",
+    "lusha-search-api-openapi.yml",
+    "lusha-search-enrich-api-openapi.yml",
     "lusha-signals-api-openapi.yml",
-    "lusha-webhooks-api-openapi.yml"
+    "lusha-webhooks-api-openapi.yml",
+    "lusha-website-visits-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "archived openapi/lusha-openapi.yml"
+  ],
   "errors": [],
-  "warnings": [],
-  "notes": [],
+  "warnings": [
+    "lusha-openapi.yml: info.version missing"
+  ],
+  "notes": [
+    "lusha-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0"
+  ],
   "skipped": []
 }

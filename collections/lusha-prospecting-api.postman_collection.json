@@ -1,0 +1,857 @@
+{
+  "item": [
+    {
+      "id": "c5c48b92-14ee-4730-a316-0a62f12dc0c5",
+      "name": "Prospecting",
+      "description": {
+        "content": "**Prospecting APIs:** Filter-based search for contacts and companies.\n\nUse prospecting to find new records that match your Ideal Customer Profile (ICP). Apply rich filters across:\n\n- **Contact attributes:** title, seniority, location, signals\n- **Company attributes:** size, revenue, industry, technologies, intent\n\nPass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables) or [Companies Tables](#tag/Companies-Tables).\n\n> **Billing:** Uses the capture/charge model with `api_search` actions. Signal charges apply additionally.\n",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "160a3ab9-e67a-4c62-a9a4-0d0ee7cba2b2",
+          "name": "Prospecting Contacts",
+          "request": {
+            "name": "Prospecting Contacts",
+            "description": {
+              "content": "Search for contacts that match your Ideal Customer Profile using rich filter criteria.\n\n**Filter by contact attributes:**\n- Job title, seniority, department\n- Location (city, state, country, continent)\n- Existing data points (e.g. only contacts with a known work email)\n- Signal activity (promotion, job change)\n\n**Filter by company attributes:**\n- Size, revenue, industry, technologies\n- Location, intent topics, funding\n\nUse the returned contact `id` values with Enrich Contacts to reveal emails and phones.\n\n> **Billing:** Charged per result via `api_search`. If signals are requested, an additional charge applies per matched signal per result.\n\n> **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. This is additive — the primary response is unchanged, and a `tableWrite` object is added showing what happened on the table side. See [Contacts Tables](#tag/Contacts-Tables).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "contacts",
+                "prospecting"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"names\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"jobTitles\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"jobTitlesExactMatch\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"normalizedJobTitles\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"searchText\": \"<string>\",\n        \"countries\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"seniorityIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"departments\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"linkedinUrls\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"existingDataPoints\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"startDate\": \"<date>\"\n        },\n        \"emails\": [\n          \"<email>\",\n          \"<email>\"\n        ],\n        \"previousEmails\": [\n          \"<email>\",\n          \"<email>\"\n        ],\n        \"previousJobTitle\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"skills\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"certifications\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"awards\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ids\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"existingDataPointsCondition\": \"<string>\",\n        \"jobChangedAfterDate\": \"<date>\",\n        \"jobChangedLastViewDate\": \"<date>\",\n        \"education\": {\n          \"degrees\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"fieldsOfStudy\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"schools\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"startYearGte\": \"<integer>\",\n          \"graduationYearLte\": \"<integer>\"\n        },\n        \"score\": {\n          \"minScore\": \"<integer>\",\n          \"maxScore\": \"<integer>\"\n        },\n        \"geographicDetails\": [\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          },\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          }\n        ]\n      },\n      \"exclude\": {\n        \"names\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"jobTitles\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"jobTitlesExactMatch\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"normalizedJobTitles\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"searchText\": \"<string>\",\n        \"countries\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"seniorityIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"departments\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"linkedinUrls\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"existingDataPoints\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"startDate\": \"<date>\"\n        },\n        \"emails\": [\n          \"<email>\",\n          \"<email>\"\n        ],\n        \"previousEmails\": [\n          \"<email>\",\n          \"<email>\"\n        ],\n        \"previousJobTitle\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"skills\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"certifications\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"awards\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ids\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"existingDataPointsCondition\": \"<string>\",\n        \"jobChangedAfterDate\": \"<date>\",\n        \"jobChangedLastViewDate\": \"<date>\",\n        \"education\": {\n          \"degrees\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"fieldsOfStudy\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"schools\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"startYearGte\": \"<integer>\",\n          \"graduationYearLte\": \"<integer>\"\n        },\n        \"score\": {\n          \"minScore\": \"<integer>\",\n          \"maxScore\": \"<integer>\"\n        },\n        \"geographicDetails\": [\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          },\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          }\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"names\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"domains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ids\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"sizes\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"technologies\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"technologiesCondition\": \"<string>\",\n        \"industriesLabels\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"mainIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"subIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"intentTopics\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"intentTopicsCondition\": \"<string>\",\n        \"intentMinScore\": \"<integer>\",\n        \"intentMaxScore\": \"<integer>\",\n        \"intentTopicsOperator\": \"<string>\",\n        \"topicCountThreshold\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"sicCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"naicsCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"funding\": {\n          \"isIpo\": \"<boolean>\",\n          \"ranges\": [\n            {\n              \"coverage\": \"<string>\",\n              \"min\": \"<integer>\",\n              \"max\": \"<integer>\"\n            },\n            {\n              \"coverage\": \"<string>\",\n              \"min\": \"<integer>\",\n              \"max\": \"<integer>\"\n            }\n          ],\n          \"date\": {\n            \"coverage\": \"<string>\",\n            \"date\": \"<date>\"\n          },\n          \"rounds\": [\n            {\n              \"coverage\": \"<string>\",\n              \"round\": \"<string>\"\n            },\n            {\n              \"coverage\": \"<string>\",\n              \"round\": \"<string>\"\n            }\n          ],\n          \"names\": [\n            {\n              \"coverage\": \"<string>\",\n              \"name\": \"<string>\"\n            },\n            {\n              \"coverage\": \"<string>\",\n              \"name\": \"<string>\"\n            }\n          ],\n          \"investors\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"types\": [\n            \"<string>\",\n            \"<string>\"\n          ]\n        },\n        \"foundedYear\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"businessModel\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"companyType\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"linkedinUrls\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"specialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactSpecialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactKeywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywordsSearchFields\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyDomains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyNames\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"geographicDetails\": [\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          },\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          }\n        ],\n        \"locationsZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ],\n        \"headquarterZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ]\n      },\n      \"exclude\": {\n        \"names\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"domains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ids\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"sizes\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"technologies\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"technologiesCondition\": \"<string>\",\n        \"industriesLabels\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"mainIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"subIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"intentTopics\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"intentTopicsCondition\": \"<string>\",\n        \"intentMinScore\": \"<integer>\",\n        \"intentMaxScore\": \"<integer>\",\n        \"intentTopicsOperator\": \"<string>\",\n        \"topicCountThreshold\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"sicCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"naicsCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"funding\": {\n          \"isIpo\": \"<boolean>\",\n          \"ranges\": [\n            {\n              \"coverage\": \"<string>\",\n              \"min\": \"<integer>\",\n              \"max\": \"<integer>\"\n            },\n            {\n              \"coverage\": \"<string>\",\n              \"min\": \"<integer>\",\n              \"max\": \"<integer>\"\n            }\n          ],\n          \"date\": {\n            \"coverage\": \"<string>\",\n            \"date\": \"<date>\"\n          },\n          \"rounds\": [\n            {\n              \"coverage\": \"<string>\",\n              \"round\": \"<string>\"\n            },\n            {\n              \"coverage\": \"<string>\",\n              \"round\": \"<string>\"\n            }\n          ],\n          \"names\": [\n            {\n              \"coverage\": \"<string>\",\n              \"name\": \"<string>\"\n            },\n            {\n              \"coverage\": \"<string>\",\n              \"name\": \"<string>\"\n            }\n          ],\n          \"investors\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"types\": [\n            \"<string>\",\n            \"<string>\"\n          ]\n        },\n        \"foundedYear\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"businessModel\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"companyType\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"linkedinUrls\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"specialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactSpecialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactKeywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywordsSearchFields\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyDomains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyNames\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"geographicDetails\": [\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          },\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          }\n        ],\n        \"locationsZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ],\n        \"headquarterZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ]\n      }\n    }\n  },\n  \"tableId\": \"<string>\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": \"<boolean>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "051df98b-7747-42f3-8d8b-bcd4611ce1e3",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 100\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"departments\": [\n          \"Sales\"\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"work_email\"\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 2000\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\"\n        ],\n        \"companyType\": [\n          \"Public Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/google\"\n        ],\n        \"keywords\": [\n          \"fintech\"\n        ]\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"companyType\": [\n          \"Self Employed\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"482910\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"fa828378-7a8e-4e5d-9f72-0270e7f7ab51\",\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 50,\n    \"total\": 670550\n  },\n  \"results\": [\n    {\n      \"id\": \"670138733\",\n      \"firstName\": \"Ting\",\n      \"lastName\": \"Tsou\"\n    }\n  ],\n  \"tableWrite\": {\n    \"tableId\": \"482910\",\n    \"added\": 48,\n    \"alreadyPresent\": 2,\n    \"columnsCreated\": [],\n    \"rowsProcessed\": 50,\n    \"rowsCharged\": 48,\n    \"rowsAlreadyPaidInTable\": 2\n  },\n  \"billing\": {\n    \"creditsCharged\": 2,\n    \"resultsReturned\": 50\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d7cbabd8-d2df-4c85-8da2-881b303444ab",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 100\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"departments\": [\n          \"Sales\"\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"work_email\"\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 2000\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\"\n        ],\n        \"companyType\": [\n          \"Public Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/google\"\n        ],\n        \"keywords\": [\n          \"fintech\"\n        ]\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"companyType\": [\n          \"Self Employed\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"482910\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9d38a807-1b03-4fef-b9f1-b187b854d0d3",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 100\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"departments\": [\n          \"Sales\"\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"work_email\"\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 2000\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\"\n        ],\n        \"companyType\": [\n          \"Public Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/google\"\n        ],\n        \"keywords\": [\n          \"fintech\"\n        ]\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"companyType\": [\n          \"Self Employed\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"482910\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c2869ca2-594c-4b82-9c96-d1394233e0a6",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 100\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"departments\": [\n          \"Sales\"\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"work_email\"\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 2000\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\"\n        ],\n        \"companyType\": [\n          \"Public Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/google\"\n        ],\n        \"keywords\": [\n          \"fintech\"\n        ]\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"companyType\": [\n          \"Self Employed\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"482910\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1c4d5663-bf72-4ec4-8817-e7968b278da0",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 100\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"departments\": [\n          \"Sales\"\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"work_email\"\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 2000\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\"\n        ],\n        \"companyType\": [\n          \"Public Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/google\"\n        ],\n        \"keywords\": [\n          \"fintech\"\n        ]\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"companyType\": [\n          \"Self Employed\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"482910\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8f73114f-cc1b-4e65-93e6-8698cf690ce5",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "contacts",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 100\n  },\n  \"filters\": {\n    \"contacts\": {\n      \"include\": {\n        \"departments\": [\n          \"Sales\"\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"work_email\"\n        ]\n      }\n    },\n    \"companies\": {\n      \"include\": {\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 2000\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\"\n        ],\n        \"companyType\": [\n          \"Public Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/google\"\n        ],\n        \"keywords\": [\n          \"fintech\"\n        ]\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"companyType\": [\n          \"Self Employed\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"482910\",\n  \"options\": {\n    \"includePartialProfiles\": true,\n    \"excludeDnc\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "5385"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3093f3ad-0f9a-43fb-a7d0-9aca4fc0ea2d",
+          "name": "Prospecting Companies",
+          "request": {
+            "name": "Prospecting Companies",
+            "description": {
+              "content": "Search for companies that match your target market using rich filter criteria.\n\n**Filter by:**\n- Size, revenue range, industry, sub-industry\n- Technologies in use\n- Locations (HQ country, state, city)\n- SIC and NAICS codes\n- Buyer intent topics\n- Signal activity (headcount changes, hiring surges, news events, LinkedIn activity intent)\n\nUse the returned company `id` values with Enrich Companies to get full firmographic data.\n\n> **Billing:** Charged per result via `api_search`. If signals are requested, an additional charge applies per matched signal per result.\n\n> **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. This is additive — the primary response is unchanged, and a `tableWrite` object is added showing what happened on the table side. See [Companies Tables](#tag/Companies-Tables).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v3",
+                "companies",
+                "prospecting"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"names\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"domains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ids\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"searchText\": \"<string>\",\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"sizes\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"technologies\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"technologiesCondition\": \"<string>\",\n        \"mainIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"subIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"intentTopics\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"intentTopicsCondition\": \"<string>\",\n        \"intentMinScore\": \"<integer>\",\n        \"intentMaxScore\": \"<integer>\",\n        \"intentTopicsOperator\": \"<string>\",\n        \"topicCountThreshold\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"sicCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"naicsCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"startDate\": \"<date>\",\n          \"filterByLocation\": [\n            {\n              \"country\": \"<string>\",\n              \"state\": \"<string>\",\n              \"startDate\": \"<date>\"\n            },\n            {\n              \"country\": \"<string>\",\n              \"state\": \"<string>\",\n              \"startDate\": \"<date>\"\n            }\n          ],\n          \"filterByDepartment\": [\n            {\n              \"department\": \"<string>\",\n              \"startDate\": \"<date>\"\n            },\n            {\n              \"department\": \"<string>\",\n              \"startDate\": \"<date>\"\n            }\n          ],\n          \"filterByIntentCategory\": [\n            \"<string>\",\n            \"<string>\"\n          ]\n        },\n        \"foundedYear\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"businessModel\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"companyType\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"linkedinUrls\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"specialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactSpecialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactKeywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywordsSearchFields\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyDomains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyNames\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"geographicDetails\": [\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          },\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          }\n        ],\n        \"locationsZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ],\n        \"headquarterZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ]\n      },\n      \"exclude\": {\n        \"names\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"domains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ids\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"searchText\": \"<string>\",\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"sizes\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"technologies\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"technologiesCondition\": \"<string>\",\n        \"mainIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"subIndustriesIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"intentTopics\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"intentTopicsCondition\": \"<string>\",\n        \"intentMinScore\": \"<integer>\",\n        \"intentMaxScore\": \"<integer>\",\n        \"intentTopicsOperator\": \"<string>\",\n        \"topicCountThreshold\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"sicCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"naicsCodes\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"startDate\": \"<date>\",\n          \"filterByLocation\": [\n            {\n              \"country\": \"<string>\",\n              \"state\": \"<string>\",\n              \"startDate\": \"<date>\"\n            },\n            {\n              \"country\": \"<string>\",\n              \"state\": \"<string>\",\n              \"startDate\": \"<date>\"\n            }\n          ],\n          \"filterByDepartment\": [\n            {\n              \"department\": \"<string>\",\n              \"startDate\": \"<date>\"\n            },\n            {\n              \"department\": \"<string>\",\n              \"startDate\": \"<date>\"\n            }\n          ],\n          \"filterByIntentCategory\": [\n            \"<string>\",\n            \"<string>\"\n          ]\n        },\n        \"foundedYear\": [\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          },\n          {\n            \"min\": \"<integer>\",\n            \"max\": \"<integer>\"\n          }\n        ],\n        \"businessModel\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"companyType\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"linkedinUrls\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"specialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactSpecialities\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"exactKeywords\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"keywordsSearchFields\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyDomains\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"previousCompanyNames\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"geographicDetails\": [\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          },\n          {\n            \"country\": \"<string>\",\n            \"zipcode\": \"<string>\",\n            \"distance\": \"<integer>\"\n          }\n        ],\n        \"locationsZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ],\n        \"headquarterZipcodes\": [\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          },\n          {\n            \"countryIso2\": \"<string>\",\n            \"zipcode\": \"<string>\"\n          }\n        ]\n      }\n    },\n    \"contacts\": {\n      \"include\": {\n        \"jobTitles\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"departments\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"seniorityIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"skills\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"exclude\": {\n        \"jobTitles\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"departments\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"seniorityIds\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"skills\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"locations\": [\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          },\n          {\n            \"city\": \"<string>\",\n            \"state\": \"<string>\",\n            \"country\": \"<string>\",\n            \"continent\": \"<string>\",\n            \"countryGrouping\": \"<string>\",\n            \"region\": \"<string>\",\n            \"countryIso2\": \"<string>\"\n          }\n        ],\n        \"existingDataPoints\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"<string>\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "9660a56d-3578-4e3e-87ae-5855adefe72c",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"sizes\": [\n          {\n            \"min\": 1,\n            \"max\": 1000\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": 10000000\n          }\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"technologies\": [\n          \"React\",\n          \"Node.js\"\n        ],\n        \"technologiesCondition\": \"or\",\n        \"mainIndustriesIds\": [\n          1,\n          5\n        ],\n        \"intentTopics\": [\n          \"Cloud Migration\"\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 1990,\n            \"max\": 2020\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\",\n          \"B2G\"\n        ],\n        \"companyType\": [\n          \"Public Company\",\n          \"Private Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/microsoft\"\n        ],\n        \"keywords\": [\n          \"cloud\",\n          \"artificial intelligence\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"headcountIncrease3m\",\n            \"surgeInHiring\"\n          ],\n          \"startDate\": \"2025-01-01\"\n        }\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"businessModel\": [\n          \"B2C\"\n        ],\n        \"companyType\": [\n          \"Non Profit\"\n        ],\n        \"keywords\": [\n          \"staffing\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"583021\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestId\": \"f6a7b8c9-d0e1-2345-fabc-678901234567\",\n  \"results\": [\n    {\n      \"id\": \"16303253\",\n      \"name\": \"Lusha\",\n      \"domain\": \"lusha.com\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25,\n    \"total\": 87\n  },\n  \"tableWrite\": {\n    \"tableId\": \"583021\",\n    \"added\": 1,\n    \"alreadyPresent\": 0,\n    \"columnsCreated\": [],\n    \"rowsProcessed\": 1,\n    \"rowsCharged\": 1,\n    \"rowsAlreadyPaidInTable\": 0\n  },\n  \"billing\": {\n    \"creditsCharged\": 1,\n    \"resultsReturned\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eb8f37de-280a-4367-83c9-7b48ee1e5fe4",
+              "name": "Bad request - invalid input data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"sizes\": [\n          {\n            \"min\": 1,\n            \"max\": 1000\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": 10000000\n          }\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"technologies\": [\n          \"React\",\n          \"Node.js\"\n        ],\n        \"technologiesCondition\": \"or\",\n        \"mainIndustriesIds\": [\n          1,\n          5\n        ],\n        \"intentTopics\": [\n          \"Cloud Migration\"\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 1990,\n            \"max\": 2020\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\",\n          \"B2G\"\n        ],\n        \"companyType\": [\n          \"Public Company\",\n          \"Private Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/microsoft\"\n        ],\n        \"keywords\": [\n          \"cloud\",\n          \"artificial intelligence\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"headcountIncrease3m\",\n            \"surgeInHiring\"\n          ],\n          \"startDate\": \"2025-01-01\"\n        }\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"businessModel\": [\n          \"B2C\"\n        ],\n        \"companyType\": [\n          \"Non Profit\"\n        ],\n        \"keywords\": [\n          \"staffing\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"583021\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b9b7d565-0bd4-4d9f-996a-3aafc11a7279",
+              "name": "Unauthorized - invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"sizes\": [\n          {\n            \"min\": 1,\n            \"max\": 1000\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": 10000000\n          }\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"technologies\": [\n          \"React\",\n          \"Node.js\"\n        ],\n        \"technologiesCondition\": \"or\",\n        \"mainIndustriesIds\": [\n          1,\n          5\n        ],\n        \"intentTopics\": [\n          \"Cloud Migration\"\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 1990,\n            \"max\": 2020\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\",\n          \"B2G\"\n        ],\n        \"companyType\": [\n          \"Public Company\",\n          \"Private Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/microsoft\"\n        ],\n        \"keywords\": [\n          \"cloud\",\n          \"artificial intelligence\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"headcountIncrease3m\",\n            \"surgeInHiring\"\n          ],\n          \"startDate\": \"2025-01-01\"\n        }\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"businessModel\": [\n          \"B2C\"\n        ],\n        \"companyType\": [\n          \"Non Profit\"\n        ],\n        \"keywords\": [\n          \"staffing\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"583021\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b200531-f3e9-4948-8d73-6ccccc36dcf6",
+              "name": "Payment required - insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"sizes\": [\n          {\n            \"min\": 1,\n            \"max\": 1000\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": 10000000\n          }\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"technologies\": [\n          \"React\",\n          \"Node.js\"\n        ],\n        \"technologiesCondition\": \"or\",\n        \"mainIndustriesIds\": [\n          1,\n          5\n        ],\n        \"intentTopics\": [\n          \"Cloud Migration\"\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 1990,\n            \"max\": 2020\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\",\n          \"B2G\"\n        ],\n        \"companyType\": [\n          \"Public Company\",\n          \"Private Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/microsoft\"\n        ],\n        \"keywords\": [\n          \"cloud\",\n          \"artificial intelligence\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"headcountIncrease3m\",\n            \"surgeInHiring\"\n          ],\n          \"startDate\": \"2025-01-01\"\n        }\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"businessModel\": [\n          \"B2C\"\n        ],\n        \"companyType\": [\n          \"Non Profit\"\n        ],\n        \"keywords\": [\n          \"staffing\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"583021\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 402,\n  \"message\": \"Insufficient credits for this operation\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bde8eb61-1d11-4ba4-bf55-1c0b7eb9bbd2",
+              "name": "Forbidden - account inactive, V3 access not enabled, or plan does not include this feature",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"sizes\": [\n          {\n            \"min\": 1,\n            \"max\": 1000\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": 10000000\n          }\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"technologies\": [\n          \"React\",\n          \"Node.js\"\n        ],\n        \"technologiesCondition\": \"or\",\n        \"mainIndustriesIds\": [\n          1,\n          5\n        ],\n        \"intentTopics\": [\n          \"Cloud Migration\"\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 1990,\n            \"max\": 2020\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\",\n          \"B2G\"\n        ],\n        \"companyType\": [\n          \"Public Company\",\n          \"Private Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/microsoft\"\n        ],\n        \"keywords\": [\n          \"cloud\",\n          \"artificial intelligence\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"headcountIncrease3m\",\n            \"surgeInHiring\"\n          ],\n          \"startDate\": \"2025-01-01\"\n        }\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"businessModel\": [\n          \"B2C\"\n        ],\n        \"companyType\": [\n          \"Non Profit\"\n        ],\n        \"keywords\": [\n          \"staffing\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"583021\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 403,\n  \"message\": \"Your account is not active. Please reach out to support at support@lusha.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ff4ded49-b7f5-4029-9343-a0208a93b30d",
+              "name": "Too many requests - rate limit exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v3",
+                    "companies",
+                    "prospecting"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "api_key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pagination\": {\n    \"page\": 0,\n    \"size\": 25\n  },\n  \"filters\": {\n    \"companies\": {\n      \"include\": {\n        \"sizes\": [\n          {\n            \"min\": 1,\n            \"max\": 1000\n          }\n        ],\n        \"revenues\": [\n          {\n            \"min\": 10000000\n          }\n        ],\n        \"locations\": [\n          {\n            \"country\": \"United States\"\n          }\n        ],\n        \"technologies\": [\n          \"React\",\n          \"Node.js\"\n        ],\n        \"technologiesCondition\": \"or\",\n        \"mainIndustriesIds\": [\n          1,\n          5\n        ],\n        \"intentTopics\": [\n          \"Cloud Migration\"\n        ],\n        \"foundedYear\": [\n          {\n            \"min\": 1990,\n            \"max\": 2020\n          }\n        ],\n        \"businessModel\": [\n          \"B2B\",\n          \"B2G\"\n        ],\n        \"companyType\": [\n          \"Public Company\",\n          \"Private Company\"\n        ],\n        \"linkedinUrls\": [\n          \"https://www.linkedin.com/company/microsoft\"\n        ],\n        \"keywords\": [\n          \"cloud\",\n          \"artificial intelligence\"\n        ],\n        \"signals\": {\n          \"types\": [\n            \"headcountIncrease3m\",\n            \"surgeInHiring\"\n          ],\n          \"startDate\": \"2025-01-01\"\n        }\n      },\n      \"exclude\": {\n        \"domains\": [\n          \"competitor.com\"\n        ],\n        \"businessModel\": [\n          \"B2C\"\n        ],\n        \"companyType\": [\n          \"Non Profit\"\n        ],\n        \"keywords\": [\n          \"staffing\"\n        ]\n      }\n    }\n  },\n  \"tableId\": \"583021\",\n  \"options\": {\n    \"includePartialProfiles\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per day",
+                  "key": "x-rate-limit-daily",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in daily quota",
+                  "key": "x-daily-requests-left",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per hour",
+                  "key": "x-rate-limit-hourly",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in hourly quota",
+                  "key": "x-hourly-requests-left",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Total requests allowed per minute",
+                  "key": "x-rate-limit-minute",
+                  "value": "5385"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in current minute window",
+                  "key": "x-minute-requests-left",
+                  "value": "5385"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 429,\n  \"message\": \"Too many requests. Please wait before making another request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lusha.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api_key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "5142db0a-4358-441d-9ec0-448b0fe0548a",
+    "name": "Lusha API Documentation Prospecting API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n\n\nContact Support:\n Name: Lusha Support\n Email: support@lusha.com",
+      "type": "text/plain"
+    }
+  }
+}

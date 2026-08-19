@@ -1,0 +1,159 @@
+generated: '2026-08-13'
+method: derived
+source: mcp/lusha-mcp.yml + openapi/lusha-*-api-openapi.yml
+description: >-
+  Binds each published Lusha MCP tool to the REST operation(s) that back it, so
+  a tool inherits a real inputSchema from the OpenAPI instead of a guessed one.
+  Live tools/list on https://mcp.lusha.com is auth-gated (401), so tools are
+  mapped by the provider's published names and descriptions against verified
+  operationIds — confidence is set honestly per row and no operation is invented.
+surfaces:
+  openapi:
+    files: openapi/lusha-*-api-openapi.yml
+    source: https://docs.lusha.com/_spec/apis/@v3/openapi.yaml
+    operations: 58
+    gated: false
+  mcp:
+    url: https://mcp.lusha.com
+    tools_list_gated: true
+    tools_list_status: 401
+    published_tools: 22
+  graphql:
+    present: false
+crosswalk:
+- tool: contacts_search
+  category: search
+  rest: [searchContacts, searchAndEnrichContacts]
+  binding: rest
+  confidence: medium
+  note: >-
+    Tool description ("enrich contact data using email, LinkedIn URL, or name +
+    company") spans both the non-PII preview (searchContacts) and the
+    single-call resolve-and-reveal (searchAndEnrichContacts); which one the
+    server calls is not published.
+- tool: companies_search
+  category: search
+  rest: [searchCompanies, searchAndEnrichCompanies]
+  binding: rest
+  confidence: medium
+- tool: prospecting_contact_filters
+  category: filters
+  rest: [getContactFilterTypes, getContactFilterValues]
+  binding: rest
+  confidence: high
+- tool: prospecting_contact_search
+  category: prospecting
+  rest: [prospectingContacts]
+  binding: rest
+  confidence: high
+- tool: prospecting_contact_enrich
+  category: enrichment
+  rest: [enrichContacts]
+  binding: rest
+  confidence: high
+- tool: prospecting_company_filters
+  category: filters
+  rest: [getCompanyFilterTypes, getCompanyFilterValues]
+  binding: rest
+  confidence: high
+- tool: prospecting_company_search
+  category: prospecting
+  rest: [prospectingCompanies]
+  binding: rest
+  confidence: high
+- tool: prospecting_company_enrich
+  category: enrichment
+  rest: [enrichCompanies]
+  binding: rest
+  confidence: high
+- tool: lookalike_contacts
+  category: lookalikes
+  rest: [getContactLookalikes]
+  binding: rest
+  confidence: high
+- tool: lookalike_companies
+  category: lookalikes
+  rest: [getCompanyLookalikes]
+  binding: rest
+  confidence: high
+- tool: signals_contact_filters
+  category: signals
+  rest: [getContactSignalTypes]
+  binding: rest
+  confidence: medium
+  note: >-
+    REST publishes contact signal TYPES only; there is no contact-side
+    filters/filter-values pair to match the company-side endpoints.
+- tool: signals_contacts_search
+  category: signals
+  rest: [getContactSignals]
+  binding: rest
+  confidence: medium
+  note: search and get collapse onto one REST operation that accepts several identifier forms.
+- tool: signals_contacts_get
+  category: signals
+  rest: [getContactSignals]
+  binding: rest
+  confidence: medium
+- tool: signals_company_filters
+  category: signals
+  rest: [getCompanySignalTypes, getCompanySignalFilters, getCompanySignalFilterValues]
+  binding: rest
+  confidence: high
+- tool: signals_companies_search
+  category: signals
+  rest: [getCompanySignals]
+  binding: rest
+  confidence: medium
+- tool: signals_companies_get
+  category: signals
+  rest: [getCompanySignals]
+  binding: rest
+  confidence: medium
+- tool: account_usage
+  category: account
+  rest: [getAccountUsage]
+  binding: rest
+  confidence: high
+mcp_only:
+- tool: recommendations_contacts_get
+  reason: >-
+    The Recommendations API (changelog 1.5.0, 2025-10-15) is not exposed in the
+    public v3 OpenAPI; results are drawn from the authenticated user's own
+    Target Profiles in ICP Hub, with user/account IDs inferred from the session.
+- tool: recommendations_companies_get
+  reason: same — no public REST operation for ICP Hub recommendations.
+- tool: recommendations_status_get
+  reason: >-
+    Returns none/computing/done for the caller's recommendation build; no public
+    REST equivalent.
+- tool: recommendations_contacts_filters
+  reason: no public REST operation for recommendation filter discovery.
+- tool: recommendations_companies_filters
+  reason: no public REST operation for recommendation filter discovery.
+rest_only:
+- capability: Buying Group
+  operations: [getContactsBuyingGroup]
+- capability: Contacts Tables
+  operations: [createContactsTable, listContactsTables, getContactsTable, updateContactsTable,
+    deleteContactsTable, getContactsTableEntities, addContactsTableEntities, removeContactsTableEntities,
+    listContactsTableColumns, removeContactsTableColumn, runContactsTableColumn]
+- capability: Companies Tables
+  operations: [createCompaniesTable, listCompaniesTables, getCompaniesTable, updateCompaniesTable,
+    deleteCompaniesTable, getCompaniesTableEntities, addCompaniesTableEntities, removeCompaniesTableEntities,
+    listCompaniesTableColumns, removeCompaniesTableColumn, runCompaniesTableColumn]
+- capability: Website Visits
+  operations: [getWebsiteVisits]
+- capability: Signal scoring
+  operations: [getCompanySignalScores, getContactSignalScores]
+- capability: Webhooks
+  operations: [createSubscription, listSubscriptions, getSubscriptionById, updateSubscription,
+    testSubscription, deleteSubscriptions, getAuditLogs, getAuditLogStats, getAccountSecret,
+    regenerateAccountSecret, createOptOutSubscription]
+coverage:
+  tools_published: 22
+  tools_bound_to_rest: 17
+  tools_mcp_only: 5
+  rest_operations_total: 58
+  rest_operations_with_tool: 21
+  rest_operations_without_tool: 37

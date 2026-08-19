@@ -1,53 +1,1604 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Lusha Account Prospecting API
-  description: Lusha is a B2B sales intelligence platform offering verified contact and company data. The platform exposes four REST APIs (Enrichment, Prospecting, Signals, Lookalike) plus webhook subscriptions and an account usage endpoint. Authentication is via an api_key header generated in the Lusha dashboard.
-  version: 3.0.0
+  title: Lusha API Documentation Prospecting API
+  version: ''
+  x-logo:
+    url: https://www.lusha.com/logo.png
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
+  description: "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n"
   contact:
-    name: Lusha
-    url: https://docs.lusha.com/apis
+    name: Lusha Support
+    url: https://api.lusha.com
+    email: support@lusha.com
+  termsOfService: https://lusha.com/legal/terms
+  x-privacy-policy:
+    name: Privacy Policy
+    url: https://lusha.com/legal/privacy-notice/
 servers:
 - url: https://api.lusha.com
-  description: Production
+  description: Production server
 security:
 - ApiKeyAuth: []
 tags:
 - name: Prospecting
-  description: Filter-based contact and company search
+  description: '**Prospecting APIs:** Filter-based search for contacts and companies.
+
+
+    Use prospecting to find new records that match your Ideal Customer Profile (ICP). Apply rich filters across:
+
+
+    - **Contact attributes:** title, seniority, location, signals
+
+    - **Company attributes:** size, revenue, industry, technologies, intent
+
+
+    Pass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables) or [Companies Tables](#tag/Companies-Tables).
+
+
+    > **Billing:** Uses the capture/charge model with `api_search` actions. Signal charges apply additionally.
+
+    '
+  x-tag-expanded: true
 paths:
   /v3/contacts/prospecting:
     post:
       tags:
       - Prospecting
-      summary: Filter-based contact prospecting
-      operationId: prospectContacts
+      summary: Prospecting Contacts
+      operationId: prospectingContacts
+      description: 'Search for contacts that match your Ideal Customer Profile using rich filter criteria.
+
+
+        **Filter by contact attributes:**
+
+        - Job title, seniority, department
+
+        - Location (city, state, country, continent)
+
+        - Existing data points (e.g. only contacts with a known work email)
+
+        - Signal activity (promotion, job change)
+
+
+        **Filter by company attributes:**
+
+        - Size, revenue, industry, technologies
+
+        - Location, intent topics, funding
+
+
+        Use the returned contact `id` values with Enrich Contacts to reveal emails and phones.
+
+
+        > **Billing:** Charged per result via `api_search`. If signals are requested, an additional charge applies per matched signal per result.
+
+
+        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. This is additive — the primary response is unchanged, and a `tableWrite` object is added showing what happened on the table side. See [Contacts Tables](#tag/Contacts-Tables).
+
+        '
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
+              $ref: '#/components/schemas/V3ProspectingContactsRequest'
+            example:
+              pagination:
+                page: 0
+                size: 100
+              filters:
+                contacts:
+                  include:
+                    departments:
+                    - Sales
+                    locations:
+                    - country: United States
+                    existingDataPoints:
+                    - work_email
+                companies:
+                  include:
+                    locations:
+                    - country: United States
+                    foundedYear:
+                    - min: 2000
+                    businessModel:
+                    - B2B
+                    companyType:
+                    - Public Company
+                    linkedinUrls:
+                    - https://www.linkedin.com/company/google
+                    keywords:
+                    - fintech
+                  exclude:
+                    domains:
+                    - competitor.com
+                    companyType:
+                    - Self Employed
+              tableId: '482910'
+              options:
+                includePartialProfiles: true
+                excludeDnc: false
       responses:
         '200':
-          description: Matching contacts
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V3ProspectingContactsResponse'
+              example:
+                requestId: fa828378-7a8e-4e5d-9f72-0270e7f7ab51
+                pagination:
+                  page: 0
+                  size: 50
+                  total: 670550
+                results:
+                - id: '670138733'
+                  firstName: Ting
+                  lastName: Tsou
+                tableWrite:
+                  tableId: '482910'
+                  added: 48
+                  alreadyPresent: 2
+                  columnsCreated: []
+                  rowsProcessed: 50
+                  rowsCharged: 48
+                  rowsAlreadyPaidInTable: 2
+                billing:
+                  creditsCharged: 2
+                  resultsReturned: 50
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /v3/companies/prospecting:
     post:
       tags:
       - Prospecting
-      summary: Filter-based company prospecting
-      operationId: prospectCompanies
+      summary: Prospecting Companies
+      operationId: prospectingCompanies
+      description: 'Search for companies that match your target market using rich filter criteria.
+
+
+        **Filter by:**
+
+        - Size, revenue range, industry, sub-industry
+
+        - Technologies in use
+
+        - Locations (HQ country, state, city)
+
+        - SIC and NAICS codes
+
+        - Buyer intent topics
+
+        - Signal activity (headcount changes, hiring surges, news events, LinkedIn activity intent)
+
+
+        Use the returned company `id` values with Enrich Companies to get full firmographic data.
+
+
+        > **Billing:** Charged per result via `api_search`. If signals are requested, an additional charge applies per matched signal per result.
+
+
+        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. This is additive — the primary response is unchanged, and a `tableWrite` object is added showing what happened on the table side. See [Companies Tables](#tag/Companies-Tables).
+
+        '
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
+              $ref: '#/components/schemas/V3ProspectingCompaniesRequest'
+            example:
+              pagination:
+                page: 0
+                size: 25
+              filters:
+                companies:
+                  include:
+                    sizes:
+                    - min: 1
+                      max: 1000
+                    revenues:
+                    - min: 10000000
+                    locations:
+                    - country: United States
+                    technologies:
+                    - React
+                    - Node.js
+                    technologiesCondition: or
+                    mainIndustriesIds:
+                    - 1
+                    - 5
+                    intentTopics:
+                    - Cloud Migration
+                    foundedYear:
+                    - min: 1990
+                      max: 2020
+                    businessModel:
+                    - B2B
+                    - B2G
+                    companyType:
+                    - Public Company
+                    - Private Company
+                    linkedinUrls:
+                    - https://www.linkedin.com/company/microsoft
+                    keywords:
+                    - cloud
+                    - artificial intelligence
+                    signals:
+                      types:
+                      - headcountIncrease3m
+                      - surgeInHiring
+                      startDate: '2025-01-01'
+                  exclude:
+                    domains:
+                    - competitor.com
+                    businessModel:
+                    - B2C
+                    companyType:
+                    - Non Profit
+                    keywords:
+                    - staffing
+              tableId: '583021'
+              options:
+                includePartialProfiles: false
       responses:
         '200':
-          description: Matching companies
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V3ProspectingCompaniesResponse'
+              example:
+                requestId: f6a7b8c9-d0e1-2345-fabc-678901234567
+                results:
+                - id: '16303253'
+                  name: Lusha
+                  domain: lusha.com
+                pagination:
+                  page: 0
+                  size: 25
+                  total: 87
+                tableWrite:
+                  tableId: '583021'
+                  added: 1
+                  alreadyPresent: 0
+                  columnsCreated: []
+                  rowsProcessed: 1
+                  rowsCharged: 1
+                  rowsAlreadyPaidInTable: 0
+                billing:
+                  creditsCharged: 1
+                  resultsReturned: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 components:
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        x-rate-limit-daily:
+          description: Total requests allowed per day
+          schema:
+            type: integer
+        x-daily-requests-left:
+          description: Requests remaining in daily quota
+          schema:
+            type: integer
+        x-rate-limit-hourly:
+          description: Total requests allowed per hour
+          schema:
+            type: integer
+        x-hourly-requests-left:
+          description: Requests remaining in hourly quota
+          schema:
+            type: integer
+        x-rate-limit-minute:
+          description: Total requests allowed per minute
+          schema:
+            type: integer
+        x-minute-requests-left:
+          description: Requests remaining in current minute window
+          schema:
+            type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    PaymentRequired:
+      description: Payment required - insufficient credits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
+  schemas:
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    V3CompanyPreview:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: comp-ref-1
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: www.lusha.com
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 364
+            min:
+              type: integer
+              example: 201
+            max:
+              type: integer
+              example: 500
+        industry:
+          type: string
+          example: Technology, Information & Media
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+              example: London
+            state:
+              type: string
+              example: England
+            stateCode:
+              type: string
+              description: Free field. ISO/postal state or region code, when available.
+              example: MA
+            country:
+              type: string
+              example: United Kingdom
+            countryIso2:
+              type: string
+              example: GB
+            continent:
+              type: string
+              example: Europe
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/lushadata
+        has:
+          type: array
+          items:
+            type: string
+          description: 'Available data points that can be revealed via Enrich Companies. Includes base firmographic fields plus new revealable fields: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, businessModel, phones, emails, keywords, socialLinks, estimatedAnnualItSpend, monthlyWebsiteTraffic.
+
+            '
+          example:
+          - alternativeName
+          - alternativeDomains
+          - description
+          - companyType
+          - yearFounded
+          - subIndustry
+          - specialities
+          - sicCodes
+          - naicsCodes
+          - additionalLocations
+          - linkedinFollowers
+          - popularityTier
+          - logoUrl
+          - employeesByDepartment
+          - employeesByLocation
+          - employeesBySeniority
+          - competitors
+          - businessModel
+          - phones
+          - emails
+          - keywords
+          - socialLinks
+          - estimatedAnnualItSpend
+          - monthlyWebsiteTraffic
+        canReveal:
+          type: array
+          description: 'Data fields that can be revealed via Enrich Companies, with the credit cost per field. A cost of 0 means the field has already been revealed for this account.
+
+            '
+          items:
+            $ref: '#/components/schemas/V3CanRevealItem'
+          example:
+          - field: employeesByDepartment
+            credits: 1
+          - field: employeesByLocation
+            credits: 1
+          - field: employeesBySeniority
+            credits: 1
+          - field: competitors
+            credits: 1
+          - field: intent
+            credits: 0
+          - field: estimatedAnnualItSpend
+            credits: 1
+          - field: monthlyWebsiteTraffic
+            credits: 1
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - headcountIncrease3m
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3ContactFilterCriteria:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+        jobTitles:
+          type: array
+          items:
+            type: string
+          example:
+          - VP Sales
+          - Director of Sales
+        jobTitlesExactMatch:
+          type: array
+          items:
+            type: string
+        normalizedJobTitles:
+          type: array
+          items:
+            type: string
+        searchText:
+          type: string
+          maxLength: 200
+        countries:
+          type: array
+          items:
+            type: string
+          example:
+          - US
+          - CA
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Location'
+        seniorityIds:
+          type: array
+          items:
+            type: integer
+          example:
+          - 4
+          - 5
+        departments:
+          type: array
+          items:
+            type: string
+          example:
+          - Sales
+          - Engineering
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+        existingDataPoints:
+          type: array
+          items:
+            type: string
+          example:
+          - work_email
+          - work_phone
+        signals:
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string
+                enum:
+                - allSignals
+                - promotion
+                - companyChange
+            startDate:
+              type: string
+              format: date
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          description: Personal data — no catalog.
+        previousEmails:
+          type: array
+          items:
+            type: string
+            format: email
+          description: Personal data — no catalog.
+        previousJobTitle:
+          type: array
+          items:
+            type: string
+        skills:
+          type: array
+          items:
+            type: string
+          example:
+          - Python
+        certifications:
+          type: array
+          items:
+            type: string
+        awards:
+          type: array
+          items:
+            type: string
+        ids:
+          type: array
+          items:
+            type: string
+          description: Encrypted contact id from a prior search's `results[].id`.
+        existingDataPointsCondition:
+          type: string
+          enum:
+          - or
+          - and
+          description: Pairs with `existingDataPoints`.
+        jobChangedAfterDate:
+          type: string
+          format: date
+          description: Refinement-only — must be paired with a base filter (e.g. `jobTitles`).
+        jobChangedLastViewDate:
+          type: string
+          format: date
+          description: Refinement-only — must be paired with a base filter.
+        education:
+          type: object
+          description: Refinement-only — must be paired with a base filter.
+          properties:
+            degrees:
+              type: array
+              items:
+                type: string
+            fieldsOfStudy:
+              type: array
+              items:
+                type: string
+            schools:
+              type: array
+              items:
+                type: string
+            startYearGte:
+              type: integer
+            graduationYearLte:
+              type: integer
+        score:
+          type: object
+          description: 'Refinement-only — must be paired with a base filter. Raw 0–100 contact score. Distinct from the `confidence` band ("A+"/"A") returned on enriched contacts, which is derived from this score (e.g. `A+` when score > 75).
+
+            '
+          properties:
+            minScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+            maxScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+        geographicDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              country:
+                type: string
+              zipcode:
+                type: string
+              distance:
+                type: integer
+                description: Radius in miles.
+    V3ProspectingContactsRequest:
+      type: object
+      required:
+      - pagination
+      - filters
+      properties:
+        pagination:
+          $ref: '#/components/schemas/V3PaginationRequest'
+        filters:
+          $ref: '#/components/schemas/V3ProspectingContactFilters'
+        tableId:
+          type: string
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '482910'
+        options:
+          type: object
+          properties:
+            includePartialProfiles:
+              type: boolean
+              default: true
+            excludeDnc:
+              type: boolean
+    TableWrite:
+      type: object
+      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
+
+        '
+      properties:
+        tableId:
+          type: string
+          example: '482910'
+        added:
+          type: integer
+          description: Number of new entities added to the table by this call.
+          example: 3
+        alreadyPresent:
+          type: integer
+          description: Number of entities from this call that were already in the table.
+          example: 2
+        columnsCreated:
+          type: integer
+          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
+          example: 0
+        rowsProcessed:
+          type: integer
+          description: Number of rows the column-run touched as part of this call.
+          example: 5
+        rowsCharged:
+          type: integer
+          description: Number of those rows that incurred a credit charge.
+          example: 5
+        rowsAlreadyPaidInTable:
+          type: integer
+          description: Number of those rows that were already paid for in this table and were not re-charged.
+          example: 0
+        creditsCharged:
+          type: integer
+          description: Credits charged specifically for this table write.
+          example: 0
+    V3CompanyFilterCriteria:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+        domains:
+          type: array
+          items:
+            type: string
+          example:
+          - lusha.com
+        ids:
+          type: array
+          items:
+            type: string
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Location'
+        sizes:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Range'
+          example:
+          - min: 50
+            max: 500
+        revenues:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Range'
+        technologies:
+          type: array
+          items:
+            type: string
+          example:
+          - Salesforce
+          - HubSpot
+        technologiesCondition:
+          type: string
+          enum:
+          - or
+          - and
+          example: or
+        industriesLabels:
+          type: array
+          items:
+            type: string
+          example:
+          - Software
+          - SaaS
+        mainIndustriesIds:
+          type: array
+          items:
+            type: integer
+        subIndustriesIds:
+          type: array
+          items:
+            type: integer
+        intentTopics:
+          type: array
+          items:
+            type: string
+          example:
+          - Cloud Migration
+        intentTopicsCondition:
+          type: string
+          enum:
+          - or
+          - and
+        intentMinScore:
+          type: integer
+          minimum: 1
+          maximum: 100
+        intentMaxScore:
+          type: integer
+          minimum: 1
+          maximum: 100
+        intentTopicsOperator:
+          type: string
+          enum:
+          - or
+          - and
+          - any
+          - all
+          description: 'Recommended over `intentTopicsCondition`. `any`/`all` are aliases for `or`/`and`. `intentTopicsCondition` is not deprecated and remains accepted.
+
+            '
+        topicCountThreshold:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Range'
+        sicCodes:
+          type: array
+          items:
+            type: string
+        naicsCodes:
+          type: array
+          items:
+            type: string
+        funding:
+          type: object
+          description: 'All funding sub-filters live under this single object. Every field is optional; combine any subset.
+
+            '
+          properties:
+            isIpo:
+              type: boolean
+            ranges:
+              type: array
+              items:
+                type: object
+                properties:
+                  coverage:
+                    type: string
+                    enum:
+                    - last_funding
+                    - any_round
+                    - total_funds
+                    - last_round
+                  min:
+                    type: integer
+                  max:
+                    type: integer
+            date:
+              type: object
+              properties:
+                coverage:
+                  type: string
+                  enum:
+                  - last_funding
+                  - any_round
+                  - total_funds
+                  - last_round
+                date:
+                  type: string
+                  format: date
+            rounds:
+              type: array
+              items:
+                type: object
+                properties:
+                  coverage:
+                    type: string
+                    enum:
+                    - last_funding
+                    - any_round
+                    - total_funds
+                    - last_round
+                  round:
+                    type: string
+                    enum:
+                    - pre_seed
+                    - seed
+                    - series_a
+                    - series_b
+                    - series_c
+                    - series_d
+                    - series_e
+                    - series_f
+                    - series_g
+                    - series_h
+                    - other
+            names:
+              type: array
+              items:
+                type: object
+                properties:
+                  coverage:
+                    type: string
+                    enum:
+                    - last_funding
+                    - any_round
+                    - total_funds
+                    - last_round
+                  name:
+                    type: string
+                    enum:
+                    - angel
+                    - venture
+                    - private_equity
+                    - crowdfunding
+                    - grant
+                    - debt_financing
+                    - other
+            investors:
+              type: array
+              items:
+                type: string
+              description: Free text. Accepted but not currently applied downstream.
+            types:
+              type: array
+              items:
+                type: string
+              description: Legacy free text. Accepted but not currently applied downstream.
+        foundedYear:
+          type: array
+          description: Filter by year the company was founded. Supports `min` (greater than or equal) and `max` (less than or equal) range operators.
+          items:
+            type: object
+            properties:
+              min:
+                type: integer
+                example: 2000
+              max:
+                type: integer
+                example: 2020
+        businessModel:
+          type: array
+          description: 'Filter by business model. Accepted values: B2B, B2C, B2G.'
+          items:
+            type: string
+            enum:
+            - B2B
+            - B2C
+            - B2G
+          example:
+          - B2B
+        companyType:
+          type: array
+          description: 'Filter by company type. Accepted values: Government, Private Company, Public Company, Educational, Non Profit, Self Employed.'
+          items:
+            type: string
+            enum:
+            - Government
+            - Private Company
+            - Public Company
+            - Educational
+            - Non Profit
+            - Self Employed
+          example:
+          - Public Company
+        linkedinUrls:
+          type: array
+          description: Filter by company LinkedIn URLs.
+          items:
+            type: string
+          example:
+          - https://www.linkedin.com/company/google
+        keywords:
+          type: array
+          description: Filter by keywords associated with the company.
+          items:
+            type: string
+          example:
+          - fintech
+        specialities:
+          type: array
+          items:
+            type: string
+        exactSpecialities:
+          type: array
+          items:
+            type: string
+        exactKeywords:
+          type: array
+          items:
+            type: string
+        keywordsSearchFields:
+          type: array
+          items:
+            type: string
+        previousCompanyDomains:
+          type: array
+          items:
+            type: string
+        previousCompanyNames:
+          type: array
+          items:
+            type: string
+        geographicDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              country:
+                type: string
+              zipcode:
+                type: string
+              distance:
+                type: integer
+                description: Radius in miles.
+        locationsZipcodes:
+          type: array
+          items:
+            type: object
+            properties:
+              countryIso2:
+                type: string
+              zipcode:
+                type: string
+        headquarterZipcodes:
+          type: array
+          items:
+            type: object
+            properties:
+              countryIso2:
+                type: string
+              zipcode:
+                type: string
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
+    V3ContactsOnCompanySearchFilters:
+      type: object
+      description: Restricted contact-attribute filters usable within a company prospecting request.
+      properties:
+        jobTitles:
+          type: array
+          items:
+            type: string
+        departments:
+          type: array
+          items:
+            type: string
+        seniorityIds:
+          type: array
+          items:
+            type: integer
+        skills:
+          type: array
+          items:
+            type: string
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Location'
+        existingDataPoints:
+          type: array
+          items:
+            type: string
+    V3ContactPreview:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: my-ref-1
+        id:
+          type: string
+          example: '4389064704'
+        firstName:
+          type: string
+          example: Orit
+        lastName:
+          type: string
+          example: Shilvock
+        jobTitle:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Vice President of Partnerships
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Business Development
+            seniority:
+              type: string
+              example: Vice President
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '16303253'
+            name:
+              type: string
+              example: Lusha
+            domain:
+              type: string
+              example: www.lusha.com
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: Israel
+            state:
+              type: string
+              example: Tel Aviv District
+            city:
+              type: string
+              example: Tel Aviv
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/in/orit-shilvock-6243bb5
+        has:
+          type: array
+          items:
+            type: string
+          example:
+          - firstName
+          - lastName
+          - jobTitle
+          - location
+          - socialLinks
+          - emails
+        canReveal:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CanRevealItem'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - promotion
+          - companyChange
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3Location:
+      type: object
+      description: Location filter object used in prospecting requests
+      properties:
+        city:
+          type: string
+          example: San Francisco
+        state:
+          type: string
+          example: California
+        country:
+          type: string
+          example: United States
+        continent:
+          type: string
+          example: North America
+        countryGrouping:
+          type: string
+          example: EMEA
+        region:
+          type: string
+          example: California
+        countryIso2:
+          type: string
+          example: US
+    V3ProspectingContactFilters:
+      type: object
+      properties:
+        contacts:
+          type: object
+          properties:
+            include:
+              $ref: '#/components/schemas/V3ContactFilterCriteria'
+            exclude:
+              $ref: '#/components/schemas/V3ContactFilterCriteria'
+        companies:
+          type: object
+          properties:
+            include:
+              $ref: '#/components/schemas/V3CompanyFilterCriteria'
+            exclude:
+              $ref: '#/components/schemas/V3CompanyFilterCriteria'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    V3PaginationRequest:
+      type: object
+      required:
+      - page
+      - size
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          default: 0
+          example: 0
+        size:
+          type: integer
+          minimum: 10
+          maximum: 100
+          default: 25
+          example: 25
+    V3CompanyProspectingFilters:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+        domains:
+          type: array
+          items:
+            type: string
+        ids:
+          type: array
+          items:
+            type: string
+        searchText:
+          type: string
+          maxLength: 200
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Location'
+        sizes:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Range'
+        revenues:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Range'
+        technologies:
+          type: array
+          items:
+            type: string
+        technologiesCondition:
+          type: string
+          enum:
+          - or
+          - and
+        mainIndustriesIds:
+          type: array
+          items:
+            type: integer
+        subIndustriesIds:
+          type: array
+          items:
+            type: integer
+        intentTopics:
+          type: array
+          items:
+            type: string
+        intentTopicsCondition:
+          type: string
+          enum:
+          - or
+          - and
+        intentMinScore:
+          type: integer
+          minimum: 1
+          maximum: 100
+        intentMaxScore:
+          type: integer
+          minimum: 1
+          maximum: 100
+        intentTopicsOperator:
+          type: string
+          enum:
+          - or
+          - and
+          - any
+          - all
+          description: 'Recommended over `intentTopicsCondition`. `any`/`all` are aliases for `or`/`and`. `intentTopicsCondition` is not deprecated and remains accepted.
+
+            '
+        topicCountThreshold:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Range'
+        sicCodes:
+          type: array
+          items:
+            type: string
+        naicsCodes:
+          type: array
+          items:
+            type: string
+        signals:
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string
+              example:
+              - headcountIncrease3m
+              - surgeInHiring
+              - linkedinActivityIntent
+            startDate:
+              type: string
+              format: date
+            filterByLocation:
+              type: array
+              items:
+                type: object
+                properties:
+                  country:
+                    type: string
+                  state:
+                    type: string
+                  startDate:
+                    type: string
+                    format: date
+            filterByDepartment:
+              type: array
+              items:
+                type: object
+                required:
+                - department
+                properties:
+                  department:
+                    type: string
+                    example: Engineering & Technical
+                  startDate:
+                    type: string
+                    format: date
+            filterByIntentCategory:
+              type: array
+              items:
+                type: string
+              description: 'Refines linkedinActivityIntent results by Bombora intent category. Applied only when linkedinActivityIntent is present in `types` (or selected via allSignals). Omit to match all categories. See GET /v3/companies/signals/filters/intentCategories for the full list of valid values.
+
+                '
+              example:
+              - Technology
+        foundedYear:
+          type: array
+          description: Filter by year the company was founded. Supports `min` (greater than or equal) and `max` (less than or equal) range operators.
+          items:
+            type: object
+            properties:
+              min:
+                type: integer
+                example: 1990
+              max:
+                type: integer
+                example: 2020
+        businessModel:
+          type: array
+          description: 'Filter by business model. Accepted values: B2B, B2C, B2G.'
+          items:
+            type: string
+            enum:
+            - B2B
+            - B2C
+            - B2G
+          example:
+          - B2B
+          - B2G
+        companyType:
+          type: array
+          description: 'Filter by company type. Accepted values: Government, Private Company, Public Company, Educational, Non Profit, Self Employed.'
+          items:
+            type: string
+            enum:
+            - Government
+            - Private Company
+            - Public Company
+            - Educational
+            - Non Profit
+            - Self Employed
+          example:
+          - Public Company
+          - Private Company
+        linkedinUrls:
+          type: array
+          description: Filter by company LinkedIn URLs.
+          items:
+            type: string
+          example:
+          - https://www.linkedin.com/company/microsoft
+        keywords:
+          type: array
+          description: Filter by keywords associated with the company.
+          items:
+            type: string
+          example:
+          - cloud
+          - artificial intelligence
+        specialities:
+          type: array
+          items:
+            type: string
+        exactSpecialities:
+          type: array
+          items:
+            type: string
+        exactKeywords:
+          type: array
+          items:
+            type: string
+        keywordsSearchFields:
+          type: array
+          items:
+            type: string
+        previousCompanyDomains:
+          type: array
+          items:
+            type: string
+        previousCompanyNames:
+          type: array
+          items:
+            type: string
+        geographicDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              country:
+                type: string
+              zipcode:
+                type: string
+              distance:
+                type: integer
+                description: Radius in miles.
+        locationsZipcodes:
+          type: array
+          items:
+            type: object
+            properties:
+              countryIso2:
+                type: string
+              zipcode:
+                type: string
+        headquarterZipcodes:
+          type: array
+          items:
+            type: object
+            properties:
+              countryIso2:
+                type: string
+              zipcode:
+                type: string
+    V3CanRevealItem:
+      type: object
+      description: Indicates a data type that can be revealed and its credit cost
+      properties:
+        field:
+          type: string
+          enum:
+          - emails
+          - phones
+          example: emails
+        credits:
+          type: integer
+          description: Credit cost (0 when already revealed for this account)
+          example: 1
+    V3PaginationResponse:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 25
+        total:
+          type: integer
+    V3Range:
+      type: object
+      description: Numeric range filter
+      properties:
+        min:
+          type: integer
+          minimum: 0
+          example: 1
+        max:
+          type: integer
+          example: 1000
+    V3ProspectingCompaniesResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CompanyPreview'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3ProspectingCompaniesRequest:
+      type: object
+      required:
+      - pagination
+      - filters
+      properties:
+        pagination:
+          $ref: '#/components/schemas/V3PaginationRequest'
+        filters:
+          type: object
+          required:
+          - companies
+          description: '`filters.contacts` cannot be combined with company `searchText`, `signals`, `intent`, or `technologies` on the same request — doing so returns `400` (contact filters are never silently ignored).
+
+            '
+          properties:
+            companies:
+              type: object
+              required:
+              - include
+              properties:
+                include:
+                  $ref: '#/components/schemas/V3CompanyProspectingFilters'
+                exclude:
+                  $ref: '#/components/schemas/V3CompanyProspectingFilters'
+            contacts:
+              type: object
+              properties:
+                include:
+                  $ref: '#/components/schemas/V3ContactsOnCompanySearchFilters'
+                exclude:
+                  $ref: '#/components/schemas/V3ContactsOnCompanySearchFilters'
+        tableId:
+          type: string
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '583021'
+        options:
+          type: object
+          properties:
+            includePartialProfiles:
+              type: boolean
+              default: false
+    V3ProspectingContactsResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3ContactPreview'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: api_key
+      description: 'Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+
+        Include this key in the `api_key` header for all requests.
+
+        '

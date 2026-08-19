@@ -1,0 +1,120 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/_original/lusha-openapi.yml (146 component schemas, 58 operations)
+description: >-
+  Entity graph of the Lusha v3 API, derived from the harvested OpenAPI's schema
+  $refs and id-reference fields. Two root entities — Contact and Company — carry
+  the whole model; everything else is a projection (preview vs enriched), a
+  container (Table), a subscription (Webhook), or a per-call billing record.
+  Ids are opaque strings; Lusha does not use typed id prefixes.
+identifiers:
+  style: opaque string ids
+  prefixes: none
+  alternate_keys:
+    contact: [id, linkedinUrl, email, firstName+lastName+companyName, firstName+lastName+companyDomain]
+    company: [id, domain, name]
+  correlation:
+    field: clientReferenceId
+    description: caller-supplied per-item key echoed back on the matching result
+  request_correlation:
+    field: requestId
+    description: returned on the response envelope of most v3 operations
+entities:
+- name: Contact
+  schemas: [V3ContactPreview, V3EnrichedContact, V3ContactSearchItem, V3LookAlikeContactResult,
+    V3BuyingGroupContact, V3SignalScoreContactResult]
+  key: id
+  description: >-
+    A person profile. Returned as a non-PII preview (has / canReveal) until an
+    Enrich call unlocks emails and phones.
+  fields_of_note:
+  - {name: has, description: data points known to exist on this profile}
+  - {name: canReveal, description: 'data points that can be unlocked, with per-field credit cost'}
+  - {name: roles, description: 'buying-group persona: decision_maker, potential_champion, end_user'}
+  - {name: score, description: buying-group relevance score 0-1}
+  - {name: signalScore, description: aggregate signal momentum 0-1}
+- name: Company
+  schemas: [V3CompanyPreview, V3EnrichedCompany, V3CompanySearchItem, V3LookAlikeCompanyResult,
+    V3SignalScoreCompanyResult, WebsiteVisitsCompanyResult]
+  key: id
+  alternate_key: domain
+- name: EmailAddress
+  schemas: [V3EmailAddress]
+  fields: [email, type, confidence, updateDate]
+- name: PhoneNumber
+  schemas: [V3PhoneNumber]
+  fields: [number, type, doNotCall, updateDate]
+- name: Location
+  schemas: [V3Location, V3CompanyLocation]
+- name: Signal
+  schemas: [V3ContactSignalsResponse, V3CompanySignalsResponse, LinkedinActivityIntentItem]
+  description: >-
+    A dated real-world event attached to a contact or company. Contact signals
+    are promotion / companyChange; company signals cover headcount, hiring,
+    web traffic, IT spend, news categories and LinkedIn activity intent.
+- name: Table
+  schemas: [TableMetadata, TableResponse, TableListResponse, TableCreateRequest, TableUpdateRequest]
+  key: tableId
+  description: >-
+    A persisted, enrichable collection of contacts or companies with dynamic
+    columns. Max 50,000 entities per table, max 500 tables per account.
+- name: TableColumn
+  schemas: [ColumnSummary, EntityColumnValue, ColumnsAddRequest, ColumnsRunRequest]
+  key: columnId
+- name: TableEntity
+  schemas: [TableEntity]
+  description: a Contact or Company row inside a Table, with its column values
+- name: Subscription
+  schemas: [SubscriptionResponse, SubscriptionWithoutSecret, OptOutSubscriptionResponse]
+  key: id
+  description: a webhook subscription binding one entity + signal types to one HTTPS URL
+- name: AuditLogEntry
+  schemas: [AuditLogEntry]
+  key: id
+  description: a single webhook delivery attempt with status, duration and error
+- name: Account
+  schemas: [AccountUsageResponse, CreditsUsage, PlanInfo, RateLimits, RateLimitTier, PricingEntry]
+  description: credits, plan, per-window rate-limit tiers and per-action credit pricing
+- name: Billing
+  schemas: [V3Billing, TableWrite]
+  description: >-
+    Per-call record of creditsCharged and resultsReturned, returned inline on the
+    response envelope of every credit-consuming operation.
+relationships:
+- {from: Contact, to: Company, type: belongs_to, via: company (V3EnrichedContactCompanyRef)}
+- {from: Contact, to: EmailAddress, type: has_many, via: emails}
+- {from: Contact, to: PhoneNumber, type: has_many, via: phones}
+- {from: Contact, to: Location, type: has_one, via: location}
+- {from: Contact, to: Signal, type: has_many, via: signalTypes}
+- {from: Contact, to: V3ContactTag, type: has_many, via: tags}
+- {from: Contact, to: Contact, type: has_many, via: 'lookalike seeds (getContactLookalikes)'}
+- {from: Company, to: Location, type: has_one, via: location}
+- {from: Company, to: Contact, type: has_many, via: 'buying group (getContactsBuyingGroup)'}
+- {from: Company, to: Signal, type: has_many, via: signalTypes}
+- {from: Company, to: V3NaicsCode, type: has_many, via: naicsCodes}
+- {from: Company, to: V3SicCode, type: has_many, via: sicCodes}
+- {from: Company, to: Company, type: has_many, via: 'lookalike seeds (getCompanyLookalikes)'}
+- {from: Table, to: TableColumn, type: has_many, via: columns}
+- {from: Table, to: TableEntity, type: has_many, via: entities}
+- {from: TableEntity, to: Contact, type: belongs_to, via: entityId}
+- {from: TableEntity, to: Company, type: belongs_to, via: entityId}
+- {from: Table, to: TableOwner, type: has_one, via: owner}
+- {from: Subscription, to: Contact, type: belongs_to, via: 'entityId (entityType=contact)'}
+- {from: Subscription, to: Company, type: belongs_to, via: 'entityId (entityType=company)'}
+- {from: AuditLogEntry, to: Subscription, type: belongs_to, via: subscriptionId}
+- {from: WebhookPayload, to: Subscription, type: belongs_to, via: subscriptionId}
+- {from: LinkedinActivityIntentItem, to: Company, type: belongs_to, via: companyId}
+- {from: LinkedinActivityIntentItem, to: Contact, type: has_many, via: contactsMentioned}
+- {from: LinkedinActivityIntentItem, to: Company, type: has_many, via: companiesMentioned}
+- {from: Signal, to: Table, type: writes_to, via: 'tableId (optional persistence)'}
+lifecycle_pattern:
+  name: search -> enrich
+  description: >-
+    The v3 pattern is two-phase: a search/prospecting/lookalike call returns
+    non-PII previews with `has` and `canReveal`, and a follow-up enrich call on
+    the returned ids spends credits to reveal emails and phones.
+  operations: [searchContacts, prospectingContacts, getContactLookalikes, enrichContacts]
+  single_call_alternative: [searchAndEnrichContacts, searchAndEnrichCompanies]
+schema_count: 146
+entity_count: 13
+relationship_count: 24

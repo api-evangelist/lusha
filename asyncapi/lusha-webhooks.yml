@@ -1,0 +1,117 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.lusha.com/apis/openapi (Webhooks section),
+  https://docs.lusha.com/user-guide/webhooks/how-to-set-up-webhooks-in-lusha,
+  openapi/lusha-webhooks-api-openapi.yml
+spec_type: none
+asyncapi_published: false
+asyncapi_note: >-
+  Lusha publishes NO AsyncAPI document — probed https://docs.lusha.com/asyncapi.yaml
+  (404) and searched the docs site and the lusha-oss GitHub org. The event surface
+  is real but is described only as REST subscription-management operations plus a
+  prose delivery contract, so it is captured here as a webhook catalogue rather
+  than fabricated into an AsyncAPI.
+description: >-
+  Lusha delivers signal events as HTTP POST callbacks to subscriber-registered
+  HTTPS endpoints. Subscriptions are per entity (a specific contact or company id)
+  and per signal type; the same account-level secret signs every delivery. There
+  is no fan-out event bus, no topic namespace, and no replay endpoint — but there
+  IS a full audit log with delivery statistics.
+transport: https-webhook
+delivery:
+  method: POST
+  https_required: true
+  https_note: HTTP endpoint URLs are rejected in production.
+  acknowledgment_required: true
+  acknowledgment_note: >-
+    The receiving endpoint must reply in the acknowledgment shape documented on
+    the createSubscription operation.
+  retries: true
+  retry_note: >-
+    Retried deliveries are not re-charged. A subscription that exceeds max retries
+    is disabled and carries blockReason ("Max retries exceeded") and blockedAt.
+  ordering: not specified
+security:
+  signature_header: X-Lusha-Signature
+  timestamp_header: X-Lusha-Timestamp
+  algorithm: HMAC-SHA256
+  signed_payload: '<X-Lusha-Timestamp> + "." + JSON.stringify(payload)'
+  comparison: constant-time (provider's Node.js example uses crypto.timingSafeEqual)
+  secret:
+    scope: account
+    read: GET /api/account/secret (getAccountSecret)
+    rotate: POST /api/account/secret/regenerate (regenerateAccountSecret)
+    note: >-
+      Shown once on creation. Regeneration invalidates the old secret for every
+      subscription on the account; a secret must exist before any webhook is
+      delivered.
+subscriptions:
+  entity_types: [contact, company]
+  per_request_max: 25
+  identified_by: entityId (Lusha contact or company id)
+  management_operations:
+  - {operationId: createSubscription, method: POST, path: /api/subscriptions}
+  - {operationId: listSubscriptions, method: GET, path: /api/subscriptions}
+  - {operationId: getSubscriptionById, method: GET, path: '/api/subscriptions/{id}'}
+  - {operationId: updateSubscription, method: PATCH, path: '/api/subscriptions/{id}'}
+  - {operationId: deleteSubscriptions, method: POST, path: /api/subscriptions/delete}
+  - {operationId: testSubscription, method: POST, path: '/api/subscriptions/{id}/test'}
+  - {operationId: createOptOutSubscription, method: POST, path: /api/subscriptions/opt-out}
+  - {operationId: getAccountSecret, method: GET, path: /api/account/secret}
+  - {operationId: regenerateAccountSecret, method: POST, path: /api/account/secret/regenerate}
+  - {operationId: getAuditLogs, method: GET, path: /api/audit-logs}
+  - {operationId: getAuditLogStats, method: GET, path: /api/audit-logs/stats}
+events:
+- name: contact signal
+  entity_type: contact
+  signal_types: [promotion, companyChange, allSignals]
+  payload: signal event for the subscribed contact, including creditsCharged
+  billing: credits charged once per delivered signal
+- name: company signal
+  entity_type: company
+  signal_types:
+  - headcountIncrease1m
+  - headcountIncrease3m
+  - headcountIncrease6m
+  - headcountIncrease12m
+  - headcountDecrease1m
+  - headcountDecrease3m
+  - headcountDecrease6m
+  - headcountDecrease12m
+  - surgeInHiring
+  - surgeInHiringByDepartment
+  - surgeInHiringByLocation
+  - websiteTrafficIncrease
+  - websiteTrafficDecrease
+  - itSpendIncrease
+  - itSpendDecrease
+  - riskNews
+  - commercialActivityNews
+  - corporateStrategyNews
+  - financialEventsNews
+  - peopleNews
+  - marketIntelligenceNews
+  - productActivityNews
+  - linkedinActivityIntent
+  - allSignals
+  payload: signal event for the subscribed company, including creditsCharged
+  billing: credits charged once per delivered signal
+- name: contact opt-out
+  entity_type: contact
+  payload: OptOutWebhookPayload
+  description: >-
+    Fired when a contact requests removal from data processing, so the subscriber
+    can action the removal in their own CRM/outreach systems.
+  billing: not credit-charged
+  subscribe_via: createOptOutSubscription
+observability:
+  audit_log: GET /api/audit-logs
+  audit_stats: GET /api/audit-logs/stats
+  retention_successful_days: 90
+  retention_failed_days: 180
+  rate_limit: 100 requests/minute per account (webhook management endpoints)
+signal_discovery:
+  contact_types: GET /v3/contacts/signals/types
+  company_types: GET /v3/companies/signals/types
+  company_filters: GET /v3/companies/signals/filters

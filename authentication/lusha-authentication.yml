@@ -1,15 +1,81 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/lusha-openapi.yml
+generated: '2026-08-13'
+method: searched
+source: openapi/lusha-*-api-openapi.yml
+docs: https://docs.lusha.com/apis/openapi/section/authentication
+description: >-
+  One credential type on the REST API: a Lusha API key issued in the dashboard
+  and sent in the `api_key` request header on every call. No OAuth, no bearer
+  tokens, no signing, no mTLS. API key issuance is itself plan-gated — the docs
+  restrict keys to Scale-plan users or an active Scale trial. The agent surface
+  is different: the hosted MCP server accepts either an OAuth 2.1 authorization
+  code (scope `mcp`) or the same API key in a lowercase `x-api-key` header.
 summary:
   types:
   - apiKey
   api_key_in:
   - header
+  oauth2_flows:
+  - authorizationCode
+  oauth2_scope: mcp
+  oauth2_applies_to: mcp.lusha.com only
 schemes:
 - name: ApiKeyAuth
   type: apiKey
   in: header
   parameter: api_key
+  description: |-
+    Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+    Include this key in the `api_key` header for all requests.
+  issuance: https://dashboard.lusha.com/api/manage-api-keys
+  applies_to: https://api.lusha.com (all 58 v3 operations)
   sources:
-  - openapi/lusha-openapi.yml
+  - openapi/lusha-account-api-openapi.yml
+  - openapi/lusha-buying-group-api-openapi.yml
+  - openapi/lusha-companies-tables-api-openapi.yml
+  - openapi/lusha-contacts-tables-api-openapi.yml
+  - openapi/lusha-enrich-api-openapi.yml
+  - openapi/lusha-filters-api-openapi.yml
+  - openapi/lusha-lookalikes-api-openapi.yml
+  - openapi/lusha-prospecting-api-openapi.yml
+  - openapi/lusha-search-api-openapi.yml
+  - openapi/lusha-search-enrich-api-openapi.yml
+  - openapi/lusha-signals-api-openapi.yml
+  - openapi/lusha-webhooks-api-openapi.yml
+  - openapi/lusha-website-visits-api-openapi.yml
+- name: LushaMCPApiKey
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  applies_to: https://mcp.lusha.com
+  description: >-
+    Same Lusha API key, different header name, for MCP clients that do not do
+    OAuth (VS Code, Cursor, n8n, Gemini CLI). The provider documents that the
+    header must be lowercase `x-api-key` and that `Authorization: Bearer` fails.
+  sources: [https://docs.lusha.com/mcp-docs]
+- name: LushaMCPOAuth
+  type: oauth2
+  applies_to: https://mcp.lusha.com
+  authorization_server: https://auth.lusha.com
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://auth.lusha.com/oauth-ui/authorize
+    tokenUrl: https://auth.lusha.com/oauth/token
+    scopes: [mcp]
+    pkce: S256
+    dynamic_client_registration: true
+  used_by: [Claude connector, ChatGPT app, Codex plugin]
+  sources:
+  - well-known/lusha-oauth-authorization-server.json
+  - well-known/lusha-oauth-protected-resource.json
+key_handling_guidance:
+- Server-side environments only; the docs say not to embed the key client-side.
+- Store in an OS keychain, secrets manager or environment variable, not in shared config files.
+- Rotate keys periodically and remove unused MCP connectors.
+defects:
+- issue: >-
+    The help-centre 401 article instructs callers to send
+    `Authorization: Bearer YOUR_API_KEY`, which contradicts both the API
+    reference and the OpenAPI securityScheme (apiKey, in header, name `api_key`).
+    An agent that follows the help centre will get 401 on every call.
+  url: https://docs.lusha.com/user-guide/lushas-api/lusha-api-error-codes-reference
+  authoritative: openapi securityScheme ApiKeyAuth (api_key header)

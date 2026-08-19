@@ -1,0 +1,50 @@
+# API Evangelist Overlay — generated 2026-08-13, method: generated
+# Captures API Evangelist enhancements over the provider's published document.
+# Never mutates openapi/ — apply with an Overlay 1.0.0 processor.
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Lusha Search
+  version: 1.0.0
+extends: openapi/lusha-search-api-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: lusha
+    x-apievangelist-source: https://docs.lusha.com/_spec/apis/@v3/openapi.yaml
+    x-apievangelist-harvested: '2026-08-13'
+    x-apievangelist-artifacts:
+      authentication: authentication/lusha-authentication.yml
+      conventions: conventions/lusha-conventions.yml
+      errors: errors/lusha-problem-types.yml
+      rate-limits: rate-limits/lusha-rate-limits.yml
+      lifecycle: lifecycle/lusha-lifecycle.yml
+      plans: plans/lusha-plans-pricing.yml
+      mcp: mcp/lusha-mcp.yml
+      data-model: data-model/lusha-data-model.yml
+- target: $.info
+  update:
+    x-apievangelist-note: info.version is an empty string in the published document; the provider versions
+      the API in the URI path (/v3/) and tracks releases as semver in a dated changelog (https://docs.lusha.com/changelog).
+- target: $.servers
+  update:
+  - url: https://api.lusha.com
+    description: Production
+- target: $.components.securitySchemes.ApiKeyAuth
+  update:
+    x-apievangelist-issuance: https://dashboard.lusha.com/api/manage-api-keys
+    x-apievangelist-plan-gated: API key issuance is restricted to Scale-plan users or an active Scale
+      trial
+- target: $.paths.*.*.responses.429
+  update:
+    x-apievangelist-rate-limit-headers:
+    - x-rate-limit-minute
+    - x-minute-requests-left
+    - x-minute-usage
+    - x-rate-limit-hourly
+    - x-hourly-requests-left
+    - x-hourly-usage
+    - x-rate-limit-daily
+    - x-daily-requests-left
+    - x-daily-usage
+    x-apievangelist-retry-after: false
+    x-apievangelist-backoff: exponential, 1s doubling to a 60s cap

@@ -1,0 +1,120 @@
+generated: '2026-08-13'
+method: searched
+status: published
+source: https://docs.lusha.com/mcp-docs
+description: >-
+  Lusha ships a first-party hosted MCP server at https://mcp.lusha.com plus a
+  local stdio package on npm (@lusha-org/mcp) and a Gemini CLI extension. The
+  hosted endpoint accepts either an OAuth authorization-code flow (used by the
+  official Claude, ChatGPT and Codex connectors) or a raw Lusha API key passed
+  in the lowercase `x-api-key` header. Tool list below is the provider's own
+  published table; live tools/list introspection is auth-gated (HTTP 401), so
+  input schemas are not captured here — see mcp/lusha-tool-crosswalk.yml for
+  each tool's real input contract via its backing REST operation.
+deployment:
+  mode: both
+  endpoint: https://mcp.lusha.com
+  install: npx @lusha-org/mcp@latest
+  package: https://www.npmjs.com/package/@lusha-org/mcp
+  auth: oauth
+  verified: probed
+server:
+  name: lusha
+  transport: http
+  url: https://mcp.lusha.com
+  protocol: streamable-http
+  docs: https://docs.lusha.com/mcp-docs
+  source_repository: https://github.com/lusha-oss/lusha-public-api-mcp
+authentication:
+  methods:
+  - type: oauth
+    clients:
+    - Claude (https://claude.ai/directory/connectors/lusha)
+    - ChatGPT (https://chatgpt.com/apps?q=lusha)
+    - Codex plugin directory
+    authorization_server: https://auth.lusha.com
+    metadata: well-known/lusha-oauth-authorization-server.json
+    protected_resource: well-known/lusha-oauth-protected-resource.json
+    scopes:
+    - mcp
+    grant_types: [authorization_code, refresh_token]
+    pkce: S256
+    dynamic_client_registration: https://auth.lusha.com/oauth/register
+  - type: api-key
+    header: x-api-key
+    note: >-
+      Header name must be lowercase `x-api-key`; the provider documents that
+      `Authorization: Bearer` fails against the hosted endpoint for API-key
+      clients (the stdio package and the Gemini httpUrl config use their own
+      forms). Keys are issued at https://dashboard.lusha.com/api/manage-api-keys.
+    clients: [VS Code / GitHub Copilot, Cursor, n8n, Gemini CLI, any MCP client]
+tools:
+- name: contacts_search
+  description: Enrich contact data using email, LinkedIn URL, or name + company
+- name: companies_search
+  description: Retrieve company data using domain or company name
+- name: prospecting_contact_filters
+  description: Get available filter values for contact prospecting (no credits charged)
+- name: prospecting_contact_search
+  description: Search contacts by job title, seniority, location, department, and more
+- name: prospecting_contact_enrich
+  description: Enrich contacts by ID to reveal emails and phones (credits consumed)
+- name: prospecting_company_filters
+  description: Get available filter values for company prospecting (no credits charged)
+- name: prospecting_company_search
+  description: Search companies by firmographic and technographic filters
+- name: prospecting_company_enrich
+  description: Enrich companies by ID for detailed firmographic data
+- name: lookalike_contacts
+  description: Find contacts similar to a seed contact
+- name: lookalike_companies
+  description: Find companies similar to a seed company
+- name: signals_contact_filters
+  description: Get available filter values for contact signals (no credits charged)
+- name: signals_contacts_search
+  description: Resolve contacts and return recent activity signals
+- name: signals_contacts_get
+  description: Get signals for known contacts by ID
+- name: signals_company_filters
+  description: Get available filter values for company signals (no credits charged)
+- name: signals_companies_search
+  description: Resolve companies and return recent activity signals
+- name: signals_companies_get
+  description: Get signals for known companies by ID
+- name: account_usage
+  description: Check credit balance, rate-limit status, and plan info
+- name: recommendations_contacts_get
+  description: Paginated, scored contact recommendations with signals and Target Profile attribution
+- name: recommendations_companies_get
+  description: Paginated, scored company recommendations with signals and Target Profile attribution
+- name: recommendations_status_get
+  description: Check whether a user's recommendations are none, computing, or done
+- name: recommendations_contacts_filters
+  description: Valid signal types and Target Profiles for filtering contact recommendations
+- name: recommendations_companies_filters
+  description: Valid signal types and Target Profiles for filtering company recommendations
+tool_count: 22
+packages:
+- registry: npm
+  name: '@lusha-org/mcp'
+  transport: stdio
+  install: npx @lusha-org/mcp@latest
+  env: LUSHA_API_KEY
+- registry: github
+  name: lusha-oss/lusha-gemini-extension
+  install: gemini extensions install lusha-oss/lusha-gemini-extension
+  commands: ['/lusha:prospect', '/lusha:enrich']
+x-evidence:
+- url: https://mcp.lusha.com
+  method: POST
+  body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  http_status: 401
+  response: invalid_request
+  note: live tools/list is auth-gated; tool names/descriptions taken from the provider's docs
+- url: https://mcp.lusha.com/.well-known/oauth-protected-resource
+  http_status: 200
+- url: https://mcp.lusha.com/.well-known/oauth-authorization-server
+  http_status: 200
+- url: https://registry.npmjs.org/@lusha-org/mcp
+  http_status: 200
+  note: latest 1.2.0 published 2025-08-24

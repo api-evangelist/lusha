@@ -1,0 +1,93 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Lusha API Documentation Filters API"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "api_key",
+      "value": "{{api_key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Filters",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Contact Filter Types (Discovery)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/prospecting/filters"
+          },
+          "docs": "Returns all available filter types for contact prospecting and whether each requires a search query.\n"
+        },
+        {
+          "info": {
+            "name": "Get Contact Filter Values",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/contacts/prospecting/filters/:filterType",
+            "params": [
+              {
+                "name": "filterType",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns valid values for a single contact filter type.\n\n| Filter type | Query required? |\n|---|---|\n| `departments` | No |\n| `seniority` | No |\n| `existingDataPoints` | No |\n| `countries` | No |\n| `locations` | Yes (2-256 chars) |\n"
+        },
+        {
+          "info": {
+            "name": "Get Company Filter Types (Discovery)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/prospecting/filters"
+          },
+          "docs": "Returns all available filter types for company prospecting and whether each requires a search query.\n"
+        },
+        {
+          "info": {
+            "name": "Get Company Filter Values",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lusha.com/v3/companies/prospecting/filters/:filterType",
+            "params": [
+              {
+                "name": "filterType",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns valid values for a single company filter type.\n\n| Filter type | Query required? |\n|---|---|\n| `sizes` | No |\n| `revenues` | No |\n| `sics` | No |\n| `naics` | No |\n| `intentTopics` | No |\n| `industriesLabels` | No |\n| `names` | Yes (2-256 chars) |\n| `technologies` | Yes (2-256 chars) |\n| `locations` | Yes (2-256 chars) |\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
