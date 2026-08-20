@@ -34,6 +34,17 @@ tags:
   - Intent
   - Signals
   - Lookalikes
+  - Webhook
+  - MCP
+tags_raw:
+  - Sales Intelligence
+  - B2B
+  - Enrichment
+  - Contact Data
+  - Prospecting
+  - Intent
+  - Signals
+  - Lookalikes
   - Webhooks
   - MCP
 created: '2026-05-08'
@@ -121,6 +132,9 @@ apis:
   baseURL: https://api.lusha.com
   tags:
   - Lookalikes
+  - Account Based Marketing
+  tags_raw:
+  - Lookalikes
   - ABM
   properties:
   - type: OpenAPI
@@ -138,6 +152,9 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/buying-group
   baseURL: https://api.lusha.com
   tags:
+  - Account Based Marketing
+  - Buying Group
+  tags_raw:
   - ABM
   - Buying Group
   properties:
@@ -243,6 +260,9 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/webhooks
   baseURL: https://api.lusha.com
   tags:
+  - Webhook
+  - Signals
+  tags_raw:
   - Webhooks
   - Signals
   properties:
