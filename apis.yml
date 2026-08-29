@@ -11,6 +11,18 @@ description: >-
   where previews are free of PII and reveals spend credits. Lusha also ships a first-party hosted MCP
   server at mcp.lusha.com with 22 tools, OAuth 2.1 discovery and official Claude, ChatGPT and Codex
   connectors, plus HMAC-signed webhooks for real-time signal delivery.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
