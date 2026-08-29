@@ -94,15 +94,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   responses:
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     Forbidden:
       description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
       content:
@@ -163,6 +154,15 @@ components:
           description: Requests remaining in current minute window
           schema:
             type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
   schemas:
     AccountUsageResponse:
       type: object
@@ -177,6 +177,15 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/PricingEntry'
+    PricingEntry:
+      type: object
+      properties:
+        credits:
+          type: number
+          example: 1
+        perQuantity:
+          type: number
+          example: 25
     RateLimitTier:
       type: object
       properties:
@@ -193,59 +202,6 @@ components:
           type: string
           format: date-time
           example: '2026-03-31T00:00:00.000Z'
-    CreditsUsage:
-      type: object
-      properties:
-        total:
-          type: number
-          example: 10000
-        used:
-          type: number
-          example: 1500
-        remaining:
-          type: number
-          example: 8500
-    RateLimits:
-      type: object
-      properties:
-        daily:
-          allOf:
-          - $ref: '#/components/schemas/RateLimitTier'
-        hourly:
-          allOf:
-          - $ref: '#/components/schemas/RateLimitTier'
-        minute:
-          allOf:
-          - $ref: '#/components/schemas/RateLimitTier'
-    PricingEntry:
-      type: object
-      properties:
-        credits:
-          type: number
-          example: 1
-        perQuantity:
-          type: number
-          example: 25
-    PlanInfo:
-      type: object
-      properties:
-        category:
-          type: string
-          example: professional
-        renewalType:
-          type: string
-          example: annual
-        startDate:
-          type: string
-          format: date-time
-          example: '2026-01-01T00:00:00.000Z'
-        endDate:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Renewal/end date. Omitted (null) for free accounts, since they have no renewal cycle.
-          example: '2027-01-01T00:00:00.000Z'
     ErrorResponse:
       type: object
       required:
@@ -267,6 +223,50 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    RateLimits:
+      type: object
+      properties:
+        daily:
+          allOf:
+          - $ref: '#/components/schemas/RateLimitTier'
+        hourly:
+          allOf:
+          - $ref: '#/components/schemas/RateLimitTier'
+        minute:
+          allOf:
+          - $ref: '#/components/schemas/RateLimitTier'
+    CreditsUsage:
+      type: object
+      properties:
+        total:
+          type: number
+          example: 10000
+        used:
+          type: number
+          example: 1500
+        remaining:
+          type: number
+          example: 8500
+    PlanInfo:
+      type: object
+      properties:
+        category:
+          type: string
+          example: professional
+        renewalType:
+          type: string
+          example: annual
+        startDate:
+          type: string
+          format: date-time
+          example: '2026-01-01T00:00:00.000Z'
+        endDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Renewal/end date. Omitted (null) for free accounts, since they have no renewal cycle.
+          example: '2027-01-01T00:00:00.000Z'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -66,9 +66,9 @@ apis:
 - aid: lusha:lusha-search-api
   name: Lusha Search API
   description: >-
-    Find contacts or companies from known identifiers — contact id, LinkedIn URL, email or
-    name + company; company id, name or domain — and return a non-PII preview with `has` and
-    `canReveal` fields describing what exists and what can be unlocked.
+    Find contacts or companies from known identifiers — contact id, LinkedIn URL, email or name + company;
+    company id, name or domain — and return a non-PII preview with `has` and `canReveal` fields describing
+    what exists and what can be unlocked.
   humanURL: https://docs.lusha.com/apis/openapi/search
   baseURL: https://api.lusha.com
   tags:
@@ -84,9 +84,8 @@ apis:
 - aid: lusha:lusha-enrichment-api
   name: Lusha Enrich API
   description: >-
-    Reveal full contact and company profiles by Lusha id, with an explicit `reveal` list controlling
-    which fields are unlocked and charged, and optional waterfall fall-through to enabled third-party
-    data providers.
+    Reveal full contact and company profiles by Lusha id, with an explicit `reveal` list controlling which
+    fields are unlocked and charged, and optional waterfall fall-through to enabled third-party data providers.
   humanURL: https://docs.lusha.com/apis/openapi/enrich
   baseURL: https://api.lusha.com
   tags:
@@ -102,9 +101,8 @@ apis:
 - aid: lusha:lusha-search-enrich-api
   name: Lusha Search & Enrich API
   description: >-
-    Resolve an identifier and return the fully revealed contact or company record in a single call,
-    collapsing the two-phase search-then-enrich pattern where the caller has already decided to spend
-    credits.
+    Resolve an identifier and return the fully revealed contact or company record in a single call, collapsing
+    the two-phase search-then-enrich pattern where the caller has already decided to spend credits.
   humanURL: https://docs.lusha.com/apis/openapi/search-and-enrich
   baseURL: https://api.lusha.com
   tags:
@@ -121,8 +119,8 @@ apis:
   name: Lusha Prospecting API
   description: >-
     Filter-based search across Lusha's contact and company database — job title, seniority, department,
-    location, company size, revenue, industry, technology and intent — with paged results and a
-    dedupe session so successive pages do not repeat entities.
+    location, company size, revenue, industry, technology and intent — with paged results and a dedupe
+    session so successive pages do not repeat entities.
   humanURL: https://docs.lusha.com/apis/openapi/prospecting
   baseURL: https://api.lusha.com
   tags:
@@ -138,8 +136,8 @@ apis:
 - aid: lusha:lusha-lookalike-api
   name: Lusha Lookalikes API
   description: >-
-    AI-powered similarity search that expands a seed list of contacts or companies into comparable
-    profiles, with exclusion lists, a dedupe session id and optional persistence into a Lusha table.
+    AI-powered similarity search that expands a seed list of contacts or companies into comparable profiles,
+    with exclusion lists, a dedupe session id and optional persistence into a Lusha table.
   humanURL: https://docs.lusha.com/apis/openapi/lookalikes
   baseURL: https://api.lusha.com
   tags:
@@ -179,9 +177,9 @@ apis:
 - aid: lusha:lusha-signals-api
   name: Lusha Signals API
   description: >-
-    Real-world activity data for contacts and companies — promotions and job changes on the contact
-    side; headcount movement, hiring surges, web traffic, IT spend, news classes and LinkedIn activity
-    intent on the company side — as raw dated events or as a single 0-1 momentum score per entity.
+    Real-world activity data for contacts and companies — promotions and job changes on the contact side;
+    headcount movement, hiring surges, web traffic, IT spend, news classes and LinkedIn activity intent
+    on the company side — as raw dated events or as a single 0-1 momentum score per entity.
   humanURL: https://docs.lusha.com/apis/openapi/signals
   baseURL: https://api.lusha.com
   tags:
@@ -197,8 +195,8 @@ apis:
 - aid: lusha:lusha-website-visits-api
   name: Lusha Website Visitors API
   description: >-
-    Companies ranked by website-visit signals for domains you track, filtered by score band, visitor
-    country, session counts, unique visitors, high-intent pageviews and recency.
+    Companies ranked by website-visit signals for domains you track, filtered by score band, visitor country,
+    session counts, unique visitors, high-intent pageviews and recency.
   humanURL: https://docs.lusha.com/apis/openapi/website-visits
   baseURL: https://api.lusha.com
   tags:
@@ -267,8 +265,8 @@ apis:
   name: Lusha Webhooks API
   description: >-
     Subscription management for real-time signal callbacks — bulk create and delete up to 25 items per
-    request, account-level HMAC-SHA256 secret with rotation, delivery test, contact opt-out
-    notifications, and a delivery audit log with statistics.
+    request, account-level HMAC-SHA256 secret with rotation, delivery test, contact opt-out notifications,
+    and a delivery audit log with statistics.
   humanURL: https://docs.lusha.com/apis/openapi/webhooks
   baseURL: https://api.lusha.com
   tags:
@@ -306,10 +304,10 @@ apis:
 - aid: lusha:mcp
   name: Lusha MCP Server
   description: >-
-    First-party hosted Model Context Protocol server exposing 22 Lusha tools over streamable HTTP.
-    Authenticates with OAuth 2.1 (scope `mcp`, PKCE S256, dynamic client registration at
-    auth.lusha.com) for the official Claude, ChatGPT and Codex connectors, or with a Lusha API key in
-    a lowercase `x-api-key` header for every other client. A local stdio build ships on npm.
+    First-party hosted Model Context Protocol server exposing 22 Lusha tools over streamable HTTP. Authenticates
+    with OAuth 2.1 (scope `mcp`, PKCE S256, dynamic client registration at auth.lusha.com) for the official
+    Claude, ChatGPT and Codex connectors, or with a Lusha API key in a lowercase `x-api-key` header for
+    every other client. A local stdio build ships on npm.
   humanURL: https://docs.lusha.com/mcp-docs
   baseURL: https://mcp.lusha.com
   tags:
@@ -322,6 +320,126 @@ apis:
     url: mcp/lusha-tool-crosswalk.yml
   - type: Documentation
     url: https://docs.lusha.com/mcp-docs
+- aid: lusha:lusha-account-management-api
+  name: Lusha Account Management API
+  description: >-
+    Manage your account and monitor usage.
+
+
+    Use this endpoint to:
+
+    - Monitor credit usage
+
+    - Understand consumption patterns
+
+    - Align API usage with plan limits
+
+    - Support governance and production operations
+
+
+    Account-level insights are especially important for teams running Lusha at scale or across multiple
+    systems.
+  humanURL: https://docs.lusha.com/apis/openapi/search
+  baseURL: https://api.lusha.com
+  tags:
+  - Account Management
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-account-management-api-openapi.yml
+- aid: lusha:lusha-company-filters-api
+  name: Lusha Company Filters API
+  description: Available filters for company searches
+  humanURL: https://docs.lusha.com/apis/openapi/search
+  baseURL: https://api.lusha.com
+  tags:
+  - Company Filters
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-company-filters-api-openapi.yml
+- aid: lusha:lusha-contact-filters-api
+  name: Lusha Contact Filters API
+  description: Available filters for contact searches
+  humanURL: https://docs.lusha.com/apis/openapi/search
+  baseURL: https://api.lusha.com
+  tags:
+  - Contact Filters
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-contact-filters-api-openapi.yml
+- aid: lusha:lusha-enrichment-api
+  name: Lusha Enrichment API
+  description: >-
+    **What is enrichment?**
+
+
+    Enrichment is the process of adding missing or updated data to existing contact or company records.
+
+
+    Use enrichment to:
+
+    - Complete CRM records
+
+    - Improve outbound accuracy and deliverability
+
+    - Keep records current as people and companies change
+
+
+    > Enrichment can be performed in real time or in bulk, depending on the endpoint and use case.
+
+
+    **Available enrichment APIs**
+
+
+    Person enrichment:
+
+    - **Search single contact** — Enrich one contact at a time
+
+    - **Search multiple contacts** — Bulk enrich contacts
+
+
+    Company enrichment:
+
+    - **Search a single company** — Enrich one company at a time
+
+    - **Search multiple companies** — Bulk enrich companies
+  humanURL: https://docs.lusha.com/apis/openapi/search
+  baseURL: https://api.lusha.com
+  tags:
+  - Enrichment
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-enrichment-api-openapi.yml
+- aid: lusha:lusha-prospecting-search-enrich-api
+  name: Lusha Prospecting - Search & Enrich API
+  description: >-
+    With Lusha's Prospecting API, you can query Lusha's extensive database based on specific criteria
+    (such as job title, seniority, location, and more) to retrieve detailed contact and company information.
+
+
+    The Prospecting API is designed to help you generate new records (contacts or companies) for your
+    CRM system, using filters that align with your Ideal Customer Profile (ICP).
+
+
+    This process involves three main steps:
+
+
+    | Step | API | Description |
+
+    |------|-----|-------------|
+
+    | 1 | **Filters API** | Apply filters to refine your search *(check available Contact and Company
+    filter endpoints)* |
+
+    | 2 | **Search API** | Query Contacts or Companies using the available filters |
+
+    | 3 | **Enrich API** | Get full details of Contacts and Companies from the search results |
+  humanURL: https://docs.lusha.com/apis/openapi/search
+  baseURL: https://api.lusha.com
+  tags:
+  - Prospecting - Search & Enrich
+  properties:
+  - type: OpenAPI
+    url: openapi/lusha-prospecting-search-enrich-api-openapi.yml
 common:
   - type: Website
     url: https://www.lusha.com/

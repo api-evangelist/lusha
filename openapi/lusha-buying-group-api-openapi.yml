@@ -147,22 +147,127 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
+  responses:
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        x-rate-limit-daily:
+          description: Total requests allowed per day
+          schema:
+            type: integer
+        x-daily-requests-left:
+          description: Requests remaining in daily quota
+          schema:
+            type: integer
+        x-rate-limit-hourly:
+          description: Total requests allowed per hour
+          schema:
+            type: integer
+        x-hourly-requests-left:
+          description: Requests remaining in hourly quota
+          schema:
+            type: integer
+        x-rate-limit-minute:
+          description: Total requests allowed per minute
+          schema:
+            type: integer
+        x-minute-requests-left:
+          description: Requests remaining in current minute window
+          schema:
+            type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    PaymentRequired:
+      description: Payment required - insufficient credits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
   schemas:
-    V3BuyingGroupResponse:
+    V3BuyingGroupCompanyResult:
       type: object
       properties:
-        requestId:
+        clientReferenceId:
           type: string
-          format: uuid
-          example: 951d46da-24f9-4608-84bf-5e70a10bf851
-        results:
+          example: comp-ref-1
+        companyId:
+          type: string
+          example: v1.ocoj3UrkPqHcR8yAEosYFTuVXTH282LP
+        contacts:
           type: array
           items:
-            $ref: '#/components/schemas/V3BuyingGroupCompanyResult'
-        pagination:
-          $ref: '#/components/schemas/V3PaginationResponse'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
+            $ref: '#/components/schemas/V3BuyingGroupContact'
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3BuyingGroupCompanyItem:
+      type: object
+      description: Identifies one target company. Provide exactly one of domain or id.
+      properties:
+        clientReferenceId:
+          type: string
+          description: Optional caller-supplied token, echoed back on the matching result.
+          example: comp-ref-1
+        domain:
+          type: string
+          example: acme.com
+        id:
+          type: string
+          description: Lusha company ID.
+          example: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
+    V3PaginationResponse:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 25
+        total:
+          type: integer
     V3BuyingGroupRequest:
       type: object
       required:
@@ -207,6 +312,27 @@ components:
               maximum: 100
               default: 100
               example: 100
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
     V3CanRevealItem:
       type: object
       description: Indicates a data type that can be revealed and its credit cost
@@ -315,59 +441,21 @@ components:
           example: 0.8872673511505127
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3PaginationResponse:
+    V3BuyingGroupResponse:
       type: object
       properties:
-        page:
-          type: integer
-          example: 0
-        size:
-          type: integer
-          example: 25
-        total:
-          type: integer
-    V3BuyingGroupCompanyResult:
-      type: object
-      properties:
-        clientReferenceId:
+        requestId:
           type: string
-          example: comp-ref-1
-        companyId:
-          type: string
-          example: v1.ocoj3UrkPqHcR8yAEosYFTuVXTH282LP
-        contacts:
+          format: uuid
+          example: 951d46da-24f9-4608-84bf-5e70a10bf851
+        results:
           type: array
           items:
-            $ref: '#/components/schemas/V3BuyingGroupContact'
-        error:
-          $ref: '#/components/schemas/V3ItemError'
-    V3BuyingGroupCompanyItem:
-      type: object
-      description: Identifies one target company. Provide exactly one of domain or id.
-      properties:
-        clientReferenceId:
-          type: string
-          description: Optional caller-supplied token, echoed back on the matching result.
-          example: comp-ref-1
-        domain:
-          type: string
-          example: acme.com
-        id:
-          type: string
-          description: Lusha company ID.
-          example: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
+            $ref: '#/components/schemas/V3BuyingGroupCompanyResult'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
     V3ItemError:
       type: object
       description: Per-item error in a batch response
@@ -383,106 +471,18 @@ components:
         message:
           type: string
           example: Contact not found
-    ErrorResponse:
+    V3Billing:
       type: object
-      required:
-      - statusCode
-      - message
+      description: Credit usage summary for a V3 API request
       properties:
-        statusCode:
+        creditsCharged:
           type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-  responses:
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
-    PaymentRequired:
-      description: Payment required - insufficient credits
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 402
-            message: Insufficient credits for this operation
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
-    TooManyRequests:
-      description: Too many requests - rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 429
-            message: Too many requests. Please wait before making another request.
-      headers:
-        x-rate-limit-daily:
-          description: Total requests allowed per day
-          schema:
-            type: integer
-        x-daily-requests-left:
-          description: Requests remaining in daily quota
-          schema:
-            type: integer
-        x-rate-limit-hourly:
-          description: Total requests allowed per hour
-          schema:
-            type: integer
-        x-hourly-requests-left:
-          description: Requests remaining in hourly quota
-          schema:
-            type: integer
-        x-rate-limit-minute:
-          description: Total requests allowed per minute
-          schema:
-            type: integer
-        x-minute-requests-left:
-          description: Requests remaining in current minute window
-          schema:
-            type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

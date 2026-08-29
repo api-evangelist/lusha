@@ -1,0 +1,1915 @@
+openapi: 3.2.0
+info:
+  title: Lusha API Documentation Prospecting - Search & Enrich API
+  version: ''
+  x-logo:
+    url: https://www.lusha.com/logo.png
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
+  description: "<blockquote class=\"callout-warning\">\n\n⚠️ **This version is soon to be deprecated.** Please [migrate to V3](/apis/openapi).\n\n</blockquote>\n\n---\n\nLusha provides a RESTful API that allows you to query a comprehensive\ndataset of business profiles and company information.\n\nIt is designed for teams building prospecting, enrichment, automation, and analytics workflows that require accurate, continuously updated business data. The API supports both real-time and bulk use cases and is suitable for production environments.\n\nUse the Lusha API to search for new prospects, enrich existing records, react to real-world changes, and expand coverage using lookalike recommendations.\n\n*All API requests should be made over HTTPS (SSL), and the response bodies are delivered in JSON format.*\n\n---\n    <style>\n    body {\n        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;\n        margin: 0;\n        padding: 0;\n        background: #ffffff;\n    }\n\n    .endpoint-link {\n        color: #0969da;\n        text-decoration: none;\n        transition: all 0.2s ease;\n    }\n\n    .endpoint-link:hover {\n        color: #0550ae;\n        text-decoration: underline;\n    }\n\n    .endpoint-url {\n        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;\n        font-size: 9px;\n        color: #6b7280;\n        background: #f3f4f6;\n        padding: 3px 6px;\n        border-radius: 4px;\n        margin-top: 8px;\n        margin-bottom: 10px;\n        display: inline-block;\n    }\n\n    details summary:hover {\n        color: #4b5563;\n    }\n</style>\n\n<div style=\"max-width: 900px; margin: 0 auto; padding: 15px;\">\n    <div style=\"display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;\">\n\n        <!-- Person Card -->\n        <div style=\"background: #fafbfc; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px; min-height: 160px;\">\n            <h3 style=\"margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;\">\n                Person\n            </h3>\n            <ul style=\"font-size: 12px; line-height: 1.4; margin: 0; padding-left: 0; list-style: none;\">\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/searchSingleContact\" class=\"endpoint-link\">Person Enrichment</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/searchProspectingContacts\" class=\"endpoint-link\">Contact Search &amp; Enrich</a></li>\n            </ul>\n\n            <div class=\"endpoint-url\">https://api.lusha.com/v2/person</div>\n\n            <details style=\"margin-top: 10px; padding-top: 8px; border-top: 1px solid #e5e7eb;\">\n                <summary style=\"cursor: pointer; font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px 0; list-style: none;\">\n                    ▶ Common Use Cases\n                </summary>\n                <ul style=\"font-size: 11px; line-height: 1.4; margin: 0; padding-left: 14px; list-style: none; color: #4b5563;\">\n                    <li style=\"padding: 1px 0;\">• Form enrichment</li>\n                    <li style=\"padding: 1px 0;\">• CRM completion</li>\n                    <li style=\"padding: 1px 0;\">• Outbound personalization</li>\n                </ul>\n            </details>\n        </div>\n\n        <!-- Company Card -->\n        <div style=\"background: #fafbfc; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px; min-height: 160px;\">\n            <h3 style=\"margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;\">\n                Company\n            </h3>\n            <ul style=\"font-size: 12px; line-height: 1.4; margin: 0; padding-left: 0; list-style: none;\">\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/searchSingleCompanyV2\" class=\"endpoint-link\">Company Enrichment</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/searchProspectingCompanies\" class=\"endpoint-link\">Company Search &amp; Enrich</a></li>\n            </ul>\n\n            <div class=\"endpoint-url\">https://api.lusha.com/v2/company</div>\n\n            <details style=\"margin-top: 10px; padding-top: 8px; border-top: 1px solid #e5e7eb;\">\n                <summary style=\"cursor: pointer; font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px 0; list-style: none;\">\n                    ▶ Common Use Cases\n                </summary>\n                <ul style=\"font-size: 11px; line-height: 1.4; margin: 0; padding-left: 14px; list-style: none; color: #4b5563;\">\n                    <li style=\"padding: 1px 0;\">• Account enrichment</li>\n                    <li style=\"padding: 1px 0;\">• Routing, scoring, territory logic</li>\n                    <li style=\"padding: 1px 0;\">• Market analysis &amp; segmentation</li>\n                </ul>\n            </details>\n        </div>\n\n        <!-- Signals Card -->\n        <div style=\"background: #fafbfc; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px; min-height: 160px;\">\n            <h3 style=\"margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;\">\n                Signals\n            </h3>\n            <ul style=\"font-size: 12px; line-height: 1.4; margin: 0; padding-left: 0; list-style: none;\">\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/getContactSignalsById\" class=\"endpoint-link\">Contact Signals</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/getCompanySignalsById\" class=\"endpoint-link\">Company Signals</a></li>\n            </ul>\n\n            <div class=\"endpoint-url\">https://api.lusha.com/v2/signals</div>\n\n            <details style=\"margin-top: 10px; padding-top: 8px; border-top: 1px solid #e5e7eb;\">\n                <summary style=\"cursor: pointer; font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px 0; list-style: none;\">\n                    ▶ Common Use Cases\n                </summary>\n                <ul style=\"font-size: 11px; line-height: 1.4; margin: 0; padding-left: 14px; list-style: none; color: #4b5563;\">\n                    <li style=\"padding: 1px 0;\">• Job change tracking</li>\n                    <li style=\"padding: 1px 0;\">• Company updates signals</li>\n                    <li style=\"padding: 1px 0;\">• News event alerts</li>\n                </ul>\n            </details>\n        </div>\n\n        <!-- Lookalikes Card -->\n        <div style=\"background: #fafbfc; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px; min-height: 160px;\">\n            <h3 style=\"margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;\">\n                Lookalikes\n            </h3>\n            <ul style=\"font-size: 12px; line-height: 1.4; margin: 0; padding-left: 0; list-style: none;\">\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/getContactLookalikes\" class=\"endpoint-link\">Similar Contacts</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/getCompanyLookalikes\" class=\"endpoint-link\">Similar Companies</a></li>\n            </ul>\n\n            <div class=\"endpoint-url\">https://api.lusha.com/v3/lookalike</div>\n\n            <details style=\"margin-top: 10px; padding-top: 8px; border-top: 1px solid #e5e7eb;\">\n                <summary style=\"cursor: pointer; font-size: 10px; font-weight: 600; color: #6b7280; text-spacing: 0.5px; margin: 0 0 6px 0; list-style: none;\">\n                    ▶ Common Use Cases\n                </summary>\n                <ul style=\"font-size: 11px; line-height: 1.4; margin: 0; padding-left: 14px; list-style: none; color: #4b5563;\">\n                    <li style=\"padding: 1px 0;\">• Market expansion</li>\n                    <li style=\"padding: 1px 0;\">• Similar account discovery</li>\n                    <li style=\"padding: 1px 0;\">• Prospect recommendations</li>\n                </ul>\n            </details>\n        </div>\n\n        <!-- Filters Card -->\n        <div style=\"background: #fafbfc; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px; min-height: 160px;\">\n            <h3 style=\"margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;\">\n                Filters\n            </h3>\n            <ul style=\"font-size: 12px; line-height: 1.4; margin: 0; padding-left: 0; list-style: none;\">\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/getSignalOptions\" class=\"endpoint-link\">Signal Options</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#tag/Contact-Filters\" class=\"endpoint-link\">Contact Filters</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#tag/Company-Filters\" class=\"endpoint-link\">Company Filters</a></li>\n            </ul>\n        </div>\n\n        <!-- Account Card -->\n        <div style=\"background: #fafbfc; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px; min-height: 160px;\">\n            <h3 style=\"margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;\">\n                Account\n            </h3>\n            <ul style=\"font-size: 12px; line-height: 1.4; margin: 0; padding-left: 0; list-style: none;\">\n                <li style=\"padding: 2px 0;\">• <a href=\"/guides\" class=\"endpoint-link\">Getting started</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#operation/getAccountUsageStats\" class=\"endpoint-link\">Credit Usage</a></li>\n                <li style=\"padding: 2px 0;\">• <a href=\"#tag/Account-Management\" class=\"endpoint-link\">Rate Limits</a></li>\n            </ul>\n        </div>\n\n    </div>\n</div>\n\n  <!-- WEBHOOKS FEATURED BANNER -->\n  <div style=\"background: #f8f9fa; border: 1px solid #e5e7eb; padding: 18px 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);\">\n      <div style=\"display: flex; align-items: center; gap: 14px;\">\n          <div style=\"flex: 1;\">\n              <div style=\"display: flex; align-items: center; gap: 8px; margin-bottom: 6px;\">\n                  <strong style=\"font-size: 16px; color: #1f2937;\">Webhooks API</strong>\n                  <span style=\"background-color: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;\">NEW</span>\n              </div>\n              <p style=\"font-size: 13px; margin: 0 0 12px 0; color: #6b7280; line-height: 1.5;\">\n                  Subscribe to real-time notifications when contacts change jobs or companies experience key business events.\n              </p>\n              <a href=\"#tag/Webhooks\" style=\"background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; display: inline-block; transition: all 0.2s;\">\n                  View Documentation →\n              </a>\n          </div>\n      </div>\n  </div>\n\n<script>\n    document.addEventListener('DOMContentLoaded', function() {\n        const details = document.querySelectorAll('details');\n        details.forEach(detail => {\n            detail.addEventListener('toggle', function() {\n                const summary = this.querySelector('summary');\n                if (summary) {\n                    if (this.open) {\n                        summary.innerHTML = '▼ Common Use Cases';\n                    } else {\n                        summary.innerHTML = '▶ Common Use Cases';\n                    }\n                }\n            });\n        });\n    });\n</script>\n\n---\n\n**<strong style=\"font-size: 1.2em; display: block; margin: 20px 0 10px 0;\">Data Source and Privacy</strong>**\n\nPlease note that **Lusha is a search platform**, meaning the data provided\nis not created or directly managed by us. Instead, it is retrieved from\npublicly available sources and through contributions from trusted business\npartners.\n\nFor more information on how we collect, use, and handle business profiles,\nplease refer to our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n----\n\n## Authentication\n\nAPI keys are required for all API and MCP requests and are tied to your Lusha account and plan. To access the Lusha API, you must authenticate your requests using your API\nkey. This key is unique to your account and is used to identify your usage\nof the API.\n\n**How to Authenticate:**\n\nWhen making an API call, include your API key in the `api_key` header of the request.\n\n> You can generate and retrieve your API key [here](https://dashboard.lusha.com/enrich/api).\n\nAPI keys should be stored securely and used only in server-side environments.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\nTo monitor your current rate limit status, check the HTTP response headers\nin your API calls:\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | The total number of requests allowed per day under your current plan |\n| `x-daily-requests-left` | The number of requests remaining in your daily quota |\n| `x-daily-usage` | The number of requests you have made in the current daily period |\n| `x-rate-limit-hourly` | The total number of requests allowed per hour under your current plan |\n| `x-hourly-requests-left` | The number of requests remaining in your hourly quota |\n| `x-hourly-usage` | The number of requests you have made in the current hourly period |\n| `x-rate-limit-minute` | The total number of requests allowed per minute under your current plan |\n| `x-minute-requests-left` | The number of requests remaining in your current minute window |\n| `x-minute-usage` | The number of requests you have made in the current minute window |\n\n---\n\n## Error Codes\n\nLusha API uses standard HTTP response codes to indicate the status of your request.\n\n| Status Code | Name | Description |\n|-------------|------|-------------|\n| **200** | OK | Successful request |\n| **400** | Bad Request | Badly formatted request |\n| **401** | Unauthorized | The API key is invalid |\n| **402** | Payment Required | Your account requires payment |\n| **403** | Forbidden | Your account is not active. Please reach out to support at *support@lusha.com* for assistance |\n| **403** | Forbidden | Your pricing version does not support requesting individual datapoints [revealEmails, revealPhones] |\n| **404** | Not Found | The requested endpoint was not found |\n| **412** | Precondition Failed | The request failed due to invalid syntax that was provided. Please make sure to send a full name field that contains a valid first & last name |\n| **429** | Too Many Requests | You've reached your trial limit, please contact support for upgrade |\n| **429** | Too Many Requests | Daily API quota limit exceeded. Limit X calls per day |\n| **429** | Too Many Requests | Hourly API rate limit exceeded. Limit: X calls per hour. Reset in X seconds |\n| **451** | Unavailable For Legal Reasons | We are unable to process this contact request due to our GDPR regulations |\n| **499** | Client Closed Request | Request failed due to request timeout |\n| **5XX** | Server Error | There's a problem on Lusha's end |\n\n**Error Response Format**\n\nIn case of an error, the response body will contain details about the error:\n\n  ```json\n      {\n        \"error\": {\n          \"code\": 400,\n          \"message\": \"Invalid request parameters\"\n        }\n      }\n  ```\n\n**Handling errors**\n\n- Always ensure your API key is correct and valid\n- Pay attention to the specific error message and code to troubleshoot issues efficiently\n- Implement proper error handling and retry logic in your application\n- For 5XX errors, implement exponential backoff before retrying\n\n---\n"
+  contact:
+    name: Lusha Support
+    url: https://api.lusha.com
+    email: support@lusha.com
+  termsOfService: https://lusha.com/legal/terms
+  x-privacy-policy:
+    name: Privacy Policy
+    url: https://lusha.com/legal/privacy-notice/
+servers:
+- url: https://api.lusha.com
+  description: Production server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Prospecting - Search & Enrich
+  description: 'With Lusha''s Prospecting API, you can query Lusha''s extensive database based on specific criteria (such as job title, seniority, location, and more) to retrieve detailed contact and company information.
+
+
+    The Prospecting API is designed to help you generate new records (contacts or companies) for your CRM system, using filters that align with your Ideal Customer Profile (ICP).
+
+
+    This process involves three main steps:
+
+
+    | Step | API | Description |
+
+    |------|-----|-------------|
+
+    | 1 | **Filters API** | Apply filters to refine your search *(check available Contact and Company filter endpoints)* |
+
+    | 2 | **Search API** | Query Contacts or Companies using the available filters |
+
+    | 3 | **Enrich API** | Get full details of Contacts and Companies from the search results |
+
+    '
+  x-tag-expanded: true
+paths:
+  /prospecting/contact/search:
+    post:
+      tags:
+      - Prospecting - Search & Enrich
+      summary: Search Contacts
+      description: "Search for contacts using various filters. This is step 2 of the prospecting process.\n\n*Endpoint*: **(POST)  https://api.lusha.com/prospecting/contact/search**\n---\n##### Signal Filtering (Premium Feature)\nFilter contacts by signal types to find prospects at key career moments.\n\n  > **Note:** This is a premium feature. Credits are charged for each signal type that returns results.\n\n---\n##### DNC Filtering (Scale Feature)\nUse `excludeDnc: true` at the top level of the request body to filter out contacts whose phone numbers are all marked Do Not Call.\n- Contacts with **at least one callable phone** appear in results - Only callable phones are shown — DNC phones are hidden - Contacts with **only DNC phones** are excluded entirely\n> **Note**: Returns **403** on unsupported plans.\n"
+      operationId: searchProspectingContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactSearchRequest'
+            examples:
+              basicContactSearch:
+                summary: Basic contact search with filters
+                value:
+                  pages:
+                    page: 0
+                    size: 20
+                  filters:
+                    contacts:
+                      include:
+                        departments:
+                        - Engineering & Technical
+                        - Marketing
+                        seniority:
+                        - 4
+                        - 5
+                        existing_data_points:
+                        - phone
+                        - work_email
+                        - mobile_phone
+                        locations:
+                        - continent: North America
+                          country: United States
+                          city: New York
+                          state: New York
+                          country_grouping: na
+                        signals:
+                          names:
+                          - allSignals
+                          - promotion
+                          - companyChange
+                          startDate: '2025-11-01'
+                      exclude:
+                        departments:
+                        - Human Resources
+                    companies:
+                      include:
+                        names:
+                        - Apple
+                        - Microsoft
+                        locations:
+                        - country: United States
+                        technologies:
+                        - Salesforce
+                        - Amazon Web Services
+                        mainIndustriesIds:
+                        - 4
+                        - 5
+                        subIndustriesIds:
+                        - 101
+                        intentTopics:
+                        - Digital Sales
+                        sizes:
+                        - min: 100
+                          max: 1000
+                        revenues:
+                        - min: 10000000
+                          max: 100000000
+                        sicCodes:
+                        - '1011'
+                        - '1021'
+                        naicsCodes:
+                        - '11'
+                        - '21'
+                      exclude: {}
+              simpleExample:
+                summary: Simple search example
+                value:
+                  pages:
+                    page: 0
+                    size: 10
+                  filters:
+                    contacts:
+                      include:
+                        departments:
+                        - Sales
+              withSearchText:
+                summary: Contact search with searchText filter
+                value:
+                  pages:
+                    page: 0
+                    size: 50
+                  filters:
+                    contacts:
+                      include:
+                        searchText: Amit
+                        departments:
+                        - Engineering & Technical
+                      exclude:
+                        searchText: Ronen
+                    companies:
+                      include:
+                        searchText: finance marketing in Germany DE
+              dncFilterExample:
+                summary: Exclude DNC contacts — Scale only
+                value:
+                  pages:
+                    page: 0
+                    size: 20
+                  excludeDnc: true
+                  filters:
+                    contacts:
+                      include:
+                        linkedinUrls:
+                        - https://www.linkedin.com/in/justin-pernitz
+                        - https://www.linkedin.com/in/andrewbarrettbettcher
+                        - https://www.linkedin.com/in/aitor-moreno-artola-11a2a985
+                    companies: {}
+              employeesInLinkedInContactExample:
+                summary: Filter contacts by company LinkedIn employee count
+                value:
+                  pages:
+                    page: 0
+                    size: 20
+                  filters:
+                    contacts:
+                      include:
+                        departments:
+                        - Sales
+                    companies:
+                      include:
+                        employeesInLinkedIn:
+                          min: 500
+      responses:
+        '200':
+          description: Search results with contact IDs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactSearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Forbidden — DNC filter not available on your current plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                statusCode: 403
+                message: Exclude DNC is not supported on your current plan. Please contact support or your account manager for assistance.
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /prospecting/contact/enrich:
+    post:
+      tags:
+      - Prospecting - Search & Enrich
+      summary: Enrich Contacts
+      description: "Enrich contacts from search results. This is step 3 of the prospecting process.\n\n  *Endpoint*: **(POST)  https://api.lusha.com/prospecting/contact/enrich**\n---\n\n⚠️ **Important Notice - Unified Credits Plan Required**\n\n| Parameter | Requirement |\n|-----------|-------------|\n| `revealEmails` and `revealPhones` | Only available to customers on the **Unified Credits** pricing plan |\n| Plan Restriction | Attempting to use these parameters on other plans will result in a **403 Unauthorized** error |\n| Default Behavior | When neither parameter is used, the API returns **both email addresses and phone numbers**, if available |\n\n---\n"
+      operationId: enrichProspectingContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactEnrichRequest'
+            examples:
+              basicExample:
+                summary: Basic enrichment request
+                value:
+                  requestId: b6effae6-35b8-493d-91aa-7d3b1b7c7dc7
+                  contactIds:
+                  - 37b4c536-eaec-11ef-ad4b-a75f8e9e1484
+              unifiedCreditsExample:
+                summary: Unified Credits plan with selective reveal
+                value:
+                  requestId: b6effae6-35b8-493d-91aa-7d3b1b7c7dc7
+                  contactIds:
+                  - ddfb6966-741f-4fca-a62b-e553d4ac12f8
+                  revealEmails: false
+                  revealPhones: true
+      responses:
+        '200':
+          description: Enriched contact data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactEnrichResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /prospecting/company/search:
+    post:
+      tags:
+      - Prospecting - Search & Enrich
+      summary: Search Companies
+      description: "Search for companies using various filters. This is step 2 of the prospecting process.\n\n*Endpoint*: **(POST)  https://api.lusha.com/prospecting/company/search**\n---\n\n##### Signal Filtering (Premium Feature)\nFilter companies by signal types to identify those with recent business events and changes.\n\n  > **Note:** This is a premium feature. Credits are charged for each signal type that returns results.\n"
+      operationId: searchProspectingCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanySearchRequest'
+            examples:
+              companyLocationsExample:
+                summary: Filter by site-level office locations
+                value:
+                  pages:
+                    page: 0
+                    size: 20
+                  filters:
+                    companies:
+                      include:
+                        companyLocations:
+                        - country: United States
+                          state: California
+                        - country: Germany
+              employeesInLinkedInExample:
+                summary: Filter by LinkedIn employee count range
+                value:
+                  pages:
+                    page: 0
+                    size: 20
+                  filters:
+                    companies:
+                      include:
+                        employeesInLinkedIn:
+                          min: 100
+                          max: 5000
+      responses:
+        '200':
+          description: Search results with company IDs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanySearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /prospecting/company/enrich:
+    post:
+      tags:
+      - Prospecting - Search & Enrich
+      summary: Enrich Companies
+      description: "Enrich companies from search results. This is step 3 of the prospecting process.\n\n *Endpoint*: **(POST)  https://api.lusha.com/prospecting/company/enrich**\n"
+      operationId: enrichProspectingCompanies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyEnrichRequest'
+      responses:
+        '200':
+          description: Enriched company data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyEnrichResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    EmployeesInLinkedInFilter:
+      type: object
+      description: 'Filter companies by LinkedIn-reported employee count.
+
+        Both `min` and `max` are optional — provide either or both.
+
+        '
+      properties:
+        min:
+          type: integer
+          format: int64
+          description: Minimum employee count (inclusive)
+          example: 100
+        max:
+          type: integer
+          format: int64
+          description: Maximum employee count (inclusive)
+          example: 5000
+    LinkedinCourse:
+      type: object
+      properties:
+        activities:
+          type:
+          - string
+          - 'null'
+        degree:
+          type:
+          - string
+          - 'null'
+        endDateMonth:
+          oneOf:
+          - type:
+            - integer
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        endDateYear:
+          oneOf:
+          - type:
+            - integer
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        fieldOfStudy:
+          type:
+          - object
+          - 'null'
+          properties:
+            id:
+              type:
+              - string
+              - 'null'
+            name:
+              type:
+              - string
+              - 'null'
+        grade:
+          type:
+          - string
+          - 'null'
+        school:
+          type:
+          - object
+          - 'null'
+          properties:
+            id:
+              type:
+              - string
+              - 'null'
+            logoUrl:
+              type:
+              - string
+              - 'null'
+            name:
+              type:
+              - string
+              - 'null'
+        startDateMonth:
+          oneOf:
+          - type:
+            - number
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        startDateYear:
+          oneOf:
+          - type:
+            - number
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        linkedinSchoolId:
+          type:
+          - number
+          - 'null'
+    PhoneNumbers:
+      type: object
+      properties:
+        number:
+          type: string
+          description: The phone number
+          example: '+1234567890'
+        phoneType:
+          type: string
+          description: The type of phone number
+          example: Mobile
+          enum:
+          - Mobile
+          - Direct
+          - Phone
+        doNotCall:
+          type: boolean
+          description: Indicates whether the phone number is listed as "Do Not Call" (DNC).
+          example: false
+        updateDate:
+          type: string
+          description: The update date of the phone number
+          example: '2020-01-01'
+      required:
+      - phoneType
+      - doNotCall
+      - updateDate
+    CompanySearchRequest:
+      type: object
+      properties:
+        pages:
+          $ref: '#/components/schemas/PaginationParams'
+        filters:
+          type: object
+          properties:
+            companies:
+              $ref: '#/components/schemas/CompanyFilters'
+      required:
+      - filters
+    ContactSearchRequest:
+      type: object
+      properties:
+        includePartialContact:
+          type: boolean
+          description: 'When set to true, includes contacts with partial information in the search results.
+
+            '
+          default: true
+          example: false
+        excludeDnc:
+          type: boolean
+          description: 'When `true`, excludes contacts whose phones are all marked Do Not Call (DNC).
+
+            '
+          default: false
+          example: true
+        pages:
+          $ref: '#/components/schemas/PaginationParams'
+        filters:
+          type: object
+          properties:
+            contacts:
+              $ref: '#/components/schemas/ContactFilters'
+            companies:
+              $ref: '#/components/schemas/CompanyFilters'
+      required:
+      - filters
+    CompanyHeadcountChangeSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503904'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        baselineEmployeesCount:
+          type: number
+          example: 500
+        newEmployeesCount:
+          type: number
+          example: 550
+        changeRatePercent:
+          type: number
+          example: 10
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    LinkedinAward:
+      type: object
+      properties:
+        companyName:
+          type:
+          - string
+          - 'null'
+          example: Columbia Southern University
+        dateDay:
+          oneOf:
+          - type: number
+          - type: string
+          example: 15
+        dateMonth:
+          oneOf:
+          - type: number
+          - type: string
+          example: 7
+        dateYear:
+          oneOf:
+          - type: number
+          - type: string
+          example: 2023
+        linkedinCompanyId:
+          type:
+          - string
+          - 'null'
+        summary:
+          type:
+          - string
+          - 'null'
+          example: Certificate of Recognition for Exceptional Teaching
+        title:
+          type: string
+          example: Raising the Bar Award
+    CompanySizeRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 10
+    ContactFilters:
+      type: object
+      properties:
+        include:
+          type: object
+          properties:
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Engineering & Technical
+            seniority:
+              type: array
+              items:
+                type: integer
+              example:
+              - 4
+              - 5
+            existing_data_points:
+              type: array
+              items:
+                type: string
+              example:
+              - phone
+              - work_email
+            locations:
+              type: array
+              items:
+                $ref: '#/components/schemas/LocationFilter'
+            jobTitles:
+              type: array
+              items:
+                type: string
+              example:
+              - CTO
+              - Chief Technology Officer
+              - VP Engineering
+              - Senior Developer
+            linkedinUrls:
+              type: array
+              description: Filter contacts by LinkedIn profile URLs
+              items:
+                type: string
+              example:
+              - https://www.linkedin.com/in/justin-pernitz
+              - https://www.linkedin.com/in/andrewbarrettbettcher
+            searchText:
+              type: string
+              description: Free-text search across contact fields
+              example: Amit
+            signal:
+              type: object
+              description: Filter contacts by signal types (premium filter - charges apply per signal type)
+              properties:
+                names:
+                  type: array
+                  description: Signal types to filter by
+                  items:
+                    type: string
+                    enum:
+                    - allSignals
+                    - promotion
+                    - companyChange
+                    example:
+                    - promotion
+                    - companyChange
+                startDate:
+                  type: string
+                  format: date
+                  description: Start date for signal detection (YYYY-MM-DD format)
+                  example: '2025-11-01'
+          exclude:
+            type: object
+            description: Same structure as include, for exclusion filters
+    RevenueRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 1000000
+    CompanyEnrichResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId used in the request
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyEnrichData'
+    CompanySearchResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId that should be used in Prospecting Enrich request API params
+        currentPage:
+          type: number
+          description: Current page of search results
+        pageLength:
+          type: number
+          description: Page length
+        totalResults:
+          type: number
+          description: Total search results
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySearchData'
+    LinkedinCertification:
+      type: object
+      properties:
+        companyId:
+          type: integer
+          example: 1035
+        companyName:
+          type: string
+          example: Microsoft
+        credentialId:
+          type: string
+          example: abc123
+        dateMonth:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 6
+        dateYear:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 2020
+        expireDateMonth:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 6
+        expireDateYear:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 2025
+        linkedinCompanyId:
+          type:
+          - integer
+          - 'null'
+          example: 1441
+        summary:
+          type:
+          - string
+          - 'null'
+          example: Azure fundamentals certification covering cloud concepts
+        title:
+          type: string
+          example: 'Microsoft Certified: Azure Fundamentals'
+        verifyUrl:
+          type:
+          - string
+          - 'null'
+          example: https://www.youracclaim.com/badges/5ccf865c-dd6e-4dcc-9184-c8999d31f83d
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    CompanyLocationFilter2:
+      type: object
+      description: 'Site-level office location filter. At least `country` is required.
+
+        '
+      required:
+      - country
+      properties:
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+    ContactSearchResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The unique request ID used for subsequent enrichment requests
+        currentPage:
+          type: number
+          description: The current page of the search results
+        pageLength:
+          type: number
+          description: The number of results on the page
+        totalResults:
+          type: number
+          description: The total number of search results
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactSearchData'
+    PaginationParams:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Page number (0-1000)
+          minimum: 0
+          maximum: 1000
+          default: 0
+        size:
+          type: number
+          description: Page size (10-50)
+          minimum: 10
+          maximum: 50
+          default: 20
+    CompanySurgeInHiringSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503905'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLastWeek:
+          type: number
+          example: 25
+        historicalAvg:
+          type: number
+          example: 10
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyFilters:
+      type: object
+      properties:
+        include:
+          type: object
+          properties:
+            names:
+              type: array
+              items:
+                type: string
+              example:
+              - Apple
+            domains:
+              type: array
+              items:
+                type: string
+                example: lusha.com
+            locations:
+              type: array
+              items:
+                type: object
+                properties:
+                  country:
+                    type: string
+                    example: United States
+            technologies:
+              type: array
+              items:
+                $ref: '#/components/schemas/CompanyTechnology'
+              example:
+              - name: Amazon
+            intentTopics:
+              type: array
+              items:
+                type: string
+              example:
+              - Digital Sales
+            sizes:
+              type: array
+              items:
+                $ref: '#/components/schemas/CompanySizeRange'
+            revenues:
+              type: array
+              items:
+                $ref: '#/components/schemas/RevenueRange'
+            sicCodes:
+              type: array
+              items:
+                type: string
+              example:
+              - '1011'
+              - '1021'
+            naicsCodes:
+              type: array
+              items:
+                type: string
+              example:
+              - '11'
+              - '21'
+            mainIndustriesIds:
+              type: array
+              items:
+                type: number
+              example:
+              - 4
+              - 5
+            subIndustriesIds:
+              type: array
+              items:
+                type: number
+              example:
+              - 101
+            searchText:
+              type: string
+              description: Free-text search across company fields
+              example: Finance Marketing in Germany DE
+            excludePartialCompanies:
+              type: boolean
+              example: false
+            companyLocations:
+              type: array
+              description: 'Filter by company site-level office locations as reported by LinkedIn.
+
+                This includes all physical office locations where the company has a presence.
+
+                '
+              items:
+                $ref: '#/components/schemas/CompanyLocationFilter2'
+              example:
+              - country: United States
+                state: California
+              - country: Germany
+            employeesInLinkedIn:
+              $ref: '#/components/schemas/EmployeesInLinkedInFilter'
+            signal:
+              type: object
+              description: 'Filter companies by signal types (premium filter - charges apply per signal type).
+
+                '
+              properties:
+                names:
+                  type: array
+                  description: Signal types to filter by
+                  items:
+                    type: string
+                    enum:
+                    - allSignals
+                    - websiteTrafficIncrease
+                    - websiteTrafficDecrease
+                    - itSpendIncrease
+                    - itSpendDecrease
+                    - headcountIncrease1m
+                    - headcountDecrease1m
+                    - headcountIncrease3m
+                    - headcountDecrease3m
+                    - headcountIncrease6m
+                    - headcountDecrease6m
+                    - headcountIncrease12m
+                    - headcountDecrease12m
+                    - surgeInHiring
+                    - surgeInHiringByDepartment
+                    - surgeInHiringByLocation
+                    - riskNews
+                    - commercialActivityNews
+                    - corporateStrategyNews
+                    - financialEventsNews
+                    - peopleNews
+                    - marketIntelligenceNews
+                    - productActivityNews
+                  example:
+                  - commercialActivityNews
+                  - financialEventsNews
+                startDate:
+                  type: string
+                  format: date
+                  description: Start date for signal detection (YYYY-MM-DD format)
+                  example: '2025-11-01'
+        exclude:
+          type: object
+          description: Same structure as include, for exclusion filters
+    LocationFilter:
+      type: object
+      properties:
+        continent:
+          type: string
+          example: North America
+        country:
+          type: string
+          example: United States
+        city:
+          type: string
+          example: New York
+        state:
+          type: string
+          example: New York
+        country_grouping:
+          type: string
+          example: na
+    CompanySurgeInHiringByDepartmentSignal:
+      type: object
+      properties:
+        signalId:
+          type: string
+          example: '1503906'
+        companyId:
+          type: string
+          example: '3416'
+        department:
+          type: string
+          example: Engineering
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 15
+        historicalAvg:
+          type: number
+          example: 5
+        changeRatePercent:
+          type: number
+          example: 200
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    ContactEnrichData:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Carolina
+        lastName:
+          type: string
+          example: Portela
+        fullName:
+          type: string
+          example: Carolina Portela
+        isShown:
+          type: boolean
+          example: false
+        jobTitle:
+          type: string
+          example: Solutions Engineer
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+              example: Boston
+            state:
+              type: string
+              example: Massachusetts
+            country:
+              type: string
+              example: United States
+            country_iso2:
+              type: string
+              example: US
+            continent:
+              type: string
+              example: North America
+        emailAddresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumbers'
+        companyId:
+          type: number
+          example: 3553744
+        companyName:
+          type: string
+          example: Lusha
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/in/carolinaportela/
+            xUrl:
+              type: string
+              example: https://twitter.com/carolina
+        departments:
+          type: array
+          items:
+            type: string
+            example: Engineering & Technical
+        seniority:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 4
+              value:
+                type: string
+                example: senior
+        company:
+          type: object
+          properties:
+            revenueRange:
+              type: array
+              items:
+                type: number
+            funding:
+              $ref: '#/components/schemas/CompanyFunding'
+            intent:
+              $ref: '#/components/schemas/CompanyIntent'
+            mainIndustry:
+              type: string
+            subIndustry:
+              type: string
+            technologies:
+              type: array
+              items:
+                $ref: '#/components/schemas/CompanyTechnology'
+        linkedinFollowersCount:
+          type: integer
+          example: 1250
+        linkedinConnectionsCount:
+          type: integer
+          example: 500
+        linkedinCertifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedinCertification'
+        linkedinCourses:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedinCourse'
+        linkedinAwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedinAward'
+        linkedinSkills:
+          type: array
+          items:
+            type: string
+          example:
+          - Microsoft Office
+          - Project Management
+          - Strategic Planning
+    CompanySurgeInHiringByLocationSignal:
+      type: object
+      properties:
+        signalId:
+          type: string
+          example: '1503907'
+        companyId:
+          type: string
+          example: '3416'
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 20
+        historicalAvg:
+          type: number
+          example: 8
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyNewsSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '33222678'
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+        signalId:
+          type: string
+          example: '1503910'
+        eventType:
+          type: string
+          example: partnership
+        eventSummary:
+          type: string
+          example: Lusha announced a strategic partnership with Salesforce.
+        articlePublishedDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        articleTitle:
+          type: string
+          example: Lusha Partners with Salesforce
+        articleHighlight:
+          type: string
+          example: The partnership enables Salesforce users to access Lusha data directly within their CRM.
+        eventEffectiveDate:
+          type: string
+          format: date
+          example: '2025-06-10'
+        articleUrl:
+          type: string
+          format: uri
+          example: https://example.com/lusha-salesforce-partnership
+    CompanyIntentTopic:
+      type: object
+      properties:
+        topicName:
+          type: string
+          example: Remote Sales
+        metadata:
+          $ref: '#/components/schemas/CompanyIntentTopicMetadata'
+      required:
+      - topicName
+      - metadata
+    ContactEnrichResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId that was used in the request
+        contacts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The ID of the contact from the enrichment request
+              isSuccess:
+                type: boolean
+                description: Indicates whether the enrichment process was successful
+              data:
+                $ref: '#/components/schemas/ContactEnrichData'
+    CompanyIntent:
+      type: object
+      properties:
+        detectedTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyIntentTopic'
+        topicCount:
+          type: number
+          example: 6
+      required:
+      - detectedTopics
+      - topicCount
+    CompanyFundingRound:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: USD
+        roundAmount:
+          type: number
+          example: 205000000
+        roundType:
+          type: string
+          example: Private Equity Round
+        roundDate:
+          type: string
+          example: Nov 10, 2021
+      required:
+      - currency
+      - roundAmount
+      - roundType
+      - roundDate
+    EmailAddress:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email address (alternative to 'address')
+          example: dustin@lusha.com
+        address:
+          type: string
+          description: The email address (alternative to 'email')
+          example: dustin@lusha.com
+        emailType:
+          type: string
+          description: The type of email address (alternative to 'type')
+          example: work
+          enum:
+          - work
+          - private
+        emailConfidence:
+          type: string
+          description: The confidence level of the email address
+          example: A+
+        updateDate:
+          type: string
+          description: The update date of the email address
+          example: '2020-01-01'
+    CompanySearchData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for a Lusha company
+        name:
+          type: string
+          description: The name of the company
+        fqdn:
+          type: string
+          description: The fqdn of the company
+        description:
+          type: string
+          description: A description of the company
+        logoUrl:
+          type: string
+          description: The URL of the company's logo
+        hasCompanyEmployeesCount:
+          type: boolean
+        hasCompanyRevenue:
+          type: boolean
+        hasCompanyMainIndustry:
+          type: boolean
+        hasCompanySubIndustry:
+          type: boolean
+        hasCompanyFunding:
+          type: boolean
+        hasCompanyIntent:
+          type: boolean
+        hasCompanyTechnologies:
+          type: boolean
+        hasCompanyCity:
+          type: boolean
+        hasCompanyCountry:
+          type: boolean
+        signalTypes:
+          type: array
+          description: Types of signals detected for this company
+          items:
+            type: string
+    CompanyTechnology:
+      type: object
+      properties:
+        name:
+          type: string
+          example: salesforce
+      required:
+      - name
+    ContactEnrichRequest:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId generated in the Prospecting Search response (UUID)
+          example: b6effae6-35b8-493d-91aa-7d3b1b7c7dc7
+        contactIds:
+          type: array
+          description: An array containing the contact IDs for enrichment. Min 1, max 100.
+          items:
+            type: string
+          example:
+          - 37b4c536-eaec-11ef-ad4b-a75f8e9e1484
+        revealEmails:
+          type: boolean
+          description: 'Set `revealEmails=true` to retrieve only the email address of the contact. Only available to customers on the **Unified Credits** pricing plan.
+
+            '
+          example: false
+        revealPhones:
+          type: boolean
+          description: 'Set `revealPhones=true` to retrieve only the phone number of the contact. Only available to customers on the **Unified Credits** pricing plan.
+
+            '
+          example: true
+      required:
+      - requestId
+      - contactIds
+    CompanyWebsiteTrafficSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503902'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        historicalAvg:
+          type: number
+          example: 50000
+        lastMonthVisits:
+          type: number
+          example: 75000
+        changeRatePercent:
+          type: number
+          example: 50
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyEnrichRequest:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId from the Prospecting Search response
+          example: 5ad275c8-7dd4-462a-bd45-6bc1970da64e
+        companiesIds:
+          type: array
+          description: An array of company IDs for enrichment. Min 1, max 100.
+          items:
+            type: string
+          example:
+          - '1586'
+      required:
+      - requestId
+      - companiesIds
+    CompanyEnrichData:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 33222678
+        name:
+          type: string
+          example: Lusha
+        companySize:
+          type: object
+          properties:
+            min:
+              type: number
+              example: 11
+            max:
+              type: number
+              example: 50
+            employees_in_linkedin:
+              type: number
+              example: 32
+        employees:
+          type: string
+          example: 10001 - 100000
+        revenueRange:
+          type: array
+          items:
+            type: number
+          example:
+          - 10000000
+          - 50000000
+        fqdn:
+          type: string
+          example: www.lusha.com
+        description:
+          type: string
+          example: Lusha is the sales intelligence platform designed to help businesses get their next customers.
+        domains:
+          type: object
+          properties:
+            email:
+              type: string
+              example: lusha.com
+            homepage:
+              type: string
+              example: lusha.com
+        logoUrl:
+          type: string
+          example: https://logo.lusha.co/logo.jpg
+        industryTags:
+          type: array
+          items:
+            type: string
+            example:
+            - Technology, Information & Media
+            - Software Development
+        stateCode:
+          type: string
+          example: MA
+        social:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/lushadata
+            crunchbase:
+              type: string
+              example: https://www.crunchbase.com/organization/lusha
+        city:
+          type: string
+          example: Boston
+        state:
+          type: string
+          example: Massachusetts
+        country:
+          type: string
+          example: United States
+        countryIso2:
+          type: string
+          example: US
+        continent:
+          type: string
+          example: North America
+        rawLocation:
+          type: string
+          example: 800 Boylston St; Suite 1410; Boston, Massachusetts 02199, US
+        coordinates:
+          type: array
+          items:
+            type: number
+          example:
+          - -71.05976867675781
+          - 42.358428955078125
+        specialities:
+          type: array
+          items:
+            type: string
+          example:
+          - data enrichment
+          - sales intelligence
+          - lead generation
+          - prospecting
+        mainIndustry:
+          type: string
+          example: Technology, Information & Media
+        subIndustry:
+          type: string
+          example: Software Development
+        linkedinFollowers:
+          type: integer
+          example: 1950
+        emailDomain:
+          type: string
+          example: bitcoinromania.ro
+        companyLocations:
+          type: array
+          description: All known company locations (not just HQ)
+          items:
+            type: object
+            properties:
+              city:
+                type: string
+              continent:
+                type: string
+              country:
+                type: string
+              country_iso2:
+                type: string
+              location_coordinates:
+                type: array
+                items:
+                  type: number
+              state:
+                type:
+                - string
+                - 'null'
+              state_code:
+                type:
+                - string
+                - 'null'
+        alternativeName:
+          type: string
+          example: bitcoin romania
+        companyType:
+          type: string
+          example: Private company
+        lushaPopularityTier:
+          type: integer
+          example: 1
+        funding:
+          $ref: '#/components/schemas/CompanyFunding'
+        intent:
+          $ref: '#/components/schemas/CompanyIntent'
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyTechnology'
+        riskNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        commercialActivityNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        corporateStrategyNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        financialEventsNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        peopleNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        marketIntelligenceNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        productActivityNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        surgeInHiring:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringSignal'
+        surgeInHiringByDepartment:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringByDepartmentSignal'
+        surgeInHiringByLocation:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringByLocationSignal'
+        websiteTrafficIncrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
+        websiteTrafficDecrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
+        itSpendIncrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyItSpendSignal'
+        itSpendDecrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyItSpendSignal'
+        headcountIncrease1m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease1m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease3m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease3m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease6m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease6m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease12m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease12m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+    ContactSearchData:
+      type: object
+      properties:
+        contactId:
+          type: string
+          description: A unique serial contact ID generated for each search response
+          example: 06de9b18-516d-5512-5cb5-6ec5pb215776
+        isShown:
+          type: boolean
+          description: Indicates whether the contact was already revealed by any of the account users
+          example: false
+        name:
+          type: string
+          description: The full name of the contact
+          example: Chris Karageorge
+        jobTitle:
+          type: string
+          description: The job title held by the person at their current company
+          example: Senior Director of Technical Operations
+        companyId:
+          type: number
+          description: A unique identifier for a Lusha company
+          example: 28054532
+        companyName:
+          type: string
+          description: The name of the company where the person currently works
+          example: Lusha
+        fqdn:
+          type: string
+          description: The fqdn of the company
+          example: lusha.com
+        hasCompanyEmployeesCount:
+          type: boolean
+        hasCompanyRevenue:
+          type: boolean
+        hasCompanyMainIndustry:
+          type: boolean
+        hasCompanySubIndustry:
+          type: boolean
+        hasCompanyFunding:
+          type: boolean
+        hasCompanyIntent:
+          type: boolean
+        hasCompanyTechnologies:
+          type: boolean
+        hasDepartment:
+          type: boolean
+        hasSeniority:
+          type: boolean
+        hasContactLocation:
+          type: boolean
+        hasSocialLink:
+          type: boolean
+        hasEmails:
+          type: boolean
+        hasWorkEmail:
+          type: boolean
+        hasPrivateEmail:
+          type: boolean
+        hasPhones:
+          type: boolean
+        hasMobilePhone:
+          type: boolean
+        hasDirectPhone:
+          type: boolean
+        hasCompanyCity:
+          type: boolean
+        hasCompanyCountry:
+          type: boolean
+        signalTypes:
+          type: array
+          description: Types of signals detected for this contact
+          items:
+            type: string
+          example:
+          - companyChange
+          - promotion
+    CompanyFunding:
+      type: object
+      properties:
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyFundingRound'
+        totalRounds:
+          type: number
+          example: 2
+        totalRoundsAmount:
+          type: number
+          example: 245000000
+        currency:
+          type: string
+          example: USD
+        isIpo:
+          type: boolean
+          example: false
+        lastRoundType:
+          type: string
+          example: Private Equity Round
+        lastRoundAmount:
+          type: number
+          example: 205000000
+        lastRoundDate:
+          type: string
+          example: Nov 10, 2021
+      required:
+      - totalRounds
+      - currency
+      - isIpo
+    CompanyItSpendSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503903'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        estimatedAnnualItSpend:
+          type: number
+          example: 5000000
+        changeRatePercent:
+          type: number
+          example: 25
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyIntentTopicMetadata:
+      type: object
+      properties:
+        topicScore:
+          type: number
+          example: 83
+        topicTrend:
+          type: string
+          example: '-5'
+      required:
+      - topicScore
+      - topicTrend
+  responses:
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        RateLimit-Limit:
+          description: The total number of allowed requests per second
+          schema:
+            type: integer
+        RateLimit-Remaining:
+          description: The number of remaining requests in the current window
+          schema:
+            type: integer
+        RateLimit-Reset:
+          description: The time (in seconds) until the rate limit quota is reset
+          schema:
+            type: integer
+        X-RateLimit-Remaining-Daily:
+          description: The number of remaining requests for your daily quota
+          schema:
+            type: integer
+        X-RateLimit-Reset-Daily:
+          description: The time when your daily quota will reset
+          schema:
+            type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    Forbidden:
+      description: Forbidden - account inactive or feature not available
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            featureNotAvailable:
+              summary: Feature not available for pricing plan
+              value:
+                statusCode: 403
+                message: Your pricing version does not support requesting individual datapoints [revealEmails, revealPhones]
+            subscriptionLimitReached:
+              summary: Subscription limit reached
+              value:
+                statusCode: 403
+                message: Maximum subscriptions limit reached for your account
+            dncNotSupported:
+              summary: DNC filter not supported on current plan
+              value:
+                statusCode: 403
+                message: Exclude DNC is not supported on your current plan. Please contact support or your account manager for assistance.
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
+      description: 'Your Lusha API key. You can find this in your Lusha dashboard under API settings.
+
+
+        Include this key in the `api_key` header for all requests.
+
+        '

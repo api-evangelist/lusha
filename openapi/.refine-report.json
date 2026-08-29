@@ -1,7 +1,8 @@
 {
   "provider": "lusha",
   "sources": [
-    "lusha-openapi.yml"
+    "_original/lusha-openapi.yml",
+    "_original/lusha-v2-openapi.yaml"
   ],
   "outputs": [
     "lusha-account-api-openapi.yml",
@@ -16,17 +17,40 @@
     "lusha-search-enrich-api-openapi.yml",
     "lusha-signals-api-openapi.yml",
     "lusha-webhooks-api-openapi.yml",
-    "lusha-website-visits-api-openapi.yml"
+    "lusha-website-visits-api-openapi.yml",
+    "lusha-account-management-api-openapi.yml",
+    "lusha-company-filters-api-openapi.yml",
+    "lusha-contact-filters-api-openapi.yml",
+    "lusha-enrichment-api-openapi.yml",
+    "lusha-prospecting-search-enrich-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/lusha-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [
-    "lusha-openapi.yml: info.version missing"
+    "lusha-openapi.yml: info.version missing",
+    "lusha-v2-openapi.yaml: info.version missing"
   ],
   "notes": [
-    "lusha-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0"
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "lusha-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "lusha-v2-openapi.yaml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "tag 'Lookalikes' spans 2 source specs (lusha-openapi.yml, lusha-v2-openapi.yaml): per-path servers applied",
+    "tag 'Signals' spans 2 source specs (lusha-openapi.yml, lusha-v2-openapi.yaml): per-path servers applied",
+    "tag 'Webhooks' spans 2 source specs (lusha-openapi.yml, lusha-v2-openapi.yaml): per-path servers applied"
   ],
-  "skipped": []
+  "skipped": [
+    "lusha-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-buying-group-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-companies-tables-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-contacts-tables-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-enrich-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-filters-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-lookalikes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-prospecting-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-search-enrich-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-signals-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lusha-website-visits-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

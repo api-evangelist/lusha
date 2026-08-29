@@ -1,21 +1,21 @@
 openapi: 3.2.0
 info:
-  title: Lusha API Documentation Signals API
+  title: Lusha Signals API
   version: ''
-  x-logo:
-    url: https://www.lusha.com/logo.png
-  license:
-    name: Proprietary
-    url: https://lusha.com/legal/terms
-  description: "<blockquote class=\"callout\">\n\n **This is the Lusha API V3 documentation.** \n \n V3 introduces a new search-then-enrich pattern, bulk operations, AI-powered lookalikes, and richer filter capabilities. All endpoints are under `https://api.lusha.com/v3/`.\n\n  For more information on V3, refer to the [Migration Guide](/tutorials/v3-migration-guide).\n\n</blockquote>\n\n  --- \n\nLusha provides a RESTful API for querying a comprehensive dataset of business profiles and company information. Built for teams running prospecting, enrichment, automation, and analytics workflows that need accurate, continuously updated business data. The API supports both real-time and bulk use cases.\n\nUse the Lusha API to **search for new prospects**, **enrich existing records**, **react to real-world changes**, and **expand coverage** with AI-powered lookalike recommendations.\n\n> All API requests must be made over **HTTPS**. All responses are returned in **JSON** format.\n\n--- \n## Available Endpoints\n\n| Category | Description |\n|---|---|\n| [**Search**](#tag/Search) | Find contacts or companies using known identifiers |\n| [**Enrich**](#tag/Enrich) | Retrieve full profile data for contacts or companies by ID |\n| [**Search & Enrich**](#tag/Search-and-Enrich) | Find and retrieve full contact or company data in a single call |\n| [**Prospecting**](#tag/Prospecting) | Filter-based search across contacts and companies |\n| [**Lookalikes**](#tag/Lookalikes) | AI-powered recommendations for similar contacts and companies |\n| [**Buying Group**](#tag/Buying-Group) | Identify decision makers, champions, and end users within target accounts |\n| [**Contacts Tables**](#tag/Contacts-Tables) | Persist, organize, and enrich contacts in reusable tables |\n| [**Companies Tables**](#tag/Companies-Tables) | Persist, organize, and enrich companies in reusable tables |\n| [**Signals**](#tag/Signals) | Real-world activity data for contacts and companies |\n| [**Website Visitors**](#tag/Website-Visits) | Companies ranked by website-visit signals for your tracked domains |\n| [**Filters**](#tag/Filters) | Discover valid filter values for prospecting |\n| [**Webhooks**](#tag/Webhooks) | Real-time signal notifications via HTTP callbacks |\n| [**Account**](#tag/Account) | Usage, credits, rate limits, and pricing |\n\n<blockquote class=\"callout\">\n\n **Waterfall Reveal for Contact Enrichment.**\n\n  Enrich Contacts now supports `waterfallEnabled`. Fall through to your enabled third-party providers when Lusha's own data has no match, for extra reach on hard-to-match contacts. On by default once your account has it turned on - pass `waterfallEnabled: false` to opt a specific call out. [See Enrich Contacts](#operation/enrichContacts).\n\n</blockquote>\n\n---\n\n## Data Source and Privacy\n\n**Lusha is a search platform.** The data provided is not created or directly managed by Lusha. It is sourced from publicly available information and trusted business partners.\n\nFor more details on how we collect and handle data, see our [Privacy Policy](https://lusha.com/legal/privacy-notice/).\n\n---\n\n## Authentication\n\nAll API requests require an **API key** linked to your Lusha account and plan. Pass your key in the `api_key` request header on every call.\n\n> Generate and manage your API key in the [Lusha dashboard](https://dashboard.lusha.com/enrich/api).\n\nStore your API key securely and use it only in **server-side environments**.\n\n---\n\n## Rate Limiting\n\nLusha enforces rate limits on a per-plan basis to ensure fair usage and platform stability. Limits are applied across multiple time windows (per minute, per hour, and per day), and vary depending on your account plan.\n\nRate limits for the **Credit Usage API** differ from standard endpoint limits.\n\n> **Note:** To check your current plan's limits, visit the [Lusha Help Center](https://info.lusha.com/en/articles/163856-all-there-is-to-know-about-lusha-s-api) or contact your account manager.\n\n**Rate Limit Response Headers**\n\n| Header | Description |\n|--------|-------------|\n| `x-rate-limit-daily` | Total requests allowed per day |\n| `x-daily-requests-left` | Requests remaining in your daily quota |\n| `x-daily-usage` | Requests made in the current daily period |\n| `x-rate-limit-hourly` | Total requests allowed per hour |\n| `x-hourly-requests-left` | Requests remaining in your hourly quota |\n| `x-hourly-usage` | Requests made in the current hourly period |\n| `x-rate-limit-minute` | Total requests allowed per minute |\n| `x-minute-requests-left` | Requests remaining in the current minute window |\n| `x-minute-usage` | Requests made in the current minute window |\n\n---\n## Error Codes\n\nLusha uses standard HTTP status codes to indicate the result of each request.\n\n| Code | Name | Description |\n|------|------|-------------|\n| `200` | OK | Request was successful |\n| `400` | Bad Request | Request is malformed or missing required fields |\n| `401` | Unauthorized | API key is missing or invalid |\n| `402` | Payment Required | Insufficient credits or payment needed |\n| `403` | Forbidden | Account is inactive. Contact support@lusha.com |\n| `404` | Not Found | Endpoint or resource does not exist |\n| `429` | Too Many Requests | Rate limit or daily quota exceeded |\n| `451` | Unavailable For Legal Reasons | Request blocked due to GDPR regulations |\n| `499` | Client Closed Request | Request timed out before completing |\n| `5XX` | Server Error | Issue on Lusha's end. Retry with exponential backoff |\n\n**Error Response Format**\n\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Invalid request parameters\"\n}\n```\n\n**Tables-specific error codes**\n\n| Code | Status | Meaning |\n|---|---|---|\n| `TABLE_NOT_FOUND` | 404 | The `table_id` does not exist or is not accessible to this account |\n| `COLUMN_NOT_FOUND` | 404 | The `column_id` does not exist on the given table |\n| `TABLE_NAME_CONFLICT` | 409 | A table with this name already exists |\n\nTables error bodies use the shape `{ \"message\": \"...\", \"code\": <status>, ... }` rather than the `statusCode`/`errors` shape used elsewhere in this doc.\n\n**Limits:** up to 500 entity IDs per add/remove call · max 50,000 entities per table · max 500 tables per account · `page` 0–100 · `size` default 100.\n\n**Tips for Handling Errors**\n\n- Verify your API key is correct and active\n- Read the `message` field for specific troubleshooting details\n- For `429` errors, wait before retrying\n- For `5XX` errors, use exponential backoff before retrying\n"
   contact:
     name: Lusha Support
     url: https://api.lusha.com
     email: support@lusha.com
+  license:
+    name: Proprietary
+    url: https://lusha.com/legal/terms
   termsOfService: https://lusha.com/legal/terms
+  x-logo:
+    url: https://www.lusha.com/logo.png
   x-privacy-policy:
     name: Privacy Policy
     url: https://lusha.com/legal/privacy-notice/
+  description: 'Operations tagged Signals across 2 of this provider''s published API definitions: lusha-openapi.yml, lusha-v2-openapi.yaml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.lusha.com
   description: Production server
@@ -118,6 +118,9 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/companies/signals:
     post:
       tags:
@@ -166,6 +169,9 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/contacts/signals/types:
     get:
       tags:
@@ -191,6 +197,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/companies/signals/types:
     get:
       tags:
@@ -237,6 +246,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/companies/signals/filters:
     get:
       tags:
@@ -267,6 +279,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/companies/signals/filters/{filterType}:
     get:
       tags:
@@ -320,6 +335,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/companies/signal-score:
     post:
       tags:
@@ -402,6 +420,9 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
   /v3/contacts/signal-score:
     post:
       tags:
@@ -493,8 +514,691 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '502':
           $ref: '#/components/responses/BadGateway'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
+  /api/signals/filters/{objectType}:
+    get:
+      tags:
+      - Signals
+      summary: Get Signal Options
+      description: "Retrieve available signal options for a specific entity type (contact or company).\nThis endpoint returns the list of signal types you can filter by when enriching contacts or companies.\n\n\n  **Endpoints:**\n\n    * **Contacts:** `GET /api/signals/filters/contact`\n    * **Companies:** `GET /api/signals/filters/company`\n\n\n  #### Available Signal Types\n\n\n    #### For contacts:\n\n    * **`allSignals`** - All available contact signal types\n    * **`promotion`** - Job title promotions\n    * **`companyChange`** - Company changes\n\n    ---\n\n    #### For companies:\n\n      * **`allSignals`** - All available company signal types\n\n    <br />\n\n    **Hiring & Workforce:**\n\n    * **`surgeInHiring`** - Overall hiring activity increase\n    * **`surgeInHiringByDepartment`** - Department-specific hiring surges\n    * **`surgeInHiringByLocation`** - Location-specific hiring surges\n\n    <br />\n\n      **Headcount Trends:**\n\n    | Signal | Description |\n    |--------|-------------|\n    | `headcountIncrease1m` / `headcountDecrease1m` | 1-month employee count changes |\n    | `headcountIncrease3m` / `headcountDecrease3m` | 3-month employee count changes |\n    | `headcountIncrease6m` / `headcountDecrease6m` | 6-month employee count changes |\n    | `headcountIncrease12m` / `headcountDecrease12m` | 12-month employee count changes |\n\n    <br />\n\n      **Technology & Digital Presence:**\n\n    * **`websiteTrafficIncrease`** - Website traffic growth\n    * **`websiteTrafficDecrease`** - Website traffic decline\n    * **`itSpendIncrease`** - IT spending increase\n    * **`itSpendDecrease`** - IT spending decrease\n\n    **News Events:**\n\n    To retrieve company news, use one or more of the following category values:\n\n\n    | Signal | Included Events |\n    |--------|-----------------|\n    | `commercialActivityNews` | Partnership, New Customer, New Vendor |\n    | `corporateStrategyNews` | M&A, Facilities Expansion, New Location, Facility Closure, Asset Sale, Lawsuit Filed |\n    | `financialEventsNews` | Funding Round, Asset Investment, Strategic Investment, IPO |\n    | `marketIntelligenceNews` | Event Participation, Recognition, Competitor Activity |\n    | `peopleNews` | Executive Hire, Executive Departure, Executive Promotion, Headcount Increase, Headcount Decrease |\n    | `productActivityNews` | Product Launch, Product Development, Product Integration |\n    | `riskNews` | Security Issue, Lawsuit Faced |\n\n\n    > The response also includes available values for signal sub-filters:\n\n      * `newsEventTypes` — available event type values for news signal filtering\n      * `hiringByDepartments` — available department values for hiring surge filtering\n      * `hiringByLocations` — available location values for hiring surge filtering (array of `{ country, state }` objects)\n"
+      operationId: getSignalOptions
+      parameters:
+      - name: objectType
+        in: path
+        required: true
+        description: The type of object to get signal options for
+        schema:
+          type: string
+          enum:
+          - contact
+          - company
+        example: contact
+      responses:
+        '200':
+          description: List of available signal types for the specified object type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signals:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - promotion
+                    - companyChange
+                  objectType:
+                    type: string
+                    example: contact
+                  filterOptions:
+                    type: object
+                    description: Available enum values for signal sub-filters. Only present in the `company` response.
+                    properties:
+                      newsEventTypes:
+                        type: array
+                        items:
+                          type: string
+                        description: Available values for the `newsEventTypes` filter
+                      hiringByDepartments:
+                        type: array
+                        items:
+                          type: string
+                        description: Available values for the `hiringByDepartments` filter
+              examples:
+                contactSignals:
+                  summary: Contact signal options
+                  value:
+                    signals:
+                    - promotion
+                    - companyChange
+                    - allSignals
+                    objectType: contact
+                companySignals:
+                  summary: Company signal options
+                  value:
+                    signals:
+                    - allSignals
+                    - websiteTrafficIncrease
+                    - websiteTrafficDecrease
+                    - itSpendIncrease
+                    - itSpendDecrease
+                    - headcountIncrease1m
+                    - headcountDecrease1m
+                    - headcountIncrease3m
+                    - headcountDecrease3m
+                    - headcountIncrease6m
+                    - headcountDecrease6m
+                    - headcountIncrease12m
+                    - headcountDecrease12m
+                    - surgeInHiring
+                    - surgeInHiringByDepartment
+                    - surgeInHiringByLocation
+                    - riskNews
+                    - commercialActivityNews
+                    - corporateStrategyNews
+                    - financialEventsNews
+                    - peopleNews
+                    - marketIntelligenceNews
+                    - productActivityNews
+                    objectType: company
+                    filterOptions:
+                      newsEventTypes:
+                      - Asset Investment
+                      - Asset Sale
+                      - Competitor Activity
+                      - Event Participation
+                      - Executive Departure
+                      - Executive Hire
+                      - Executive Promotion
+                      - Facilities Expansion
+                      - Facility Closure
+                      - Funding Round
+                      - Headcount Decrease
+                      - Headcount Increase
+                      - IPO
+                      - Lawsuit Faced
+                      - Lawsuit Filed
+                      - M&A
+                      - New Customer
+                      - New Location
+                      - New Vendor
+                      - Partnership
+                      - Product Development
+                      - Product Integration
+                      - Product Launch
+                      - Recognition
+                      - Security Issue
+                      - Strategic Investment
+                      hiringByDepartments:
+                      - Business Development
+                      - Consulting
+                      - Customer Service
+                      - Engineering & Technical
+                      - Finance
+                      - General Management
+                      - Health Care & Medical
+                      - Human Resources
+                      - Information Technology
+                      - Legal
+                      - Marketing
+                      - Operations
+                      - Other
+                      - Product
+                      - Research & Analytics
+                      - Sales
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Signals API not supported on your plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
+  /api/signals/contacts:
+    post:
+      tags:
+      - Signals
+      summary: Get Contact Signals by IDs
+      description: 'Retrieve signals data for a list of contact IDs.
+
+        This endpoint allows you to get recent activities and signals for up to 100 contacts per request.
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/api/signals/contacts**
+
+
+        **Default Behavior:**
+
+        - Returns signals from the last 6 months by default
+
+        - Use `startDate` to customize the timeframe
+
+        - Each signal type requested counts towards credit usage
+
+        '
+      operationId: getContactSignalsById
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactSignalsByIdRequest'
+            examples:
+              basicExample:
+                summary: Basic request
+                value:
+                  contactIds:
+                  - 115889
+                  signals:
+                  - promotion
+                  - companyChange
+                  startDate: '2025-01-01'
+                  maxResultsPerSignal: 5
+              allSignals:
+                summary: Request all signal types
+                value:
+                  contactIds:
+                  - 115889
+                  signals:
+                  - allSignals
+                  maxResultsPerSignal: 10
+      responses:
+        '200':
+          description: Contact signals retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactSignalsByIdResponse'
+              example:
+                contacts:
+                  '115889':
+                    personId: '115889'
+                    companyChange:
+                    - personId: '115889'
+                      currentCompanyId: 8217
+                      currentCompanyName: Callaway Golf
+                      currentDepartments: R&D
+                      currentSeniorityLabel: c-suite
+                      currentTitle: Senior Manager, IT Solutions
+                      signalDate: '2025-05-01'
+                      previousCompanyName: Previous Corp
+                      previousDomain: nextgen.com
+                      currentDomain: vendavo.com
+                    promotion:
+                    - personId: '115889'
+                      currentCompanyId: 8217
+                      currentCompanyName: Callaway Golf
+                      currentDepartments: R&D
+                      currentSeniorityLabel: c-suite
+                      currentTitle: Senior Manager, IT Solutions
+                      signalDate: '2025-05-01'
+                      previousCompanyName: Previous Corp
+                      previousDomain: nextgen.com
+                      currentDomain: vendavo.com
+                endDate: '2025-07-31'
+                startDate: '2025-01-01'
+                creditCharged: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '429':
+          $ref: '#/components/responses/TooManyRequests_2'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
+  /api/signals/contacts/search:
+    post:
+      tags:
+      - Signals
+      summary: Search Contact Signals
+      description: 'Search for contact signals using identifiers like LinkedIn URL, email, or name + company.
+
+        This endpoint combines search and signal enrichment in a single request.
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/api/signals/contacts/search**
+
+
+        **Search Requirements:**
+
+        Each contact can be identified by:
+
+        - Contact ID
+
+        - LinkedIn URL
+
+        - Email address
+
+        - Full name + Company (name or domain)
+
+
+        **Default Behavior:**
+
+        - Returns signals from the last 6 months by default
+
+        - Contacts are matched based on provided identifiers
+
+        - Returns both contact data and associated signals
+
+        '
+      operationId: searchContactSignals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactSignalsSearchRequest'
+            examples:
+              searchByLinkedIn:
+                summary: Search by LinkedIn URL (id required)
+                value:
+                  contacts:
+                  - id: '123321'
+                    social_link: https://www.linkedin.com/in/ron-nabet
+                  signals:
+                  - promotion
+                  - companyChange
+                  startDate: '2025-01-01'
+                  maxResultsPerSignal: 5
+              searchByEmail:
+                summary: Search by email (id required)
+                value:
+                  contacts:
+                  - id: '456654'
+                    email: dustin@lusha.com
+                  signals:
+                  - allSignals
+                  maxResultsPerSignal: 10
+              searchByNameAndCompany:
+                summary: Search by name and company (id required)
+                value:
+                  contacts:
+                  - id: '987789'
+                    full_name: Ron Nabet
+                    companies:
+                    - name: Lusha
+                    domain: lusha.com
+                    is_current: true
+                  signals:
+                  - promotion
+                  maxResultsPerSignal: 10
+      responses:
+        '200':
+          description: Contact signals search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactSignalsSearchResponse'
+              examples:
+                success:
+                  summary: Contact signals found via search
+                  value:
+                    contacts:
+                      '123321':
+                        personId: '115889'
+                        companyChange:
+                        - personId: '115889'
+                          currentCompanyId: 8217
+                          currentCompanyName: Callaway Golf
+                          currentDepartments: R&D
+                          currentSeniorityLabel: c-suite
+                          currentTitle: Senior Manager, IT Solutions
+                          signalDate: '2025-05-01'
+                          previousCompanyName: Previous Corp
+                          previousDomain: nextgen.com
+                          currentDomain: vendavo.com
+                        promotion:
+                        - personId: '115889'
+                          currentCompanyId: 8217
+                          currentCompanyName: Callaway Golf
+                          currentDepartments: R&D
+                          currentSeniorityLabel: c-suite
+                          currentTitle: Senior Manager, IT Solutions
+                          signalDate: '2025-05-01'
+                          previousCompanyName: Previous Corp
+                          previousDomain: nextgen.com
+                          currentDomain: vendavo.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '429':
+          $ref: '#/components/responses/TooManyRequests_2'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
+  /api/signals/companies:
+    post:
+      tags:
+      - Signals
+      summary: Get Company Signals by IDs
+      description: 'Retrieve signals data for a list of company IDs.
+
+        This endpoint allows you to get recent activities and signals for up to 100 companies per request.
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/api/signals/companies**
+
+
+        **Default Behavior:**
+
+        - Returns signals from the last 6 months by default
+
+        - Use `startDate` to customize the timeframe
+
+        '
+      operationId: getCompanySignalsById
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanySignalsByIdRequest'
+            examples:
+              basicExample:
+                summary: Basic request
+                value:
+                  companyIds:
+                  - 3416
+                  signals:
+                  - websiteTrafficIncrease
+                  startDate: '2025-01-01'
+                  maxResultsPerSignal: 10
+              allSignals:
+                summary: Request all signals
+                value:
+                  companyIds:
+                  - 3416
+                  - 3417
+                  signals:
+                  - allSignals
+                  maxResultsPerSignal: 10
+      responses:
+        '200':
+          description: Company signals retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanySignalsByIdResponse'
+              examples:
+                multipleSignals:
+                  summary: Company signals with multiple signal types
+                  value:
+                    companies:
+                      '3416':
+                        companyId: '3416'
+                        companyName: Test
+                        domain: test.com
+                        commercialActivityNews:
+                        - companyId: '3416'
+                          companyName: Lusha
+                          domain: lusha.com
+                          signalId: '1503910'
+                          eventType: partnership
+                          eventSummary: Lusha announced a strategic partnership with Salesforce.
+                          articlePublishedDate: '2025-06-15'
+                          articleTitle: Lusha Partners with Salesforce
+                          articleHighlight: The partnership enables Salesforce users to access Lusha data directly within their CRM.
+                          eventEffectiveDate: '2025-06-10'
+                          articleUrl: https://example.com/lusha-salesforce-partnership
+                        websiteTrafficIncrease:
+                        - companyId: '3416'
+                          signalId: '1503902'
+                          signalDate: '2025-06-15'
+                          historicalAvg: 50000
+                          lastMonthVisits: 75000
+                          changeRatePercent: 50
+                          companyName: Test
+                          domain: test.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 2
+                surgeInHiringExample:
+                  summary: Overall hiring surge signal
+                  value:
+                    companies:
+                      '3416':
+                        companyId: '3416'
+                        companyName: Lusha
+                        domain: lusha.com
+                        surgeInHiring:
+                        - companyId: '3416'
+                          signalId: '1503905'
+                          signalDate: '2025-06-15'
+                          newJobsPostedLastWeek: 25
+                          historicalAvg: 10
+                          changeRatePercent: 150
+                          companyName: Lusha
+                          domain: lusha.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '429':
+          $ref: '#/components/responses/TooManyRequests_2'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
+  /api/signals/companies/search:
+    post:
+      tags:
+      - Signals
+      summary: Search Company Signals
+      description: 'Search for company signals using identifiers like domain, company name, or ID.
+
+        This endpoint combines search and signal enrichment in a single request.
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/api/signals/companies/search**
+
+
+        **Search Requirements:**
+
+        Each company must have at least one identifier:
+
+        - Company ID (as string)
+
+        - Company name
+
+        - Company domain
+
+
+        **Default Behavior:**
+
+        - Returns signals from the last 6 months by default
+
+        - Companies are matched based on provided identifiers
+
+        '
+      operationId: searchCompanySignals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanySignalsSearchRequest'
+            examples:
+              searchByDomain:
+                summary: Search by domain (id required)
+                value:
+                  companies:
+                  - id: '12344321'
+                    domain: lusha.com
+                  signals:
+                  - itSpendIncrease
+                  startDate: '2025-01-01'
+                  maxResultsPerSignal: 10
+              searchByName:
+                summary: Search by company name (id required)
+                value:
+                  companies:
+                  - id: '123123'
+                    name: Lusha
+                  signals:
+                  - allSignals
+                  startDate: '2025-01-01'
+                  maxResultsPerSignal: 10
+              multipleCompanies:
+                summary: Search multiple companies with different identifiers
+                value:
+                  companies:
+                  - id: '123123'
+                    name: Arcmedix
+                  - id: '12344321'
+                    domain: lusha.com
+                  - id: '1234434421'
+                    domain: example.com
+                  signals:
+                  - itSpendIncrease
+                  startDate: '2025-01-01'
+                  maxResultsPerSignal: 10
+      responses:
+        '200':
+          description: Company signals search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanySignalsByIdResponse'
+              examples:
+                multipleSignals:
+                  summary: Multiple signal types found via search
+                  value:
+                    companies:
+                      '12344321':
+                        companyId: '3416'
+                        companyName: Lusha
+                        domain: lusha.com
+                        commercialActivityNews:
+                        - companyId: '3416'
+                          companyName: Lusha
+                          domain: lusha.com
+                          signalId: '1503910'
+                          eventType: partnership
+                          eventSummary: Lusha announced a strategic partnership with Salesforce.
+                          articlePublishedDate: '2025-06-15'
+                          articleTitle: Lusha Partners with Salesforce
+                          articleHighlight: The partnership enables Salesforce users to access Lusha data directly within their CRM.
+                          eventEffectiveDate: '2025-06-10'
+                          articleUrl: https://example.com/lusha-salesforce-partnership
+                        itSpendIncrease:
+                        - companyId: '3416'
+                          signalId: '1503903'
+                          signalDate: '2025-06-15'
+                          estimatedAnnualItSpend: 5000000
+                          changeRatePercent: 25
+                          companyName: Lusha
+                          domain: lusha.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 2
+                headcountSignal:
+                  summary: Headcount increase signal
+                  value:
+                    companies:
+                      '12344321':
+                        companyId: '3416'
+                        companyName: Lusha
+                        domain: lusha.com
+                        headcountIncrease3m:
+                        - companyId: '3416'
+                          signalId: '1503904'
+                          signalDate: '2025-06-15'
+                          baselineEmployeesCount: 500
+                          newEmployeesCount: 550
+                          changeRatePercent: 10
+                          companyName: Lusha
+                          domain: lusha.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 1
+                hiringByDepartment:
+                  summary: Department-specific hiring surge
+                  value:
+                    companies:
+                      '12344321':
+                        companyId: '3416'
+                        companyName: Lusha
+                        domain: lusha.com
+                        surgeInHiringByDepartment:
+                        - signalId: '1503906'
+                          companyId: '3416'
+                          department: Engineering
+                          signalDate: '2025-06-15'
+                          newJobsPostedLast4Weeks: 15
+                          historicalAvg: 5
+                          changeRatePercent: 200
+                          companyName: Lusha
+                          domain: lusha.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 1
+                hiringByLocation:
+                  summary: Location-specific hiring surge
+                  value:
+                    companies:
+                      '12344321':
+                        companyId: '3416'
+                        companyName: Lusha
+                        domain: lusha.com
+                        surgeInHiringByLocation:
+                        - signalId: '1503907'
+                          companyId: '3416'
+                          country: United States
+                          state: California
+                          signalDate: '2025-06-15'
+                          newJobsPostedLast4Weeks: 20
+                          historicalAvg: 8
+                          changeRatePercent: 150
+                          companyName: Lusha
+                          domain: lusha.com
+                    endDate: '2025-07-31'
+                    startDate: '2025-01-01'
+                    creditCharged: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden_2'
+        '429':
+          $ref: '#/components/responses/TooManyRequests_2'
+    servers:
+    - url: https://api.lusha.com
+      description: Production server
 components:
   schemas:
+    V3SignalScoreContactsResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          example: 5d6f13d2-f6b0-4e55-85d5-04e17f932c1a
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SignalScoreContactResult'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
     LinkedinActivityIntentCompanyMention:
       type: object
       description: A company referenced in a LinkedIn activity intent post.
@@ -511,6 +1215,37 @@ components:
         linkedinUrl:
           type: string
           example: https://www.linkedin.com/company/lushadata
+    V3SignalScoreContactsRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SignalScoreContactItem'
+          minItems: 1
+          maxItems: 100
+    V3SignalScoreCompaniesRequest:
+      type: object
+      required:
+      - companies
+      properties:
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SignalScoreCompanyItem'
+          minItems: 1
+          maxItems: 100
+    LinkedinActivityIntentTopic:
+      type: object
+      properties:
+        topic:
+          type: string
+          example: Cloud Security
+        category:
+          type: string
+          example: Technology
     LinkedinActivityIntentItem:
       type: object
       properties:
@@ -567,78 +1302,6 @@ components:
         activityType:
           type: string
           example: post
-    V3ContactSignalsRequest:
-      type: object
-      required:
-      - ids
-      - signalTypes
-      properties:
-        ids:
-          type: array
-          items:
-            type: string
-          minItems: 1
-          maxItems: 100
-          example:
-          - '4389064624'
-          - '4389064654'
-        signalTypes:
-          type: array
-          items:
-            type: string
-            enum:
-            - allSignals
-            - promotion
-            - companyChange
-          example:
-          - allSignals
-        startDate:
-          type: string
-          format: date
-          example: '2025-01-01'
-        maxResultsPerSignal:
-          type: integer
-          minimum: 1
-          maximum: 100
-          example: 10
-        tableId:
-          type: string
-          description: Optional. If provided, these contacts are also added to this table (if not already present) and the Signals column is populated. See the Tables API.
-          example: '482910'
-    V3CompanySignalsResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                example: '16303253'
-              companyName:
-                type: string
-                example: Lusha
-              domain:
-                type: string
-                example: lusha.com
-              linkedinActivityIntent:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LinkedinActivityIntentItem'
-            additionalProperties:
-              type: array
-              items:
-                type: object
-                additionalProperties: true
-        startDate:
-          type: string
-        endDate:
-          type: string
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
     V3CompanySignalsRequest:
       type: object
       required:
@@ -719,29 +1382,147 @@ components:
                   example:
                   - Technology
                   - Business
-    V3Billing:
+    V3ContactSignalsResponse:
       type: object
-      description: Credit usage summary for a V3 API request
       properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    V3SignalScoreCompaniesRequest:
-      type: object
-      required:
-      - companies
-      properties:
-        companies:
+        results:
           type: array
           items:
-            $ref: '#/components/schemas/V3SignalScoreCompanyItem'
-          minItems: 1
-          maxItems: 100
+            type: object
+            properties:
+              id:
+                type: string
+                example: '4389064624'
+              companyChange:
+                type: array
+                items:
+                  type: object
+              promotion:
+                type: array
+                items:
+                  type: object
+        startDate:
+          type: string
+        endDate:
+          type: string
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    CompanySignalTypesResponse:
+      type: object
+      properties:
+        signalTypes:
+          type: array
+          items:
+            type: string
+    V3SignalScoreCompaniesResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          example: 5d6f13d2-f6b0-4e55-85d5-04e17f932c1a
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SignalScoreCompanyResult'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3CompanySignalsResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: '16303253'
+              companyName:
+                type: string
+                example: Lusha
+              domain:
+                type: string
+                example: lusha.com
+              linkedinActivityIntent:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkedinActivityIntentItem'
+            additionalProperties:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+        startDate:
+          type: string
+        endDate:
+          type: string
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3SignalScoreCompanyItem:
+      type: object
+      description: Must contain exactly one of id, domain, name, or email.
+      properties:
+        clientReferenceId:
+          type: string
+          maxLength: 256
+          description: Caller-supplied token echoed back on the matching result.
+          example: ref-1
+        id:
+          type: string
+          description: Encrypted Lusha company ID (vN.…). Legacy numeric IDs accepted during the transition window.
+          example: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
+        domain:
+          type: string
+          example: www.microsoft.com
+        name:
+          type: string
+          example: Apple
+        email:
+          type: string
+          format: email
+          description: Must be a valid email address; only the domain part is used for resolution. A malformed email is rejected with 400.
+          example: jane@acme.com
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
     TableWrite:
       type: object
       description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
@@ -779,225 +1560,17 @@ components:
           type: integer
           description: Credits charged specifically for this table write.
           example: 0
-    FilterValuesResponse:
-      type: object
-      properties:
-        values:
-          description: Filter values (shape depends on filter type)
-    FilterTypesDiscoveryResponse:
-      type: object
-      properties:
-        availableFilters:
-          type: array
-          items:
-            type: object
-            properties:
-              filterType:
-                type: string
-              requiresQuery:
-                type: boolean
-    V3ItemError:
-      type: object
-      description: Per-item error in a batch response
-      properties:
-        code:
-          type: string
-          enum:
-          - NOT_FOUND
-          - COMPLIANCE_RESTRICTED
-          - ENRICH_FAILED
-          - NO_SCORE
-          example: NOT_FOUND
-        message:
-          type: string
-          example: Contact not found
-    V3ContactSignalsResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                example: '4389064624'
-              companyChange:
-                type: array
-                items:
-                  type: object
-              promotion:
-                type: array
-                items:
-                  type: object
-        startDate:
-          type: string
-        endDate:
-          type: string
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3SignalScoreContactsRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3SignalScoreContactItem'
-          minItems: 1
-          maxItems: 100
-    V3SignalScoreCompanyItem:
-      type: object
-      description: Must contain exactly one of id, domain, name, or email.
-      properties:
-        clientReferenceId:
-          type: string
-          maxLength: 256
-          description: Caller-supplied token echoed back on the matching result.
-          example: ref-1
-        id:
-          type: string
-          description: Encrypted Lusha company ID (vN.…). Legacy numeric IDs accepted during the transition window.
-          example: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
-        domain:
-          type: string
-          example: www.microsoft.com
-        name:
-          type: string
-          example: Apple
-        email:
-          type: string
-          format: email
-          description: Must be a valid email address; only the domain part is used for resolution. A malformed email is rejected with 400.
-          example: jane@acme.com
-    LinkedinActivityIntentPerson:
-      type: object
-      description: A person referenced in a LinkedIn activity intent post (author or mention).
-      properties:
-        id:
-          type:
-          - string
-          - 'null'
-          description: Lusha contact ID, or null if the person couldn't be resolved to a Lusha record.
-          example: '4389064624'
-        fullName:
-          type: string
-          example: Daniel Turgeman
-        linkedinUrl:
-          type: string
-          example: https://www.linkedin.com/in/daniel-turgeman-49676b161
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    LinkedinActivityIntentTopic:
-      type: object
-      properties:
-        topic:
-          type: string
-          example: Cloud Security
-        category:
-          type: string
-          example: Technology
-    CompanySignalTypesResponse:
+    ContactSignalTypesResponse:
       type: object
       properties:
         signalTypes:
           type: array
           items:
             type: string
-    V3SignalScoreContactsResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-          example: 5d6f13d2-f6b0-4e55-85d5-04e17f932c1a
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3SignalScoreContactResult'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3SignalScoreContactItem:
-      type: object
-      description: 'Must contain id, linkedinUrl, email, or firstName + lastName + (companyName | companyDomain).
-
-        '
-      properties:
-        clientReferenceId:
-          type: string
-          maxLength: 256
-          example: ref-1
-        id:
-          type: string
-          description: Encrypted Lusha contact ID (vN.…).
-          example: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
-        linkedinUrl:
-          type: string
-          example: https://linkedin.com/in/johndoe
-        email:
-          type: string
-          format: email
-          example: jane.doe@acme.com
-        firstName:
-          type: string
-          example: Jane
-        lastName:
-          type: string
-          example: Doe
-        companyName:
-          type: string
-          example: Acme Corp
-        companyDomain:
-          type: string
-          example: acme.com
-    V3SignalScoreCompaniesResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-          example: 5d6f13d2-f6b0-4e55-85d5-04e17f932c1a
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3SignalScoreCompanyResult'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3SignalScoreContactCompanyRef:
-      type: object
-      description: Company the contact was scored at.
-      properties:
-        id:
-          type: string
-          example: v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01
-        name:
-          type: string
-          example: Acme Corp
-        domain:
-          type: string
-          example: acme.com
+          example:
+          - allSignals
+          - promotion
+          - companyChange
     V3SignalScoreCompanyResult:
       type: object
       description: A scored entry, or an error entry with NOT_FOUND / NO_SCORE instead of the score fields.
@@ -1035,6 +1608,11 @@ components:
           example: false
         error:
           $ref: '#/components/schemas/V3ItemError'
+    FilterValuesResponse:
+      type: object
+      properties:
+        values:
+          description: Filter values (shape depends on filter type)
     V3SignalScoreContactResult:
       type: object
       description: A scored entry, or an error entry with NOT_FOUND / NO_SCORE instead of the score fields.
@@ -1070,53 +1648,866 @@ components:
           example: false
         error:
           $ref: '#/components/schemas/V3ItemError'
-    ContactSignalTypesResponse:
+    FilterTypesDiscoveryResponse:
       type: object
       properties:
+        availableFilters:
+          type: array
+          items:
+            type: object
+            properties:
+              filterType:
+                type: string
+              requiresQuery:
+                type: boolean
+    V3SignalScoreContactCompanyRef:
+      type: object
+      description: Company the contact was scored at.
+      properties:
+        id:
+          type: string
+          example: v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01
+        name:
+          type: string
+          example: Acme Corp
+        domain:
+          type: string
+          example: acme.com
+    V3ContactSignalsRequest:
+      type: object
+      required:
+      - ids
+      - signalTypes
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 100
+          example:
+          - '4389064624'
+          - '4389064654'
         signalTypes:
           type: array
           items:
             type: string
+            enum:
+            - allSignals
+            - promotion
+            - companyChange
           example:
           - allSignals
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        maxResultsPerSignal:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        tableId:
+          type: string
+          description: Optional. If provided, these contacts are also added to this table (if not already present) and the Signals column is populated. See the Tables API.
+          example: '482910'
+    V3SignalScoreContactItem:
+      type: object
+      description: 'Must contain id, linkedinUrl, email, or firstName + lastName + (companyName | companyDomain).
+
+        '
+      properties:
+        clientReferenceId:
+          type: string
+          maxLength: 256
+          example: ref-1
+        id:
+          type: string
+          description: Encrypted Lusha contact ID (vN.…).
+          example: v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345
+        linkedinUrl:
+          type: string
+          example: https://linkedin.com/in/johndoe
+        email:
+          type: string
+          format: email
+          example: jane.doe@acme.com
+        firstName:
+          type: string
+          example: Jane
+        lastName:
+          type: string
+          example: Doe
+        companyName:
+          type: string
+          example: Acme Corp
+        companyDomain:
+          type: string
+          example: acme.com
+    LinkedinActivityIntentPerson:
+      type: object
+      description: A person referenced in a LinkedIn activity intent post (author or mention).
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+          description: Lusha contact ID, or null if the person couldn't be resolved to a Lusha record.
+          example: '4389064624'
+        fullName:
+          type: string
+          example: Daniel Turgeman
+        linkedinUrl:
+          type: string
+          example: https://www.linkedin.com/in/daniel-turgeman-49676b161
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    ContactSignalsSearchResponse:
+      type: object
+      properties:
+        contacts:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              personId:
+                type: string
+                example: '115889'
+              companyChange:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactSignal'
+              promotion:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactSignal'
+        endDate:
+          type: string
+          format: date
+          example: '2025-07-31'
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        creditCharged:
+          type: integer
+          example: 2
+    CompanyHeadcountChangeSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503904'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        baselineEmployeesCount:
+          type: number
+          example: 500
+        newEmployeesCount:
+          type: number
+          example: 550
+        changeRatePercent:
+          type: number
+          example: 10
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanySignalFiltersInclude:
+      type: object
+      description: 'Optional sub-filters to narrow results within a signal type.
+
+        - Multi-value filters use **OR** logic
+
+        - Filter values are **not** case-sensitive
+
+        - `state` without `country` in `hiringByLocations` returns HTTP **400**
+
+        '
+      properties:
+        newsEventTypes:
+          type: array
+          items:
+            type: string
+            enum:
+            - Asset Investment
+            - Asset Sale
+            - Competitor Activity
+            - Event Participation
+            - Executive Departure
+            - Executive Hire
+            - Executive Promotion
+            - Facilities Expansion
+            - Facility Closure
+            - Funding Round
+            - Headcount Decrease
+            - Headcount Increase
+            - IPO
+            - Lawsuit Faced
+            - Lawsuit Filed
+            - M&A
+            - New Customer
+            - New Location
+            - New Vendor
+            - Partnership
+            - Product Development
+            - Product Integration
+            - Product Launch
+            - Recognition
+            - Security Issue
+            - Strategic Investment
+          example:
+          - Partnership
+          - New Customer
+        hiringByDepartments:
+          type: array
+          items:
+            type: string
+            enum:
+            - Business Development
+            - Consulting
+            - Customer Service
+            - Engineering & Technical
+            - Finance
+            - General Management
+            - Health Care & Medical
+            - Human Resources
+            - Information Technology
+            - Legal
+            - Marketing
+            - Operations
+            - Other
+            - Product
+            - Research & Analytics
+            - Sales
+          example:
+          - Engineering & Technical
+          - Sales
+        hiringByLocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignalFilterLocation'
+          example:
+          - country: United States
+            state: California
+          - country: Germany
+    CompanySignalData:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+        riskNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        commercialActivityNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        corporateStrategyNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        financialEventsNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        peopleNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        marketIntelligenceNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        productActivityNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        surgeInHiring:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringSignal'
+        surgeInHiringByDepartment:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringByDepartmentSignal'
+        surgeInHiringByLocation:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringByLocationSignal'
+        websiteTrafficIncrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
+        websiteTrafficDecrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
+        itSpendIncrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyItSpendSignal'
+        itSpendDecrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyItSpendSignal'
+        headcountIncrease1m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease1m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease3m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease3m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease6m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease6m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease12m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease12m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+    ContactSignalData:
+      type: object
+      properties:
+        personId:
+          type: string
+          example: '115889'
+        companyChange:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactSignal'
+        promotion:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactSignal'
+    CompanySurgeInHiringSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503905'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLastWeek:
+          type: number
+          example: 25
+        historicalAvg:
+          type: number
+          example: 10
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanySignalsSearchRequest:
+      type: object
+      required:
+      - companies
+      - signals
+      properties:
+        companies:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required:
+            - id
+            properties:
+              id:
+                type: string
+                example: '12345'
+              name:
+                type: string
+                example: Lusha
+              domain:
+                type: string
+                example: lusha.com
+        signals:
+          type: array
+          items:
+            type: string
+            enum:
+            - allSignals
+            - websiteTrafficIncrease
+            - websiteTrafficDecrease
+            - itSpendIncrease
+            - itSpendDecrease
+            - headcountIncrease1m
+            - headcountDecrease1m
+            - headcountIncrease3m
+            - headcountDecrease3m
+            - headcountIncrease6m
+            - headcountDecrease6m
+            - headcountIncrease12m
+            - headcountDecrease12m
+            - surgeInHiring
+            - surgeInHiringByDepartment
+            - surgeInHiringByLocation
+            - riskNews
+            - commercialActivityNews
+            - corporateStrategyNews
+            - financialEventsNews
+            - peopleNews
+            - marketIntelligenceNews
+            - productActivityNews
+          example:
+          - itSpendIncrease
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        maxResultsPerSignal:
+          type: integer
+          example: 10
+        filters:
+          type: object
+          properties:
+            include:
+              $ref: '#/components/schemas/CompanySignalFiltersInclude'
+    CompanySignalsByIdRequest:
+      type: object
+      required:
+      - companyIds
+      - signals
+      properties:
+        companyIds:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: integer
+          example:
+          - 3416
+        signals:
+          type: array
+          items:
+            type: string
+            enum:
+            - allSignals
+            - websiteTrafficIncrease
+            - websiteTrafficDecrease
+            - itSpendIncrease
+            - itSpendDecrease
+            - headcountIncrease1m
+            - headcountDecrease1m
+            - headcountIncrease3m
+            - headcountDecrease3m
+            - headcountIncrease6m
+            - headcountDecrease6m
+            - headcountIncrease12m
+            - headcountDecrease12m
+            - surgeInHiring
+            - surgeInHiringByDepartment
+            - surgeInHiringByLocation
+            - riskNews
+            - commercialActivityNews
+            - corporateStrategyNews
+            - financialEventsNews
+            - peopleNews
+            - marketIntelligenceNews
+            - productActivityNews
+          example: websiteTrafficIncrease
+        startDate:
+          type: string
+          format: date
+          example: '2025-03-01'
+        maxResultsPerSignal:
+          type: integer
+          example: 10
+        filters:
+          type: object
+          properties:
+            include:
+              $ref: '#/components/schemas/CompanySignalFiltersInclude'
+    CompanySurgeInHiringByDepartmentSignal:
+      type: object
+      properties:
+        signalId:
+          type: string
+          example: '1503906'
+        companyId:
+          type: string
+          example: '3416'
+        department:
+          type: string
+          example: Engineering
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 15
+        historicalAvg:
+          type: number
+          example: 5
+        changeRatePercent:
+          type: number
+          example: 200
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    SignalFilterLocation:
+      type: object
+      description: 'Location filter for hiring signals. `country` is required; `state` is optional.
+
+        '
+      required:
+      - country
+      properties:
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+    CompanySurgeInHiringByLocationSignal:
+      type: object
+      properties:
+        signalId:
+          type: string
+          example: '1503907'
+        companyId:
+          type: string
+          example: '3416'
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 20
+        historicalAvg:
+          type: number
+          example: 8
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyNewsSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '33222678'
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+        signalId:
+          type: string
+          example: '1503910'
+        eventType:
+          type: string
+          example: partnership
+        eventSummary:
+          type: string
+          example: Lusha announced a strategic partnership with Salesforce.
+        articlePublishedDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        articleTitle:
+          type: string
+          example: Lusha Partners with Salesforce
+        articleHighlight:
+          type: string
+          example: The partnership enables Salesforce users to access Lusha data directly within their CRM.
+        eventEffectiveDate:
+          type: string
+          format: date
+          example: '2025-06-10'
+        articleUrl:
+          type: string
+          format: uri
+          example: https://example.com/lusha-salesforce-partnership
+    ContactSignalsByIdRequest:
+      type: object
+      required:
+      - contactIds
+      - signals
+      properties:
+        contactIds:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: integer
+          example:
+          - 115889
+        signals:
+          type: array
+          items:
+            type: string
+            enum:
+            - allSignals
+            - promotion
+            - companyChange
+          example:
           - promotion
           - companyChange
+        startDate:
+          type: string
+          format: date
+          example: '2025-03-01'
+        maxResultsPerSignal:
+          type: integer
+          example: 10
+    ContactSignalsSearchRequest:
+      type: object
+      required:
+      - signals
+      - contacts
+      properties:
+        contacts:
+          type: array
+          items:
+            type: object
+            required:
+            - id
+            properties:
+              id:
+                type: string
+                example: '12345'
+              social_link:
+                type: string
+                format: uri
+                example: https://www.linkedin.com/in/ron-nabet
+              full_name:
+                type: string
+                example: Ron Nabet
+              email:
+                type: string
+                format: email
+                example: dustin@lusha.com
+              companies:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - name
+                  - domain
+                  properties:
+                    name:
+                      type: string
+                      example: Lusha
+                    domain:
+                      type: string
+                      example: lusha.com
+                    is_current:
+                      type: boolean
+                      default: true
+                      example: true
+        signals:
+          type: array
+          items:
+            type: string
+            enum:
+            - allSignals
+            - promotion
+            - companyChange
+          example:
+          - promotion
+          - companyChange
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        maxResultsPerSignal:
+          type: integer
+          example: 10
+    CompanySignalsByIdResponse:
+      type: object
+      properties:
+        companies:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CompanySignalData'
+        endDate:
+          type: string
+          format: date
+          example: '2025-07-31'
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        creditCharged:
+          type: integer
+          example: 3
+    CompanyWebsiteTrafficSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503902'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        historicalAvg:
+          type: number
+          example: 50000
+        lastMonthVisits:
+          type: number
+          example: 75000
+        changeRatePercent:
+          type: number
+          example: 50
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    ContactSignalsByIdResponse:
+      type: object
+      properties:
+        contacts:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ContactSignalData'
+        endDate:
+          type: string
+          format: date
+          example: '2025-07-31'
+        startDate:
+          type: string
+          format: date
+          example: '2025-03-01'
+        creditCharged:
+          type: integer
+          example: 2
+    CompanyItSpendSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503903'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        estimatedAnnualItSpend:
+          type: number
+          example: 5000000
+        changeRatePercent:
+          type: number
+          example: 25
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    ContactSignal:
+      type: object
+      properties:
+        personId:
+          type: string
+          example: '115889'
+        currentCompanyId:
+          type: integer
+          example: 8217
+        currentCompanyName:
+          type: string
+          example: Callaway Golf
+        currentDepartments:
+          type: string
+          example: R&D
+        currentSeniorityLabel:
+          type: string
+          example: c-suite
+        currentTitle:
+          type: string
+          example: Senior Manager, IT Solutions
+        signalDate:
+          type: string
+          format: date
+          example: '2025-05-01'
+        previousCompanyName:
+          type: string
+          example: Previous Corp
+        previousDomain:
+          type: string
+          example: nextgen.com
+        currentDomain:
+          type: string
+          example: vendavo.com
   responses:
-    BadGateway:
-      description: Bad gateway - upstream identity resolution provider is unavailable. Retryable.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 502
-            message: Identity resolution provider is temporarily unavailable. Retry with backoff.
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -1160,6 +2551,41 @@ components:
           example:
             statusCode: 401
             message: Invalid API key
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    BadGateway:
+      description: Bad gateway - upstream identity resolution provider is unavailable. Retryable.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 502
+            message: Identity resolution provider is temporarily unavailable. Retry with backoff.
     PaymentRequired:
       description: Payment required - insufficient credits
       content:
@@ -1169,6 +2595,63 @@ components:
           example:
             statusCode: 402
             message: Insufficient credits for this operation
+    TooManyRequests_2:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        RateLimit-Limit:
+          description: The total number of allowed requests per second
+          schema:
+            type: integer
+        RateLimit-Remaining:
+          description: The number of remaining requests in the current window
+          schema:
+            type: integer
+        RateLimit-Reset:
+          description: The time (in seconds) until the rate limit quota is reset
+          schema:
+            type: integer
+        X-RateLimit-Remaining-Daily:
+          description: The number of remaining requests for your daily quota
+          schema:
+            type: integer
+        X-RateLimit-Reset-Daily:
+          description: The time when your daily quota will reset
+          schema:
+            type: integer
+    Forbidden_2:
+      description: Forbidden - account inactive or feature not available
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            featureNotAvailable:
+              summary: Feature not available for pricing plan
+              value:
+                statusCode: 403
+                message: Your pricing version does not support requesting individual datapoints [revealEmails, revealPhones]
+            subscriptionLimitReached:
+              summary: Subscription limit reached
+              value:
+                statusCode: 403
+                message: Maximum subscriptions limit reached for your account
+            dncNotSupported:
+              summary: DNC filter not supported on current plan
+              value:
+                statusCode: 403
+                message: Exclude DNC is not supported on your current plan. Please contact support or your account manager for assistance.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
@@ -1179,3 +2662,6 @@ components:
         Include this key in the `api_key` header for all requests.
 
         '
+x-refined-from:
+- lusha-openapi.yml
+- lusha-v2-openapi.yaml

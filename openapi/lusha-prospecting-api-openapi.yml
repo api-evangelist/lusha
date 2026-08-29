@@ -290,447 +290,7 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
-    TooManyRequests:
-      description: Too many requests - rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 429
-            message: Too many requests. Please wait before making another request.
-      headers:
-        x-rate-limit-daily:
-          description: Total requests allowed per day
-          schema:
-            type: integer
-        x-daily-requests-left:
-          description: Requests remaining in daily quota
-          schema:
-            type: integer
-        x-rate-limit-hourly:
-          description: Total requests allowed per hour
-          schema:
-            type: integer
-        x-hourly-requests-left:
-          description: Requests remaining in hourly quota
-          schema:
-            type: integer
-        x-rate-limit-minute:
-          description: Total requests allowed per minute
-          schema:
-            type: integer
-        x-minute-requests-left:
-          description: Requests remaining in current minute window
-          schema:
-            type: integer
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
-    PaymentRequired:
-      description: Payment required - insufficient credits
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 402
-            message: Insufficient credits for this operation
   schemas:
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    V3CompanyPreview:
-      type: object
-      properties:
-        clientReferenceId:
-          type: string
-          example: comp-ref-1
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: www.lusha.com
-        employeeCount:
-          type: object
-          properties:
-            exact:
-              type: integer
-              example: 364
-            min:
-              type: integer
-              example: 201
-            max:
-              type: integer
-              example: 500
-        industry:
-          type: string
-          example: Technology, Information & Media
-        location:
-          type: object
-          properties:
-            city:
-              type: string
-              example: London
-            state:
-              type: string
-              example: England
-            stateCode:
-              type: string
-              description: Free field. ISO/postal state or region code, when available.
-              example: MA
-            country:
-              type: string
-              example: United Kingdom
-            countryIso2:
-              type: string
-              example: GB
-            continent:
-              type: string
-              example: Europe
-        socialLinks:
-          type: object
-          properties:
-            linkedin:
-              type: string
-              example: https://www.linkedin.com/company/lushadata
-        has:
-          type: array
-          items:
-            type: string
-          description: 'Available data points that can be revealed via Enrich Companies. Includes base firmographic fields plus new revealable fields: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, businessModel, phones, emails, keywords, socialLinks, estimatedAnnualItSpend, monthlyWebsiteTraffic.
-
-            '
-          example:
-          - alternativeName
-          - alternativeDomains
-          - description
-          - companyType
-          - yearFounded
-          - subIndustry
-          - specialities
-          - sicCodes
-          - naicsCodes
-          - additionalLocations
-          - linkedinFollowers
-          - popularityTier
-          - logoUrl
-          - employeesByDepartment
-          - employeesByLocation
-          - employeesBySeniority
-          - competitors
-          - businessModel
-          - phones
-          - emails
-          - keywords
-          - socialLinks
-          - estimatedAnnualItSpend
-          - monthlyWebsiteTraffic
-        canReveal:
-          type: array
-          description: 'Data fields that can be revealed via Enrich Companies, with the credit cost per field. A cost of 0 means the field has already been revealed for this account.
-
-            '
-          items:
-            $ref: '#/components/schemas/V3CanRevealItem'
-          example:
-          - field: employeesByDepartment
-            credits: 1
-          - field: employeesByLocation
-            credits: 1
-          - field: employeesBySeniority
-            credits: 1
-          - field: competitors
-            credits: 1
-          - field: intent
-            credits: 0
-          - field: estimatedAnnualItSpend
-            credits: 1
-          - field: monthlyWebsiteTraffic
-            credits: 1
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - headcountIncrease3m
-        error:
-          $ref: '#/components/schemas/V3ItemError'
-    V3ContactFilterCriteria:
-      type: object
-      properties:
-        names:
-          type: array
-          items:
-            type: string
-        jobTitles:
-          type: array
-          items:
-            type: string
-          example:
-          - VP Sales
-          - Director of Sales
-        jobTitlesExactMatch:
-          type: array
-          items:
-            type: string
-        normalizedJobTitles:
-          type: array
-          items:
-            type: string
-        searchText:
-          type: string
-          maxLength: 200
-        countries:
-          type: array
-          items:
-            type: string
-          example:
-          - US
-          - CA
-        locations:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3Location'
-        seniorityIds:
-          type: array
-          items:
-            type: integer
-          example:
-          - 4
-          - 5
-        departments:
-          type: array
-          items:
-            type: string
-          example:
-          - Sales
-          - Engineering
-        linkedinUrls:
-          type: array
-          items:
-            type: string
-        existingDataPoints:
-          type: array
-          items:
-            type: string
-          example:
-          - work_email
-          - work_phone
-        signals:
-          type: object
-          properties:
-            types:
-              type: array
-              items:
-                type: string
-                enum:
-                - allSignals
-                - promotion
-                - companyChange
-            startDate:
-              type: string
-              format: date
-        emails:
-          type: array
-          items:
-            type: string
-            format: email
-          description: Personal data — no catalog.
-        previousEmails:
-          type: array
-          items:
-            type: string
-            format: email
-          description: Personal data — no catalog.
-        previousJobTitle:
-          type: array
-          items:
-            type: string
-        skills:
-          type: array
-          items:
-            type: string
-          example:
-          - Python
-        certifications:
-          type: array
-          items:
-            type: string
-        awards:
-          type: array
-          items:
-            type: string
-        ids:
-          type: array
-          items:
-            type: string
-          description: Encrypted contact id from a prior search's `results[].id`.
-        existingDataPointsCondition:
-          type: string
-          enum:
-          - or
-          - and
-          description: Pairs with `existingDataPoints`.
-        jobChangedAfterDate:
-          type: string
-          format: date
-          description: Refinement-only — must be paired with a base filter (e.g. `jobTitles`).
-        jobChangedLastViewDate:
-          type: string
-          format: date
-          description: Refinement-only — must be paired with a base filter.
-        education:
-          type: object
-          description: Refinement-only — must be paired with a base filter.
-          properties:
-            degrees:
-              type: array
-              items:
-                type: string
-            fieldsOfStudy:
-              type: array
-              items:
-                type: string
-            schools:
-              type: array
-              items:
-                type: string
-            startYearGte:
-              type: integer
-            graduationYearLte:
-              type: integer
-        score:
-          type: object
-          description: 'Refinement-only — must be paired with a base filter. Raw 0–100 contact score. Distinct from the `confidence` band ("A+"/"A") returned on enriched contacts, which is derived from this score (e.g. `A+` when score > 75).
-
-            '
-          properties:
-            minScore:
-              type: integer
-              minimum: 0
-              maximum: 100
-            maxScore:
-              type: integer
-              minimum: 0
-              maximum: 100
-        geographicDetails:
-          type: array
-          items:
-            type: object
-            properties:
-              country:
-                type: string
-              zipcode:
-                type: string
-              distance:
-                type: integer
-                description: Radius in miles.
-    V3ProspectingContactsRequest:
-      type: object
-      required:
-      - pagination
-      - filters
-      properties:
-        pagination:
-          $ref: '#/components/schemas/V3PaginationRequest'
-        filters:
-          $ref: '#/components/schemas/V3ProspectingContactFilters'
-        tableId:
-          type: string
-          description: Optional. If provided, results are also persisted to this table. See the Tables API.
-          example: '482910'
-        options:
-          type: object
-          properties:
-            includePartialProfiles:
-              type: boolean
-              default: true
-            excludeDnc:
-              type: boolean
-    TableWrite:
-      type: object
-      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
-
-        '
-      properties:
-        tableId:
-          type: string
-          example: '482910'
-        added:
-          type: integer
-          description: Number of new entities added to the table by this call.
-          example: 3
-        alreadyPresent:
-          type: integer
-          description: Number of entities from this call that were already in the table.
-          example: 2
-        columnsCreated:
-          type: integer
-          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
-          example: 0
-        rowsProcessed:
-          type: integer
-          description: Number of rows the column-run touched as part of this call.
-          example: 5
-        rowsCharged:
-          type: integer
-          description: Number of those rows that incurred a credit charge.
-          example: 5
-        rowsAlreadyPaidInTable:
-          type: integer
-          description: Number of those rows that were already paid for in this table and were not re-charged.
-          example: 0
-        creditsCharged:
-          type: integer
-          description: Credits charged specifically for this table write.
-          example: 0
     V3CompanyFilterCriteria:
       type: object
       properties:
@@ -1032,6 +592,211 @@ components:
                 type: string
               zipcode:
                 type: string
+    V3Location:
+      type: object
+      description: Location filter object used in prospecting requests
+      properties:
+        city:
+          type: string
+          example: San Francisco
+        state:
+          type: string
+          example: California
+        country:
+          type: string
+          example: United States
+        continent:
+          type: string
+          example: North America
+        countryGrouping:
+          type: string
+          example: EMEA
+        region:
+          type: string
+          example: California
+        countryIso2:
+          type: string
+          example: US
+    V3PaginationResponse:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 25
+        total:
+          type: integer
+    V3CompanyPreview:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: comp-ref-1
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: www.lusha.com
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 364
+            min:
+              type: integer
+              example: 201
+            max:
+              type: integer
+              example: 500
+        industry:
+          type: string
+          example: Technology, Information & Media
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+              example: London
+            state:
+              type: string
+              example: England
+            stateCode:
+              type: string
+              description: Free field. ISO/postal state or region code, when available.
+              example: MA
+            country:
+              type: string
+              example: United Kingdom
+            countryIso2:
+              type: string
+              example: GB
+            continent:
+              type: string
+              example: Europe
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/lushadata
+        has:
+          type: array
+          items:
+            type: string
+          description: 'Available data points that can be revealed via Enrich Companies. Includes base firmographic fields plus new revealable fields: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, businessModel, phones, emails, keywords, socialLinks, estimatedAnnualItSpend, monthlyWebsiteTraffic.
+
+            '
+          example:
+          - alternativeName
+          - alternativeDomains
+          - description
+          - companyType
+          - yearFounded
+          - subIndustry
+          - specialities
+          - sicCodes
+          - naicsCodes
+          - additionalLocations
+          - linkedinFollowers
+          - popularityTier
+          - logoUrl
+          - employeesByDepartment
+          - employeesByLocation
+          - employeesBySeniority
+          - competitors
+          - businessModel
+          - phones
+          - emails
+          - keywords
+          - socialLinks
+          - estimatedAnnualItSpend
+          - monthlyWebsiteTraffic
+        canReveal:
+          type: array
+          description: 'Data fields that can be revealed via Enrich Companies, with the credit cost per field. A cost of 0 means the field has already been revealed for this account.
+
+            '
+          items:
+            $ref: '#/components/schemas/V3CanRevealItem'
+          example:
+          - field: employeesByDepartment
+            credits: 1
+          - field: employeesByLocation
+            credits: 1
+          - field: employeesBySeniority
+            credits: 1
+          - field: competitors
+            credits: 1
+          - field: intent
+            credits: 0
+          - field: estimatedAnnualItSpend
+            credits: 1
+          - field: monthlyWebsiteTraffic
+            credits: 1
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - headcountIncrease3m
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3ProspectingContactFilters:
+      type: object
+      properties:
+        contacts:
+          type: object
+          properties:
+            include:
+              $ref: '#/components/schemas/V3ContactFilterCriteria'
+            exclude:
+              $ref: '#/components/schemas/V3ContactFilterCriteria'
+        companies:
+          type: object
+          properties:
+            include:
+              $ref: '#/components/schemas/V3CompanyFilterCriteria'
+            exclude:
+              $ref: '#/components/schemas/V3CompanyFilterCriteria'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    V3Range:
+      type: object
+      description: Numeric range filter
+      properties:
+        min:
+          type: integer
+          minimum: 0
+          example: 1
+        max:
+          type: integer
+          example: 1000
     V3ItemError:
       type: object
       description: Per-item error in a batch response
@@ -1047,34 +812,43 @@ components:
         message:
           type: string
           example: Contact not found
-    V3ContactsOnCompanySearchFilters:
+    TableWrite:
       type: object
-      description: Restricted contact-attribute filters usable within a company prospecting request.
+      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
+
+        '
       properties:
-        jobTitles:
-          type: array
-          items:
-            type: string
-        departments:
-          type: array
-          items:
-            type: string
-        seniorityIds:
-          type: array
-          items:
-            type: integer
-        skills:
-          type: array
-          items:
-            type: string
-        locations:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3Location'
-        existingDataPoints:
-          type: array
-          items:
-            type: string
+        tableId:
+          type: string
+          example: '482910'
+        added:
+          type: integer
+          description: Number of new entities added to the table by this call.
+          example: 3
+        alreadyPresent:
+          type: integer
+          description: Number of entities from this call that were already in the table.
+          example: 2
+        columnsCreated:
+          type: integer
+          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
+          example: 0
+        rowsProcessed:
+          type: integer
+          description: Number of rows the column-run touched as part of this call.
+          example: 5
+        rowsCharged:
+          type: integer
+          description: Number of those rows that incurred a credit charge.
+          example: 5
+        rowsAlreadyPaidInTable:
+          type: integer
+          description: Number of those rows that were already paid for in this table and were not re-charged.
+          example: 0
+        creditsCharged:
+          type: integer
+          description: Credits charged specifically for this table write.
+          example: 0
     V3ContactPreview:
       type: object
       properties:
@@ -1159,87 +933,64 @@ components:
           - companyChange
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3Location:
-      type: object
-      description: Location filter object used in prospecting requests
-      properties:
-        city:
-          type: string
-          example: San Francisco
-        state:
-          type: string
-          example: California
-        country:
-          type: string
-          example: United States
-        continent:
-          type: string
-          example: North America
-        countryGrouping:
-          type: string
-          example: EMEA
-        region:
-          type: string
-          example: California
-        countryIso2:
-          type: string
-          example: US
-    V3ProspectingContactFilters:
-      type: object
-      properties:
-        contacts:
-          type: object
-          properties:
-            include:
-              $ref: '#/components/schemas/V3ContactFilterCriteria'
-            exclude:
-              $ref: '#/components/schemas/V3ContactFilterCriteria'
-        companies:
-          type: object
-          properties:
-            include:
-              $ref: '#/components/schemas/V3CompanyFilterCriteria'
-            exclude:
-              $ref: '#/components/schemas/V3CompanyFilterCriteria'
-    ErrorResponse:
+    V3ProspectingCompaniesRequest:
       type: object
       required:
-      - statusCode
-      - message
+      - pagination
+      - filters
       properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
+        pagination:
+          $ref: '#/components/schemas/V3PaginationRequest'
+        filters:
+          type: object
+          required:
+          - companies
+          description: '`filters.contacts` cannot be combined with company `searchText`, `signals`, `intent`, or `technologies` on the same request — doing so returns `400` (contact filters are never silently ignored).
+
+            '
+          properties:
+            companies:
+              type: object
+              required:
+              - include
+              properties:
+                include:
+                  $ref: '#/components/schemas/V3CompanyProspectingFilters'
+                exclude:
+                  $ref: '#/components/schemas/V3CompanyProspectingFilters'
+            contacts:
+              type: object
+              properties:
+                include:
+                  $ref: '#/components/schemas/V3ContactsOnCompanySearchFilters'
+                exclude:
+                  $ref: '#/components/schemas/V3ContactsOnCompanySearchFilters'
+        tableId:
           type: string
-          description: Error message
-          example: Validation failed
-        errors:
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '583021'
+        options:
+          type: object
+          properties:
+            includePartialProfiles:
+              type: boolean
+              default: false
+    V3ProspectingContactsResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
           type: array
           items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    V3PaginationRequest:
-      type: object
-      required:
-      - page
-      - size
-      properties:
-        page:
-          type: integer
-          minimum: 0
-          maximum: 1000
-          default: 0
-          example: 0
-        size:
-          type: integer
-          minimum: 10
-          maximum: 100
-          default: 25
-          example: 25
+            $ref: '#/components/schemas/V3ContactPreview'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
     V3CompanyProspectingFilters:
       type: object
       properties:
@@ -1482,6 +1233,176 @@ components:
                 type: string
               zipcode:
                 type: string
+    V3ContactFilterCriteria:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+        jobTitles:
+          type: array
+          items:
+            type: string
+          example:
+          - VP Sales
+          - Director of Sales
+        jobTitlesExactMatch:
+          type: array
+          items:
+            type: string
+        normalizedJobTitles:
+          type: array
+          items:
+            type: string
+        searchText:
+          type: string
+          maxLength: 200
+        countries:
+          type: array
+          items:
+            type: string
+          example:
+          - US
+          - CA
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Location'
+        seniorityIds:
+          type: array
+          items:
+            type: integer
+          example:
+          - 4
+          - 5
+        departments:
+          type: array
+          items:
+            type: string
+          example:
+          - Sales
+          - Engineering
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+        existingDataPoints:
+          type: array
+          items:
+            type: string
+          example:
+          - work_email
+          - work_phone
+        signals:
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string
+                enum:
+                - allSignals
+                - promotion
+                - companyChange
+            startDate:
+              type: string
+              format: date
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          description: Personal data — no catalog.
+        previousEmails:
+          type: array
+          items:
+            type: string
+            format: email
+          description: Personal data — no catalog.
+        previousJobTitle:
+          type: array
+          items:
+            type: string
+        skills:
+          type: array
+          items:
+            type: string
+          example:
+          - Python
+        certifications:
+          type: array
+          items:
+            type: string
+        awards:
+          type: array
+          items:
+            type: string
+        ids:
+          type: array
+          items:
+            type: string
+          description: Encrypted contact id from a prior search's `results[].id`.
+        existingDataPointsCondition:
+          type: string
+          enum:
+          - or
+          - and
+          description: Pairs with `existingDataPoints`.
+        jobChangedAfterDate:
+          type: string
+          format: date
+          description: Refinement-only — must be paired with a base filter (e.g. `jobTitles`).
+        jobChangedLastViewDate:
+          type: string
+          format: date
+          description: Refinement-only — must be paired with a base filter.
+        education:
+          type: object
+          description: Refinement-only — must be paired with a base filter.
+          properties:
+            degrees:
+              type: array
+              items:
+                type: string
+            fieldsOfStudy:
+              type: array
+              items:
+                type: string
+            schools:
+              type: array
+              items:
+                type: string
+            startYearGte:
+              type: integer
+            graduationYearLte:
+              type: integer
+        score:
+          type: object
+          description: 'Refinement-only — must be paired with a base filter. Raw 0–100 contact score. Distinct from the `confidence` band ("A+"/"A") returned on enriched contacts, which is derived from this score (e.g. `A+` when score > 75).
+
+            '
+          properties:
+            minScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+            maxScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+        geographicDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              country:
+                type: string
+              zipcode:
+                type: string
+              distance:
+                type: integer
+                description: Radius in miles.
     V3CanRevealItem:
       type: object
       description: Indicates a data type that can be revealed and its credit cost
@@ -1496,28 +1417,6 @@ components:
           type: integer
           description: Credit cost (0 when already revealed for this account)
           example: 1
-    V3PaginationResponse:
-      type: object
-      properties:
-        page:
-          type: integer
-          example: 0
-        size:
-          type: integer
-          example: 25
-        total:
-          type: integer
-    V3Range:
-      type: object
-      description: Numeric range filter
-      properties:
-        min:
-          type: integer
-          minimum: 0
-          example: 1
-        max:
-          type: integer
-          example: 1000
     V3ProspectingCompaniesResponse:
       type: object
       properties:
@@ -1534,7 +1433,65 @@ components:
           $ref: '#/components/schemas/TableWrite'
         billing:
           $ref: '#/components/schemas/V3Billing'
-    V3ProspectingCompaniesRequest:
+    V3ContactsOnCompanySearchFilters:
+      type: object
+      description: Restricted contact-attribute filters usable within a company prospecting request.
+      properties:
+        jobTitles:
+          type: array
+          items:
+            type: string
+        departments:
+          type: array
+          items:
+            type: string
+        seniorityIds:
+          type: array
+          items:
+            type: integer
+        skills:
+          type: array
+          items:
+            type: string
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3Location'
+        existingDataPoints:
+          type: array
+          items:
+            type: string
+    V3PaginationRequest:
+      type: object
+      required:
+      - page
+      - size
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          default: 0
+          example: 0
+        size:
+          type: integer
+          minimum: 10
+          maximum: 100
+          default: 25
+          example: 25
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    V3ProspectingContactsRequest:
       type: object
       required:
       - pagination
@@ -1543,55 +1500,98 @@ components:
         pagination:
           $ref: '#/components/schemas/V3PaginationRequest'
         filters:
-          type: object
-          required:
-          - companies
-          description: '`filters.contacts` cannot be combined with company `searchText`, `signals`, `intent`, or `technologies` on the same request — doing so returns `400` (contact filters are never silently ignored).
-
-            '
-          properties:
-            companies:
-              type: object
-              required:
-              - include
-              properties:
-                include:
-                  $ref: '#/components/schemas/V3CompanyProspectingFilters'
-                exclude:
-                  $ref: '#/components/schemas/V3CompanyProspectingFilters'
-            contacts:
-              type: object
-              properties:
-                include:
-                  $ref: '#/components/schemas/V3ContactsOnCompanySearchFilters'
-                exclude:
-                  $ref: '#/components/schemas/V3ContactsOnCompanySearchFilters'
+          $ref: '#/components/schemas/V3ProspectingContactFilters'
         tableId:
           type: string
           description: Optional. If provided, results are also persisted to this table. See the Tables API.
-          example: '583021'
+          example: '482910'
         options:
           type: object
           properties:
             includePartialProfiles:
               type: boolean
-              default: false
-    V3ProspectingContactsResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3ContactPreview'
-        pagination:
-          $ref: '#/components/schemas/V3PaginationResponse'
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
+              default: true
+            excludeDnc:
+              type: boolean
+  responses:
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        x-rate-limit-daily:
+          description: Total requests allowed per day
+          schema:
+            type: integer
+        x-daily-requests-left:
+          description: Requests remaining in daily quota
+          schema:
+            type: integer
+        x-rate-limit-hourly:
+          description: Total requests allowed per hour
+          schema:
+            type: integer
+        x-hourly-requests-left:
+          description: Requests remaining in hourly quota
+          schema:
+            type: integer
+        x-rate-limit-minute:
+          description: Total requests allowed per minute
+          schema:
+            type: integer
+        x-minute-requests-left:
+          description: Requests remaining in current minute window
+          schema:
+            type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    PaymentRequired:
+      description: Payment required - insufficient credits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

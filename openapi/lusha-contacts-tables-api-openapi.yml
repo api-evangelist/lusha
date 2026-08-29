@@ -489,88 +489,35 @@ paths:
           $ref: '#/components/responses/ColumnNotFound'
 components:
   schemas:
-    EntitiesRemoveRequest:
+    CreatedBy:
+      type: object
+      description: Where and by whom the table was created.
+      properties:
+        surface:
+          type: string
+          enum:
+          - api
+          - mcp
+          - workspace
+          example: api
+        createdByUserId:
+          type: integer
+          example: 12345
+    ColumnsRunRequest:
       type: object
       required:
-      - entityIds
+      - runScope
       - owner
       properties:
+        runScope:
+          $ref: '#/components/schemas/RunScope'
         entityIds:
           type: array
           items:
             type: string
-          description: 'Accepts either the encrypted token (`v{N}.…`, as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in `invalidIds` in the exact form you sent them.
-
-            '
-          example:
-          - '10042851'
-          - '10042852'
+          description: Required when `runScope` is `specific`.
         owner:
           $ref: '#/components/schemas/TableOwner'
-    TableResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/TableStatusData'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    EntitiesAddResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            added:
-              type: integer
-              example: 20
-            alreadyPresent:
-              type: integer
-              example: 5
-            invalidIds:
-              type: array
-              description: IDs that couldn't be resolved. Not an error — the call still returns `200`.
-              items:
-                type: string
-              example: []
-            addedBy:
-              $ref: '#/components/schemas/AddedBy'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    EntityColumnValue:
-      type: object
-      description: 'One column''s value on a single row, as returned by Get Entities. This shape is a passthrough from the underlying Workspace service — the fields shown here (`id`, `name`, `type`, `sourceType`, `value`, `status`) are representative, not an exhaustive schema.
-
-        '
-      properties:
-        id:
-          type: string
-          example: f8c1a2b3
-        name:
-          type: string
-          example: company_name
-        type:
-          type: string
-          example: string
-        sourceType:
-          type: string
-          example: lusha
-        value:
-          description: The cell's data. Shape depends on the column type.
-          example: Google
-        status:
-          $ref: '#/components/schemas/CellStatus'
     EntitiesAddRequest:
       type: object
       required:
@@ -602,56 +549,17 @@ components:
           - '12790225'
         owner:
           $ref: '#/components/schemas/TableOwner'
-    TableUpdateRequest:
+    V3PaginationResponse:
       type: object
-      required:
-      - owner
-      description: '`name`, `visibility`, and `archived` are all optional — send any subset; omitted fields stay unchanged. Sending none of them is a no-op. A partial update re-reads the persisted table first, so fields you don''t send are never clobbered.
-
-        '
       properties:
-        name:
-          type: string
-          example: renamed
-        visibility:
-          type: string
-          enum:
-          - private
-          - shared
-          example: shared
-        archived:
-          type: boolean
-          description: Set `true` to archive the table (hides it from default List Tables results), `false` to restore it.
-          example: true
-        owner:
-          $ref: '#/components/schemas/TableOwner'
-    OwnerInfo:
-      type: object
-      description: 'Resolved owner of the table. `id` is always present; `email` and `name` are resolved best-effort within the API key''s account and may be omitted if resolution fails (in which case the object contains only `id`). Replaces the removed top-level `ownerId` field - this is a breaking change from the prior response shape.
-
-        '
-      properties:
-        id:
+        page:
           type: integer
-          example: 12345
-        email:
-          type: string
-          format: email
-          example: owner@lusha.com
-        name:
-          type: string
-          example: Ada Lovelace
-    TableListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/TableMetadata'
-        pagination:
-          $ref: '#/components/schemas/V3PaginationResponse'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
+          example: 0
+        size:
+          type: integer
+          example: 25
+        total:
+          type: integer
     EntitiesRemoveResponse:
       type: object
       properties:
@@ -707,6 +615,80 @@ components:
         workspaceUrl:
           type: string
           example: https://workspace.lusha.com/tables/482910
+    CellStatus:
+      type: string
+      enum:
+      - not_run
+      - processing
+      - success
+      - no_data
+      - failed
+      description: 'Current state of a single cell''s data. `no_data` means the run succeeded but found nothing — distinct from `failed`, which means the run itself errored.
+
+        '
+    ColumnsListResponse:
+      type: object
+      description: Response for List Columns — `data` is a bare array of ColumnDto.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnSummary'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    EntityColumnValue:
+      type: object
+      description: 'One column''s value on a single row, as returned by Get Entities. This shape is a passthrough from the underlying Workspace service — the fields shown here (`id`, `name`, `type`, `sourceType`, `value`, `status`) are representative, not an exhaustive schema.
+
+        '
+      properties:
+        id:
+          type: string
+          example: f8c1a2b3
+        name:
+          type: string
+          example: company_name
+        type:
+          type: string
+          example: string
+        sourceType:
+          type: string
+          example: lusha
+        value:
+          description: The cell's data. Shape depends on the column type.
+          example: Google
+        status:
+          $ref: '#/components/schemas/CellStatus'
+    TableResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TableStatusData'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    TableUpdateRequest:
+      type: object
+      required:
+      - owner
+      description: '`name`, `visibility`, and `archived` are all optional — send any subset; omitted fields stay unchanged. Sending none of them is a no-op. A partial update re-reads the persisted table first, so fields you don''t send are never clobbered.
+
+        '
+      properties:
+        name:
+          type: string
+          example: renamed
+        visibility:
+          type: string
+          enum:
+          - private
+          - shared
+          example: shared
+        archived:
+          type: boolean
+          description: Set `true` to archive the table (hides it from default List Tables results), `false` to restore it.
+          example: true
+        owner:
+          $ref: '#/components/schemas/TableOwner'
     RunScope:
       type: string
       enum:
@@ -716,6 +698,158 @@ components:
       description: 'Controls which rows a column operation applies to. `all` re-runs every row, including already-processed ones. `missing` only runs rows that don''t have a value for this column yet. `specific` requires `entityIds`.
 
         '
+    TableEntity:
+      type: object
+      description: 'A single row. `id` is the **encrypted** Lusha ID (`v{N}.…`) — `personId` for contacts, `lushaCompanyId` for companies — in the same format used across V3, so it round-trips directly into Add Entities, Remove Entities, and Enrich. Internal fields (`accountId`, `companyLid`, `lushaCompanyId`, `personId`, `companyDetails`) are not returned. Remaining per-row fields under `columns` are owned by the Workspace service; this shape is representative, not an exhaustive schema.
+
+        '
+      properties:
+        id:
+          type: string
+          description: Encrypted Lusha ID.
+          example: v1.aB3kZ9example
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityColumnValue'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    AddedBy:
+      type: object
+      description: Where and by whom a row was added to the table.
+      properties:
+        surface:
+          type: string
+          enum:
+          - api
+          - mcp
+          - workspace
+          example: api
+    TableStatusData:
+      type: object
+      description: Response payload for Get Table — TableDto fields plus live entity/column counts.
+      allOf:
+      - $ref: '#/components/schemas/TableMetadata'
+      - type: object
+        properties:
+          entityCount:
+            type: integer
+            example: 5
+          isProcessing:
+            type: boolean
+            description: Whether any column run is currently in progress on this table.
+            example: false
+          columns:
+            type: array
+            items:
+              $ref: '#/components/schemas/ColumnSummary'
+    EntitiesGetResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableEntity'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ColumnsRunResponse:
+      type: object
+      description: 'Run is asynchronous — this response confirms the run was accepted. Poll Get Table for per-column row-status counts to know when it''s finished.
+
+        '
+      properties:
+        data:
+          type: object
+          properties:
+            columnId:
+              type: string
+              example: c1
+            runScope:
+              $ref: '#/components/schemas/RunScope'
+            status:
+              type: string
+              example: processing
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    TableOwner:
+      type: object
+      description: 'Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) — omitting it returns `400`. Optional for OAuth/token callers, since the caller is already identified by the token; still accepted if you want to act on behalf of another owner.
+
+        '
+      properties:
+        email:
+          type: string
+          format: email
+          description: Must resolve to an existing user on the account tied to your API key.
+          example: user@example.com
+    EntitiesAddResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            added:
+              type: integer
+              example: 20
+            alreadyPresent:
+              type: integer
+              example: 5
+            invalidIds:
+              type: array
+              description: IDs that couldn't be resolved. Not an error — the call still returns `200`.
+              items:
+                type: string
+              example: []
+            addedBy:
+              $ref: '#/components/schemas/AddedBy'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    TableCreateRequest:
+      type: object
+      required:
+      - name
+      - owner
+      properties:
+        name:
+          type: string
+          example: postman-companies
+        visibility:
+          type: string
+          enum:
+          - private
+          - shared
+          default: private
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+        ids:
+          type: array
+          description: Optional initial entity IDs to seed the table with.
+          items:
+            type: string
+          example:
+          - '10042851'
+          - '10042852'
     ColumnSummary:
       type: object
       description: ColumnDto — a column's definition plus aggregated per-cell status counts.
@@ -760,6 +894,33 @@ components:
           type: integer
         rowsFailed:
           type: integer
+    OwnerInfo:
+      type: object
+      description: 'Resolved owner of the table. `id` is always present; `email` and `name` are resolved best-effort within the API key''s account and may be omitted if resolution fails (in which case the object contains only `id`). Replaces the removed top-level `ownerId` field - this is a breaking change from the prior response shape.
+
+        '
+      properties:
+        id:
+          type: integer
+          example: 12345
+        email:
+          type: string
+          format: email
+          example: owner@lusha.com
+        name:
+          type: string
+          example: Ada Lovelace
+    TableListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableMetadata'
+        pagination:
+          $ref: '#/components/schemas/V3PaginationResponse'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
     TableListRequest:
       type: object
       required:
@@ -785,216 +946,55 @@ components:
           - active
           - archived
           description: '`deleted` is not a filterable status.'
-    ColumnsListResponse:
-      type: object
-      description: Response for List Columns — `data` is a bare array of ColumnDto.
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ColumnSummary'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    EntitiesGetResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/TableEntity'
-        pagination:
-          $ref: '#/components/schemas/V3PaginationResponse'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    ColumnsRunResponse:
-      type: object
-      description: 'Run is asynchronous — this response confirms the run was accepted. Poll Get Table for per-column row-status counts to know when it''s finished.
-
-        '
-      properties:
-        data:
-          type: object
-          properties:
-            columnId:
-              type: string
-              example: c1
-            runScope:
-              $ref: '#/components/schemas/RunScope'
-            status:
-              type: string
-              example: processing
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    ErrorResponse:
+    EntitiesRemoveRequest:
       type: object
       required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    TableStatusData:
-      type: object
-      description: Response payload for Get Table — TableDto fields plus live entity/column counts.
-      allOf:
-      - $ref: '#/components/schemas/TableMetadata'
-      - type: object
-        properties:
-          entityCount:
-            type: integer
-            example: 5
-          isProcessing:
-            type: boolean
-            description: Whether any column run is currently in progress on this table.
-            example: false
-          columns:
-            type: array
-            items:
-              $ref: '#/components/schemas/ColumnSummary'
-    AddedBy:
-      type: object
-      description: Where and by whom a row was added to the table.
-      properties:
-        surface:
-          type: string
-          enum:
-          - api
-          - mcp
-          - workspace
-          example: api
-    ColumnsRunRequest:
-      type: object
-      required:
-      - runScope
+      - entityIds
       - owner
       properties:
-        runScope:
-          $ref: '#/components/schemas/RunScope'
         entityIds:
           type: array
           items:
             type: string
-          description: Required when `runScope` is `specific`.
-        owner:
-          $ref: '#/components/schemas/TableOwner'
-    CellStatus:
-      type: string
-      enum:
-      - not_run
-      - processing
-      - success
-      - no_data
-      - failed
-      description: 'Current state of a single cell''s data. `no_data` means the run succeeded but found nothing — distinct from `failed`, which means the run itself errored.
+          description: 'Accepts either the encrypted token (`v{N}.…`, as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in `invalidIds` in the exact form you sent them.
 
-        '
-    TableOwner:
-      type: object
-      description: 'Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) — omitting it returns `400`. Optional for OAuth/token callers, since the caller is already identified by the token; still accepted if you want to act on behalf of another owner.
-
-        '
-      properties:
-        email:
-          type: string
-          format: email
-          description: Must resolve to an existing user on the account tied to your API key.
-          example: user@example.com
-    V3PaginationResponse:
-      type: object
-      properties:
-        page:
-          type: integer
-          example: 0
-        size:
-          type: integer
-          example: 25
-        total:
-          type: integer
-    CreatedBy:
-      type: object
-      description: Where and by whom the table was created.
-      properties:
-        surface:
-          type: string
-          enum:
-          - api
-          - mcp
-          - workspace
-          example: api
-        createdByUserId:
-          type: integer
-          example: 12345
-    TableEntity:
-      type: object
-      description: 'A single row. `id` is the **encrypted** Lusha ID (`v{N}.…`) — `personId` for contacts, `lushaCompanyId` for companies — in the same format used across V3, so it round-trips directly into Add Entities, Remove Entities, and Enrich. Internal fields (`accountId`, `companyLid`, `lushaCompanyId`, `personId`, `companyDetails`) are not returned. Remaining per-row fields under `columns` are owned by the Workspace service; this shape is representative, not an exhaustive schema.
-
-        '
-      properties:
-        id:
-          type: string
-          description: Encrypted Lusha ID.
-          example: v1.aB3kZ9example
-        columns:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityColumnValue'
-    TableCreateRequest:
-      type: object
-      required:
-      - name
-      - owner
-      properties:
-        name:
-          type: string
-          example: postman-companies
-        visibility:
-          type: string
-          enum:
-          - private
-          - shared
-          default: private
-        owner:
-          $ref: '#/components/schemas/TableOwner'
-        ids:
-          type: array
-          description: Optional initial entity IDs to seed the table with.
-          items:
-            type: string
+            '
           example:
           - '10042851'
           - '10042852'
+        owner:
+          $ref: '#/components/schemas/TableOwner'
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
   responses:
-    ColumnNotFound:
-      description: Not found - column does not exist on the given table
+    TableNotFound:
+      description: Not found - table does not exist or is not accessible to this account
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
             statusCode: 404
-            message: 'COLUMN_NOT_FOUND: Column not found'
-    BadRequest:
-      description: Bad request - invalid input data
+            message: 'TABLE_NOT_FOUND: Table not found'
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
-            statusCode: 400
-            message: Invalid request parameters
+            statusCode: 401
+            message: Invalid API key
     Forbidden:
       description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
       content:
@@ -1012,15 +1012,6 @@ components:
               value:
                 statusCode: 403
                 message: V3 API access is not enabled for your account
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     TableNameConflict:
       description: Conflict - a table with this name already exists
       content:
@@ -1030,15 +1021,24 @@ components:
           example:
             statusCode: 409
             message: 'TABLE_NAME_CONFLICT: A table with this name already exists'
-    TableNotFound:
-      description: Not found - table does not exist or is not accessible to this account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    ColumnNotFound:
+      description: Not found - column does not exist on the given table
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
             statusCode: 404
-            message: 'TABLE_NOT_FOUND: Table not found'
+            message: 'COLUMN_NOT_FOUND: Column not found'
   parameters:
     ColumnIdPath:
       name: column_id

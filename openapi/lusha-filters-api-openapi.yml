@@ -231,24 +231,6 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   responses:
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
     Forbidden:
       description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
       content:
@@ -266,6 +248,15 @@ components:
               value:
                 statusCode: 403
                 message: V3 API access is not enabled for your account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -300,12 +291,16 @@ components:
           description: Requests remaining in current minute window
           schema:
             type: integer
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
   schemas:
-    FilterValuesResponse:
-      type: object
-      properties:
-        values:
-          description: Filter values (shape depends on filter type)
     FilterTypesDiscoveryResponse:
       type: object
       properties:
@@ -339,6 +334,11 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    FilterValuesResponse:
+      type: object
+      properties:
+        values:
+          description: Filter values (shape depends on filter type)
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

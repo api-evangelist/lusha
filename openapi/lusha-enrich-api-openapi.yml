@@ -483,183 +483,20 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
-    V3EmailAddress:
+    V3ContactsEnrichResponse:
       type: object
       properties:
-        email:
+        requestId:
           type: string
-          format: email
-          example: orit.shilvock@lusha.com
-        type:
-          type: string
-          enum:
-          - work
-          - private
-          - unknown
-          example: work
-        confidence:
-          type:
-          - string
-          - 'null'
-          example: A+
-        updateDate:
-          type: string
-          format: date
-          example: '2026-04-23'
-    V3SicCode:
-      type: object
-      properties:
-        code:
-          type: integer
-          example: 7371
-        description:
-          type: string
-          example: Custom computer programming services
-    V3ContactTag:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        color:
-          type: string
-          example: '#FF5733'
-    V3NaicsCode:
-      type: object
-      properties:
-        code:
-          type: integer
-          example: 541511
-        description:
-          type: string
-          example: Custom Computer Programming Services
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    TableWrite:
-      type: object
-      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
-
-        '
-      properties:
-        tableId:
-          type: string
-          example: '482910'
-        added:
-          type: integer
-          description: Number of new entities added to the table by this call.
-          example: 3
-        alreadyPresent:
-          type: integer
-          description: Number of entities from this call that were already in the table.
-          example: 2
-        columnsCreated:
-          type: integer
-          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
-          example: 0
-        rowsProcessed:
-          type: integer
-          description: Number of rows the column-run touched as part of this call.
-          example: 5
-        rowsCharged:
-          type: integer
-          description: Number of those rows that incurred a credit charge.
-          example: 5
-        rowsAlreadyPaidInTable:
-          type: integer
-          description: Number of those rows that were already paid for in this table and were not re-charged.
-          example: 0
-        creditsCharged:
-          type: integer
-          description: Credits charged specifically for this table write.
-          example: 0
-    V3EnrichedContactCompanyRef:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: www.lusha.com
-        industry:
-          type: string
-          example: Technology, Information & Media
-    V3ContactsEnrichRequest:
-      type: object
-      required:
-      - ids
-      properties:
-        ids:
+          format: uuid
+        results:
           type: array
           items:
-            type: string
-          minItems: 1
-          maxItems: 100
-          example:
-          - '4389064654'
-          - '4389064624'
-        reveal:
-          type: array
-          items:
-            type: string
-            enum:
-            - emails
-            - phones
-          example:
-          - emails
-          - phones
-        waterfallEnabled:
-          type: boolean
-          default: true
-          description: 'Whether this call is allowed to fall through to your enabled
-
-            third-party providers when Lusha''s own data has no match, for the fields
-
-            requested via `reveal`. Defaults to `true` whenever Data Waterfall is
-
-            enabled on your account (Account > Waterfall) - pass `false` to opt this
-
-            specific call out. Has no effect if Data Waterfall or no providers are
-
-            enabled on your account. Provider order isn''t configurable - Lusha manages
-
-            that internally.
-
-            '
-          example: false
-        tableId:
-          type: string
-          description: Optional. If provided, these contacts are also added to this table (if not already present) and the revealed fields' columns are populated. See the Tables API.
-          example: '482910'
-    V3ItemError:
-      type: object
-      description: Per-item error in a batch response
-      properties:
-        code:
-          type: string
-          enum:
-          - NOT_FOUND
-          - COMPLIANCE_RESTRICTED
-          - ENRICH_FAILED
-          - NO_SCORE
-          example: NOT_FOUND
-        message:
-          type: string
-          example: Contact not found
+            $ref: '#/components/schemas/V3EnrichedContact'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
     V3CompaniesEnrichRequest:
       type: object
       required:
@@ -1041,27 +878,92 @@ components:
           - plumbing
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3PhoneNumber:
+    V3ContactsEnrichRequest:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 100
+          example:
+          - '4389064654'
+          - '4389064624'
+        reveal:
+          type: array
+          items:
+            type: string
+            enum:
+            - emails
+            - phones
+          example:
+          - emails
+          - phones
+        waterfallEnabled:
+          type: boolean
+          default: true
+          description: 'Whether this call is allowed to fall through to your enabled
+
+            third-party providers when Lusha''s own data has no match, for the fields
+
+            requested via `reveal`. Defaults to `true` whenever Data Waterfall is
+
+            enabled on your account (Account > Waterfall) - pass `false` to opt this
+
+            specific call out. Has no effect if Data Waterfall or no providers are
+
+            enabled on your account. Provider order isn''t configurable - Lusha manages
+
+            that internally.
+
+            '
+          example: false
+        tableId:
+          type: string
+          description: Optional. If provided, these contacts are also added to this table (if not already present) and the revealed fields' columns are populated. See the Tables API.
+          example: '482910'
+    V3CompaniesEnrichResponse:
       type: object
       properties:
-        number:
+        requestId:
           type: string
-          example: '+14155551234'
-        type:
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3EnrichedCompany'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3EnrichedContactCompanyRef:
+      type: object
+      properties:
+        id:
           type: string
-          enum:
-          - mobile
-          - direct
-          - work
-          - unknown
-          example: mobile
-        doNotCall:
-          type: boolean
-          example: false
-        updateDate:
+          example: '16303253'
+        name:
           type: string
-          format: date
-          example: '2026-04-23'
+          example: Lusha
+        domain:
+          type: string
+          example: www.lusha.com
+        industry:
+          type: string
+          example: Technology, Information & Media
+    V3ContactTag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+          example: '#FF5733'
     ErrorResponse:
       type: object
       required:
@@ -1083,46 +985,15 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
-    V3ContactsEnrichResponse:
+    V3SicCode:
       type: object
       properties:
-        requestId:
+        code:
+          type: integer
+          example: 7371
+        description:
           type: string
-          format: uuid
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3EnrichedContact'
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3CompanyLocation:
-      type: object
-      properties:
-        city:
-          type: string
-          example: London
-        state:
-          type: string
-          example: England
-        stateCode:
-          type: string
-          description: Free field. ISO/postal state or region code, when available.
-          example: MA
-        country:
-          type: string
-          example: United Kingdom
-        countryIso2:
-          type: string
-          example: GB
-        continent:
-          type: string
-          example: Europe
-        zipCode:
-          type: string
-          description: Postal/ZIP code (present on HQ location when available)
-          example: '80904'
+          example: Custom computer programming services
     V3EnrichedContact:
       type: object
       properties:
@@ -1233,47 +1104,150 @@ components:
           example: '2026-04-23'
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3CompaniesEnrichResponse:
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
+    V3EmailAddress:
       type: object
       properties:
-        requestId:
+        email:
           type: string
-          format: uuid
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3EnrichedCompany'
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
+          format: email
+          example: orit.shilvock@lusha.com
+        type:
+          type: string
+          enum:
+          - work
+          - private
+          - unknown
+          example: work
+        confidence:
+          type:
+          - string
+          - 'null'
+          example: A+
+        updateDate:
+          type: string
+          format: date
+          example: '2026-04-23'
+    TableWrite:
+      type: object
+      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
+
+        '
+      properties:
+        tableId:
+          type: string
+          example: '482910'
+        added:
+          type: integer
+          description: Number of new entities added to the table by this call.
+          example: 3
+        alreadyPresent:
+          type: integer
+          description: Number of entities from this call that were already in the table.
+          example: 2
+        columnsCreated:
+          type: integer
+          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
+          example: 0
+        rowsProcessed:
+          type: integer
+          description: Number of rows the column-run touched as part of this call.
+          example: 5
+        rowsCharged:
+          type: integer
+          description: Number of those rows that incurred a credit charge.
+          example: 5
+        rowsAlreadyPaidInTable:
+          type: integer
+          description: Number of those rows that were already paid for in this table and were not re-charged.
+          example: 0
+        creditsCharged:
+          type: integer
+          description: Credits charged specifically for this table write.
+          example: 0
+    V3NaicsCode:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 541511
+        description:
+          type: string
+          example: Custom Computer Programming Services
+    V3CompanyLocation:
+      type: object
+      properties:
+        city:
+          type: string
+          example: London
+        state:
+          type: string
+          example: England
+        stateCode:
+          type: string
+          description: Free field. ISO/postal state or region code, when available.
+          example: MA
+        country:
+          type: string
+          example: United Kingdom
+        countryIso2:
+          type: string
+          example: GB
+        continent:
+          type: string
+          example: Europe
+        zipCode:
+          type: string
+          description: Postal/ZIP code (present on HQ location when available)
+          example: '80904'
+    V3PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          example: '+14155551234'
+        type:
+          type: string
+          enum:
+          - mobile
+          - direct
+          - work
+          - unknown
+          example: mobile
+        doNotCall:
+          type: boolean
+          example: false
+        updateDate:
+          type: string
+          format: date
+          example: '2026-04-23'
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
   responses:
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -1317,6 +1291,32 @@ components:
           example:
             statusCode: 401
             message: Invalid API key
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
     PaymentRequired:
       description: Payment required - insufficient credits
       content:
