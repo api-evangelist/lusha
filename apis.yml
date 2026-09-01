@@ -142,7 +142,7 @@ apis:
   baseURL: https://api.lusha.com
   tags:
   - Lookalikes
-  - ABM
+  - Account Based Marketing
   tags_raw:
   - Lookalikes
   - ABM
@@ -162,7 +162,7 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/buying-group
   baseURL: https://api.lusha.com
   tags:
-  - ABM
+  - Account Based Marketing
   - Buying Group
   tags_raw:
   - ABM
