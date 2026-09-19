@@ -43,7 +43,7 @@ tags:
   - Enrichment
   - Contact Data
   - Prospecting
-  - Intent
+  - Intents
   - Signals
   - Lookalikes
   - Webhook
@@ -184,6 +184,9 @@ apis:
   baseURL: https://api.lusha.com
   tags:
   - Signals
+  - Intents
+  tags_raw:
+  - Signals
   - Intent
   properties:
   - type: OpenAPI
@@ -200,6 +203,9 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/website-visits
   baseURL: https://api.lusha.com
   tags:
+  - Intents
+  - Website Visitors
+  tags_raw:
   - Intent
   - Website Visitors
   properties:
