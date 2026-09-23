@@ -23,7 +23,7 @@ security:
 - ApiKeyAuth: []
 tags:
 - name: Webhooks
-  description: "Subscribe to real-time notifications when contacts change jobs or companies experience key business events.\n\nWebhooks deliver HTTP POST requests to your endpoints when signals occur - from promotions and job changes to company growth.\n\n> For a full list of available signals, refer to [**Signal Options**](https://docs.lusha.com/apis/openapi/signals/getsignaloptions).\n---\n**Key Features:**\n- Real-time contact & company signal notifications\n- Bulk subscription management (up to 25 items per request)\n- Secure delivery with HMAC-SHA256 signatures\n- Delivery monitoring with audit logs\n\n **Available Endpoints:**\n\n| Method | Endpoint | Purpose |\n|--------|----------|---------|\n| POST | `/api/subscriptions` | Create subscriptions (bulk supported) |\n| GET | `/api/subscriptions` | List all subscriptions |\n| GET | `/api/subscriptions/{id}` | Get subscription by ID |\n| PATCH | `/api/subscriptions/{id}` | Update subscription |\n| POST | `/api/subscriptions/delete` | Delete subscriptions (bulk supported) |\n| POST | `/api/subscriptions/{id}/test` | Test subscription delivery |\n| GET | `/api/audit-logs` | Get webhook delivery logs |\n| GET | `/api/audit-logs/stats` | Get delivery statistics |\n| GET | `/api/account/secret` | Get account webhook secret |\n| POST | `/api/account/secret/regenerate` | Regenerate account secret |\n| POST | `/api/subscriptions/opt-out` | Subscribe to contact opt-out notifications |\n\n> **Webhook Delivery Acknowledgment:** When receiving webhook deliveries (POST requests), your endpoint must acknowledge with a specific response format. See the [Create Subscription](#operation/createSubscription) endpoint for the required acknowledgment structure.\n      ---\n\n<details>\n<summary><strong>Rate Limits</strong></summary>\n\n| Operation | Limit |\n|-----------|-------|\n| API Requests | 100 requests/minute per account |\n| Create Subscriptions | 25 items per request |\n| Delete Subscriptions | 25 items per request |\n\n</details>\n\n---\n\n<details>\n<summary><strong>Security & Verification</strong></summary>\n\n**HTTPS Requirement:**\n- Production webhook URLs **must** use HTTPS\n- HTTP URLs are not accepted\n\n**Signature Verification:**\n\nAll webhook deliveries include an `X-Lusha-Signature` header containing an HMAC-SHA256 signature. Verify this signature to ensure the request is from Lusha:\n\n1. Extract the `X-Lusha-Signature` and `X-Lusha-Timestamp` headers\n2. Concatenate: `timestamp + \".\" + JSON.stringify(payload)`\n3. Compute HMAC-SHA256 using your webhook secret\n4. Compare the computed signature with the received signature\n\n**Example (Node.js):**\n```javascript\nconst crypto = require('crypto');\n\nfunction verifySignature(payload, signature, timestamp, secret) {\n  const signedPayload = `${timestamp}.${JSON.stringify(payload)}`;\n  const expectedSignature = crypto\n    .createHmac('sha256', secret)\n    .update(signedPayload)\n    .digest('hex');\n  \n  return crypto.timingSafeEqual(\n    Buffer.from(signature),\n    Buffer.from(expectedSignature)\n  );\n}\n```\n\n> **Security Best Practice:** Always verify webhook signatures to prevent spoofed requests.\n\n</details>\n\n---\n\n<details>\n<summary><strong>Credits & Billing</strong></summary>\n\n**Credit Charges:**\n- Credits are charged when signals are detected and delivered to your webhook\n- The `creditsCharged` field in the webhook payload indicates how many credits were used\n- Credits are deducted from your account balance per signal type\n\n**No Duplicate Charges:**\n- Each signal is delivered once and charged once\n- Webhook delivery retries do not incur additional charges\n\n</details>\n\n---\n\n<details>\n<summary><strong>Error Response Format</strong></summary>\n\nAll error responses follow this format:\n```json\n{\n  \"statusCode\": 400,\n  \"message\": \"Validation failed\",\n  \"errors\": [\"entityType must be one of: contact, company\"]\n}\n```\n\n| Field | Type | Description |\n|-------|------|-------------|\n| `statusCode` | number | HTTP status code |\n| `message` | string | Error message |\n| `errors` | string[] | Detailed error messages (optional) |\n\n</details>\n    \n---\n"
+  description: Subscribe to real-time notifications when contacts change jobs or companies experience key business events.
   x-tag-expanded: true
 paths:
   /api/subscriptions:
@@ -31,7 +31,265 @@ paths:
       tags:
       - Webhooks
       summary: Create Subscription
-      description: "Creates one or more webhook subscriptions for real-time signal notifications.\n\n**Delivery & Reliability:**\n- Webhooks are delivered with automatic retry on failures\n- Maximum 3 retry attempts with exponential backoff\n- Subscriptions auto-disable after max retries exceeded\n- All deliveries are logged in audit logs\n\n> **Note:** Your webhook endpoint must respond with a proper acknowledgment. \n See Client Response Format below for details.\n\n> **Limit:** Maximum 25 subscriptions per request\n\n*Endpoint*: **(POST) https://api.lusha.com/api/subscriptions**\n\n---\n\n### Webhook Payload You'll Receive\n When a signal is triggered, this payload is sent to your webhook URL:\n```json\n    {\n      \"id\": \"f3b87e05-0402-4f3e-8e26-6a38fd0ad62c\",\n      \"type\": \"promotion\",\n      \"entityType\": \"contact\",\n      \"entityId\": \"4158887495\",\n      \"subscriptionId\": \"507f1f77bcf86cd799439011\",\n      \"data\": {\n        \"personId\": 4158887495,\n        \"currentCompanyId\": 40823133,\n        \"currentCompanyName\": \"OMG Hospitality Group LLC\",\n        \"currentDomain\": \"omghospitalitygroup.com\",\n        \"currentTitle\": \"Bartender\",\n        \"currentDepartments\": [\n          { \"id\": 7, \"value\": \"Other\" }\n        ],\n        \"previousCompanyName\": \"First Watch Restaurants\",\n        \"previousDomain\": \"firstwatch.com\",\n        \"signalDate\": \"2025-07-01\"\n      },\n      \"timestamp\": \"2026-01-14T16:16:35.841Z\",\n      \"billing\": {\n        \"creditsCharged\": 1\n      }\n    }\n    ```\n            **Example — Company News Signal:**\n    ```json\n            {\n              \"id\": \"a7c92f14-1234-4b3e-9d22-8b4fe1d0bc45\",\n              \"type\": \"commercialActivityNews\",\n              \"entityType\": \"company\",\n              \"entityId\": \"33222678\",\n              \"subscriptionId\": \"507f1f77bcf86cd799439011\",\n              \"data\": {\n                \"companyId\": \"33222678\",\n                \"companyName\": \"Lusha\",\n                \"domain\": \"lusha.com\",\n                \"signalId\": \"1503910\",\n                \"eventType\": \"partnership\",\n                \"eventSummary\": \"Lusha announced a strategic partnership with Salesforce.\",\n                \"articlePublishedDate\": \"2025-06-15\",\n                \"articleTitle\": \"Lusha Partners with Salesforce\",\n                \"articleHighlight\": \"The partnership enables Salesforce users to access Lusha data directly within their CRM.\",\n                \"eventEffectiveDate\": \"2025-06-10\",\n                \"articleUrl\": \"https://example.com/lusha-salesforce-partnership\"\n              },\n              \"timestamp\": \"2026-01-14T16:16:35.841Z\",\n              \"billing\": {\n                \"creditsCharged\": 1\n              }\n            }\n          ```\n\n      **Headers Included:**\n\n      | Header | Description |\n      |--------|-------------|\n      | `X-Lusha-Signature` | HMAC-SHA256 signature for verification |\n      | `X-Lusha-Timestamp` | Unix timestamp of the request |\n      | `Content-Type` | application/json |\n      | `User-Agent` | Lusha-Webhooks/1.0 |\n\n\n---\n⚠️ **Important:** Ensure your account has a webhook secret before creating subscriptions.\nCreate one via the [Regenerate Account Secret](#operation/regenerateAccountSecret) endpoint.\n\n---\n\n### Client Response Format (Required)\n\nWhen your webhook endpoint receives a delivery, it **must** acknowledge receipt with this response:\n\n  **Required Response:**\n  ````json\n  {\n    \"received\": true,\n    \"timestamp\": \"2026-02-05T10:30:45.123Z\",\n    \"webhookId\": \"f3b87e05-0402-4f3e-8e26-6a38fd0ad62c\"\n  }\n  ````\n\n<details>\n<summary><strong>Response Requirements</strong></summary>\n\n  | Requirement | Value |\n  |-------------|-------|\n  | **HTTP Status** | `201 Created` (recommended) or any `2xx` status |\n  | **Content-Type** | `application/json` |\n  | **Response Time** | Within 10 seconds |\n</details>\n\n\n<details>\n<summary><strong>Field Descriptions & Implementation Guide</strong></summary>\n\n  **Field Descriptions:**\n  * `received` (boolean, required): Confirmation flag - must be `true`\n  * `timestamp` (string, required): ISO 8601 timestamp of receipt\n  * `webhookId` (string, required): Echo the `id` from webhook payload\n\n  **Implementation Example:**\n  ```javascript\n  app.post('/webhook', async (req, res) => {\n    // 1. Verify signature\n    if (!verifyWebhookSignature(req)) {\n      return res.status(401).json({ error: 'Invalid signature' });\n    }\n    \n    // 2. Queue for async processing\n    await queueWebhook(req.body);\n    \n    // 3. Acknowledge immediately\n    res.status(201).json({\n      received: true,\n      timestamp: new Date().toISOString(),\n      webhookId: req.body.id\n    });\n    ```\n\n  **Important Notes:**\n  * Return acknowledgment **before** heavy processing\n  * Non-2xx responses trigger retry mechanism\n  * After 3 failed retries, subscription is disabled\n\n  </details>\n\n----\n"
+      description: 'Creates one or more webhook subscriptions for real-time signal notifications.
+
+
+        **Delivery & Reliability:**
+
+        - Webhooks are delivered with automatic retry on failures
+
+        - Maximum 3 retry attempts with exponential backoff
+
+        - Subscriptions auto-disable after max retries exceeded
+
+        - All deliveries are logged in audit logs
+
+
+        > **Note:** Your webhook endpoint must respond with a proper acknowledgment.
+
+        See Client Response Format below for details.
+
+
+        > **Limit:** Maximum 25 subscriptions per request
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/api/subscriptions**
+
+
+        ---
+
+
+        ### Webhook Payload You''ll Receive
+
+        When a signal is triggered, this payload is sent to your webhook URL:
+
+        ```json
+
+        {
+
+        "id": "f3b87e05-0402-4f3e-8e26-6a38fd0ad62c",
+
+        "type": "promotion",
+
+        "entityType": "contact",
+
+        "entityId": "4158887495",
+
+        "subscriptionId": "507f1f77bcf86cd799439011",
+
+        "data": {
+
+        "personId": 4158887495,
+
+        "currentCompanyId": 40823133,
+
+        "currentCompanyName": "OMG Hospitality Group LLC",
+
+        "currentDomain": "omghospitalitygroup.com",
+
+        "currentTitle": "Bartender",
+
+        "currentDepartments": [
+
+        { "id": 7, "value": "Other" }
+
+        ],
+
+        "previousCompanyName": "First Watch Restaurants",
+
+        "previousDomain": "firstwatch.com",
+
+        "signalDate": "2025-07-01"
+
+        },
+
+        "timestamp": "2026-01-14T16:16:35.841Z",
+
+        "billing": {
+
+        "creditsCharged": 1
+
+        }
+
+        }
+
+        ```
+
+        **Example — Company News Signal:**
+
+        ```json
+
+        {
+
+        "id": "a7c92f14-1234-4b3e-9d22-8b4fe1d0bc45",
+
+        "type": "commercialActivityNews",
+
+        "entityType": "company",
+
+        "entityId": "33222678",
+
+        "subscriptionId": "507f1f77bcf86cd799439011",
+
+        "data": {
+
+        "companyId": "33222678",
+
+        "companyName": "Lusha",
+
+        "domain": "lusha.com",
+
+        "signalId": "1503910",
+
+        "eventType": "partnership",
+
+        "eventSummary": "Lusha announced a strategic partnership with Salesforce.",
+
+        "articlePublishedDate": "2025-06-15",
+
+        "articleTitle": "Lusha Partners with Salesforce",
+
+        "articleHighlight": "The partnership enables Salesforce users to access Lusha data directly within their CRM.",
+
+        "eventEffectiveDate": "2025-06-10",
+
+        "articleUrl": "https://example.com/lusha-salesforce-partnership"
+
+        },
+
+        "timestamp": "2026-01-14T16:16:35.841Z",
+
+        "billing": {
+
+        "creditsCharged": 1
+
+        }
+
+        }
+
+        ```
+
+
+        **Headers Included:**
+
+
+        | Header | Description |
+
+        |--------|-------------|
+
+        | `X-Lusha-Signature` | HMAC-SHA256 signature for verification |
+
+        | `X-Lusha-Timestamp` | Unix timestamp of the request |
+
+        | `Content-Type` | application/json |
+
+        | `User-Agent` | Lusha-Webhooks/1.0 |
+
+
+        ---
+
+        ⚠️ **Important:** Ensure your account has a webhook secret before creating subscriptions.
+
+        Create one via the Regenerate Account Secret endpoint.
+
+
+        ---
+
+
+        ### Client Response Format (Required)
+
+
+        When your webhook endpoint receives a delivery, it **must** acknowledge receipt with this response:
+
+
+        **Required Response:**
+
+        ````json
+
+        {
+
+        "received": true,
+
+        "timestamp": "2026-02-05T10:30:45.123Z",
+
+        "webhookId": "f3b87e05-0402-4f3e-8e26-6a38fd0ad62c"
+
+        }
+
+        ````
+
+
+        Response Requirements
+
+
+        | Requirement | Value |
+
+        |-------------|-------|
+
+        | **HTTP Status** | `201 Created` (recommended) or any `2xx` status |
+
+        | **Content-Type** | `application/json` |
+
+        | **Response Time** | Within 10 seconds |
+
+
+        Field Descriptions & Implementation Guide
+
+
+        **Field Descriptions:**
+
+        * `received` (boolean, required): Confirmation flag - must be `true`
+
+        * `timestamp` (string, required): ISO 8601 timestamp of receipt
+
+        * `webhookId` (string, required): Echo the `id` from webhook payload
+
+
+        **Implementation Example:**
+
+        ```javascript
+
+        app.post(''/webhook'', async (req, res) => {
+
+        // 1. Verify signature
+
+        if (!verifyWebhookSignature(req)) {
+
+        return res.status(401).json({ error: ''Invalid signature'' });
+
+        }
+
+
+        // 2. Queue for async processing
+
+        await queueWebhook(req.body);
+
+
+        // 3. Acknowledge immediately
+
+        res.status(201).json({
+
+        received: true,
+
+        timestamp: new Date().toISOString(),
+
+        webhookId: req.body.id
+
+        });
+
+        ```
+
+
+        **Important Notes:**
+
+        * Return acknowledgment **before** heavy processing
+
+        * Non-2xx responses trigger retry mechanism
+
+        * After 3 failed retries, subscription is disabled
+
+
+        ----'
       operationId: createSubscription
       requestBody:
         required: true
@@ -179,9 +437,7 @@ paths:
         - Use `offset` for pagination through large result sets
 
 
-        > **Note:** The webhook `secret` is never returned in list responses for security.
-
-        '
+        > **Note:** The webhook `secret` is never returned in list responses for security.'
       operationId: listSubscriptions
       parameters:
       - name: limit
@@ -245,9 +501,7 @@ paths:
       description: 'Returns a single webhook subscription by ID.
 
 
-        *Endpoint*: **(GET) https://api.lusha.com/api/subscriptions/{id}**
-
-        '
+        *Endpoint*: **(GET) https://api.lusha.com/api/subscriptions/{id}**'
       operationId: getSubscriptionById
       parameters:
       - name: id
@@ -305,9 +559,7 @@ paths:
 
         - Immediately invalidates the old secret
 
-        ---
-
-        '
+        ---'
       operationId: updateSubscription
       parameters:
       - name: id
@@ -385,9 +637,7 @@ paths:
 
         - Test payloads use mock data
 
-        - Useful for verifying webhook configuration before going live
-
-        '
+        - Useful for verifying webhook configuration before going live'
       operationId: testSubscription
       parameters:
       - name: id
@@ -475,9 +725,7 @@ paths:
 
         - Duplicate IDs are automatically deduplicated
 
-        - Deletion is permanent and cannot be undone
-
-        '
+        - Deletion is permanent and cannot be undone'
       operationId: deleteSubscriptions
       requestBody:
         required: true
@@ -593,9 +841,7 @@ paths:
         **Rate Limit:** 100 requests/minute per account
 
 
-        > **Note:** Logs are retained for 90 days (successful) and 180 days (failed/DLQ)
-
-        '
+        > **Note:** Logs are retained for 90 days (successful) and 180 days (failed/DLQ)'
       operationId: getAuditLogs
       parameters:
       - name: subscriptionId
@@ -675,9 +921,7 @@ paths:
       description: 'Get delivery statistics for your account.
 
 
-        *Endpoint*: **(GET) https://api.lusha.com/api/audit-logs/stats**
-
-        '
+        *Endpoint*: **(GET) https://api.lusha.com/api/audit-logs/stats**'
       operationId: getAuditLogStats
       parameters:
       - name: subscriptionId
@@ -714,9 +958,7 @@ paths:
       description: 'Retrieve the current account webhook secret.
 
 
-        *Endpoint*: **(GET) https://api.lusha.com/api/account/secret**
-
-        '
+        *Endpoint*: **(GET) https://api.lusha.com/api/account/secret**'
       operationId: getAccountSecret
       responses:
         '200':
@@ -774,9 +1016,7 @@ paths:
 
         - Regenerating invalidates the old secret for **all subscriptions** (if one existed)
 
-        - An account secret must exist before webhooks can be delivered
-
-        '
+        - An account secret must exist before webhooks can be delivered'
       operationId: regenerateAccountSecret
       responses:
         '200':
@@ -804,7 +1044,63 @@ paths:
       tags:
       - Webhooks
       summary: Create Opt-Out Subscription
-      description: "Subscribe to real-time notifications when a contact opts out of data processing. When a contact requests removal, Lusha sends an `OptOutWebhookPayload` to your endpoint so you can action the removal in your own systems (CRM, outreach tools, etc.).\n\n*Endpoint*: **(POST) https://api.lusha.com/api/subscriptions/opt-out**\n\n---\n\n**How it works:**\n- Create one opt-out subscription per account (scoped to `contact` entity type)\n- Lusha delivers a POST request to your URL whenever a contact opts out\n- The payload includes the contact identity, opt-out date, and the specific data points (emails and/or phones) that must be removed\n\n**Payload you'll receive:**\n```json\n{\n  \"contactId\": \"987654321\",\n  \"fullName\": \"Jane Doe\",\n  \"companyName\": \"Acme Corp\",\n  \"jobTitle\": \"Director of Product\",\n  \"linkedinUrl\": \"https://www.linkedin.com/in/jane-doe\",\n  \"contactOptOutDate\": \"2026-04-22 14:32:11.412\",\n  \"contactExposureDate\": \"2025-08-03 09:15:47\",\n  \"datapoints\": [\n    { \"datapointId\": \"+14155550199\", \"datapointType\": \"phone\" },\n    { \"datapointId\": \"jane.doe@acme.com\", \"datapointType\": \"email\" }\n  ],\n  \"partnerClientId\": \"acme-crm-tenant-42\"\n}\n```\n\n> **Important:** Signature verification applies the same way as standard webhook deliveries. See [Security & Verification](#tag/Webhooks) for details.\n\n> **Note:** Ensure your account has a webhook secret before creating this subscription. See [Regenerate Account Secret](#operation/regenerateAccountSecret).\n"
+      description: 'Subscribe to real-time notifications when a contact opts out of data processing. When a contact requests removal, Lusha sends an `OptOutWebhookPayload` to your endpoint so you can action the removal in your own systems (CRM, outreach tools, etc.).
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/api/subscriptions/opt-out**
+
+
+        ---
+
+
+        **How it works:**
+
+        - Create one opt-out subscription per account (scoped to `contact` entity type)
+
+        - Lusha delivers a POST request to your URL whenever a contact opts out
+
+        - The payload includes the contact identity, opt-out date, and the specific data points (emails and/or phones) that must be removed
+
+
+        **Payload you''ll receive:**
+
+        ```json
+
+        {
+
+        "contactId": "987654321",
+
+        "fullName": "Jane Doe",
+
+        "companyName": "Acme Corp",
+
+        "jobTitle": "Director of Product",
+
+        "linkedinUrl": "https://www.linkedin.com/in/jane-doe",
+
+        "contactOptOutDate": "2026-04-22 14:32:11.412",
+
+        "contactExposureDate": "2025-08-03 09:15:47",
+
+        "datapoints": [
+
+        { "datapointId": "+14155550199", "datapointType": "phone" },
+
+        { "datapointId": "jane.doe@acme.com", "datapointType": "email" }
+
+        ],
+
+        "partnerClientId": "acme-crm-tenant-42"
+
+        }
+
+        ```
+
+
+        > **Important:** Signature verification applies the same way as standard webhook deliveries. See Security & Verification for details.
+
+
+        > **Note:** Ensure your account has a webhook secret before creating this subscription. See Regenerate Account Secret.'
       operationId: createOptOutSubscription
       requestBody:
         required: true
@@ -842,44 +1138,325 @@ paths:
     - url: https://api.lusha.com
       description: Production server
 components:
-  responses:
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    NotFound:
-      description: Not found - resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 404
-            message: Resource not found
   schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    CreateSubscriptionResponse:
+      type: object
+      required:
+      - total
+      - successful
+      - failed
+      - results
+      properties:
+        total:
+          type: integer
+          example: 3
+        successful:
+          type: integer
+          example: 2
+        failed:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CreateSubscriptionSuccessResult'
+            - $ref: '#/components/schemas/CreateSubscriptionErrorResult'
+    PaginationResponse:
+      type: object
+      required:
+      - total
+      - size
+      - page
+      - hasMore
+      properties:
+        total:
+          type: integer
+          example: 100
+        limit:
+          type: integer
+          example: 50
+        offset:
+          type: integer
+          example: 0
+        hasMore:
+          type: boolean
+          example: true
+    DeleteSubscriptionSuccessResult:
+      type: object
+      required:
+      - index
+      - success
+      - subscription
+      properties:
+        index:
+          type: integer
+          example: 0
+        success:
+          type: boolean
+          enum:
+          - true
+          example: true
+        subscription:
+          type: object
+          properties:
+            id:
+              type: string
+              example: sub-123
+            entityType:
+              type: string
+              example: contact
+            entityId:
+              type: string
+              example: '123'
+            name:
+              type: string
+              example: Contact Webhook
+    SubscriptionWithoutSecret:
+      type: object
+      required:
+      - id
+      - entityType
+      - entityId
+      - signalTypes
+      - url
+      - isActive
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          example: 507f1f77bcf86cd799439011
+        entityType:
+          type: string
+          enum:
+          - contact
+          - company
+          example: contact
+        entityId:
+          type: string
+          example: '123456'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - promotion
+          - companyChange
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhooks/lusha
+        name:
+          type: string
+          example: Contact Promotion Tracker
+        isActive:
+          type: boolean
+          example: true
+        blockReason:
+          type:
+          - string
+          - 'null'
+          description: Reason subscription was disabled (null if active)
+          example: Max retries exceeded
+        blockedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When subscription was disabled (null if active)
+          example: '2026-01-14T10:00:00.000Z'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-01-14T10:00:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-01-14T10:00:00.000Z'
+    SubscriptionListResponse:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionWithoutSecret'
+        pagination:
+          $ref: '#/components/schemas/PaginationResponse'
+    CreateSubscriptionErrorResult:
+      type: object
+      required:
+      - index
+      - success
+      - error
+      properties:
+        index:
+          type: integer
+          example: 1
+        success:
+          type: boolean
+          enum:
+          - false
+          example: false
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: string
+              enum:
+              - VALIDATION_ERROR
+              - DUPLICATE_SUBSCRIPTION
+              - URL_VALIDATION_FAILED
+              - WEBHOOK_VERIFICATION_FAILED
+              - FORBIDDEN
+              - UNKNOWN_ERROR
+              example: DUPLICATE_SUBSCRIPTION
+            message:
+              type: string
+              example: Subscription already exists for entity type 'contact' with entity ID '456'
+    AuditLogEntry:
+      type: object
+      required:
+      - id
+      - subscriptionId
+      - payloadId
+      - status
+      - url
+      - deliveredAt
+      properties:
+        id:
+          type: string
+          example: log-123
+        subscriptionId:
+          type: string
+          example: sub-123
+        payloadId:
+          type: string
+          example: payload-456
+        status:
+          type: string
+          enum:
+          - success
+          - failed
+          - permanent_failure
+          example: success
+        statusCode:
+          type: integer
+          example: 200
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        deliveredAt:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00.000Z'
+        durationMs:
+          type: integer
+          example: 150
+        error:
+          type:
+          - string
+          - 'null'
+          example: null
+    OptOutSubscriptionResponse:
+      type: object
+      description: Response body returned when an opt-out subscription is created successfully
+      required:
+      - id
+      - entityType
+      - entityId
+      - signalTypes
+      - url
+      - isActive
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          example: 6a0ca910b402df368d2aff07
+        entityType:
+          type: string
+          enum:
+          - contact
+          example: contact
+        entityId:
+          type: string
+          example: '431705'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - optOut
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        name:
+          type: string
+          example: Account opt-out webhook
+        isActive:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-05-19T18:16:48.360Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-05-19T18:16:48.360Z'
+    DeleteSubscriptionResponse:
+      type: object
+      required:
+      - total
+      - successful
+      - failed
+      - results
+      properties:
+        total:
+          type: integer
+          example: 3
+        successful:
+          type: integer
+          example: 2
+        failed:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/DeleteSubscriptionSuccessResult'
+            - $ref: '#/components/schemas/DeleteSubscriptionErrorResult'
     CreateSubscriptionRequest:
       type: object
       required:
@@ -946,93 +1523,29 @@ components:
                 type: string
                 maxLength: 100
                 description: Overrides default name
-    DeleteSubscriptionErrorResult:
+    UpdateSubscriptionRequest:
       type: object
-      required:
-      - index
-      - success
-      - error
       properties:
-        index:
-          type: integer
-          example: 1
-        success:
-          type: boolean
-          enum:
-          - false
-          example: false
-        error:
-          type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: string
-              enum:
-              - NOT_FOUND
-              - VALIDATION_ERROR
-              - FORBIDDEN
-              - UNKNOWN_ERROR
-              example: NOT_FOUND
-            message:
-              type: string
-              example: Subscription with id 'sub-456' not found
-    AuditLogStatsResponse:
-      type: object
-      required:
-      - total
-      - success
-      - failed
-      - successRate
-      properties:
-        total:
-          type: integer
-          example: 1000
-        success:
-          type: integer
-          example: 950
-        failed:
-          type: integer
-          example: 50
-        successRate:
+        signalTypes:
+          type: array
+          items:
+            type: string
+          description: New signal types to subscribe to
+        url:
           type: string
-          example: 95.00%
-    AuditLogsResponse:
-      type: object
-      required:
-      - data
-      - pagination
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogEntry'
-        pagination:
-          $ref: '#/components/schemas/PaginationResponse'
-    DeleteSubscriptionResponse:
-      type: object
-      required:
-      - total
-      - successful
-      - failed
-      - results
-      properties:
-        total:
-          type: integer
-          example: 3
-        successful:
-          type: integer
-          example: 2
-        failed:
-          type: integer
-          example: 1
-        results:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/DeleteSubscriptionSuccessResult'
-            - $ref: '#/components/schemas/DeleteSubscriptionErrorResult'
+          format: uri
+          maxLength: 2048
+          description: New webhook URL
+        name:
+          type: string
+          maxLength: 100
+          description: New subscription name
+        isActive:
+          type: boolean
+          description: Enable or disable subscription
+        regenerateSecret:
+          type: boolean
+          description: Generate new webhook secret (secret will be returned in response)
     CreateOptOutSubscriptionRequest:
       type: object
       required:
@@ -1057,63 +1570,23 @@ components:
           maxLength: 100
           description: Descriptive name for this subscription
           example: Account opt-out webhook
-    SubscriptionListResponse:
+    CreateSubscriptionSuccessResult:
       type: object
       required:
-      - data
-      - pagination
+      - index
+      - success
+      - subscription
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubscriptionWithoutSecret'
-        pagination:
-          $ref: '#/components/schemas/PaginationResponse'
-    AuditLogEntry:
-      type: object
-      required:
-      - id
-      - subscriptionId
-      - payloadId
-      - status
-      - url
-      - deliveredAt
-      properties:
-        id:
-          type: string
-          example: log-123
-        subscriptionId:
-          type: string
-          example: sub-123
-        payloadId:
-          type: string
-          example: payload-456
-        status:
-          type: string
+        index:
+          type: integer
+          example: 0
+        success:
+          type: boolean
           enum:
-          - success
-          - failed
-          - permanent_failure
-          example: success
-        statusCode:
-          type: integer
-          example: 200
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        deliveredAt:
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000Z'
-        durationMs:
-          type: integer
-          example: 150
-        error:
-          type:
-          - string
-          - 'null'
-          example: null
+          - true
+          example: true
+        subscription:
+          $ref: '#/components/schemas/SubscriptionWithoutSecret'
     TestSubscriptionResponse:
       type: object
       required:
@@ -1170,28 +1643,19 @@ components:
           type: string
           format: date-time
           example: '2024-01-01T00:00:00.000Z'
-    ErrorResponse:
+    AuditLogsResponse:
       type: object
       required:
-      - statusCode
-      - message
+      - data
+      - pagination
       properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
+        data:
           type: array
           items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    CreateSubscriptionErrorResult:
+            $ref: '#/components/schemas/AuditLogEntry'
+        pagination:
+          $ref: '#/components/schemas/PaginationResponse'
+    DeleteSubscriptionErrorResult:
       type: object
       required:
       - index
@@ -1215,127 +1679,14 @@ components:
             code:
               type: string
               enum:
+              - NOT_FOUND
               - VALIDATION_ERROR
-              - DUPLICATE_SUBSCRIPTION
-              - URL_VALIDATION_FAILED
-              - WEBHOOK_VERIFICATION_FAILED
               - FORBIDDEN
               - UNKNOWN_ERROR
-              example: DUPLICATE_SUBSCRIPTION
+              example: NOT_FOUND
             message:
               type: string
-              example: Subscription already exists for entity type 'contact' with entity ID '456'
-    UpdateSubscriptionRequest:
-      type: object
-      properties:
-        signalTypes:
-          type: array
-          items:
-            type: string
-          description: New signal types to subscribe to
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-          description: New webhook URL
-        name:
-          type: string
-          maxLength: 100
-          description: New subscription name
-        isActive:
-          type: boolean
-          description: Enable or disable subscription
-        regenerateSecret:
-          type: boolean
-          description: Generate new webhook secret (secret will be returned in response)
-    CreateSubscriptionSuccessResult:
-      type: object
-      required:
-      - index
-      - success
-      - subscription
-      properties:
-        index:
-          type: integer
-          example: 0
-        success:
-          type: boolean
-          enum:
-          - true
-          example: true
-        subscription:
-          $ref: '#/components/schemas/SubscriptionWithoutSecret'
-    OptOutSubscriptionResponse:
-      type: object
-      description: Response body returned when an opt-out subscription is created successfully
-      required:
-      - id
-      - entityType
-      - entityId
-      - signalTypes
-      - url
-      - isActive
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          example: 6a0ca910b402df368d2aff07
-        entityType:
-          type: string
-          enum:
-          - contact
-          example: contact
-        entityId:
-          type: string
-          example: '431705'
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - optOut
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        name:
-          type: string
-          example: Account opt-out webhook
-        isActive:
-          type: boolean
-          example: true
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-05-19T18:16:48.360Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2026-05-19T18:16:48.360Z'
-    CreateSubscriptionResponse:
-      type: object
-      required:
-      - total
-      - successful
-      - failed
-      - results
-      properties:
-        total:
-          type: integer
-          example: 3
-        successful:
-          type: integer
-          example: 2
-        failed:
-          type: integer
-          example: 1
-        results:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/CreateSubscriptionSuccessResult'
-            - $ref: '#/components/schemas/CreateSubscriptionErrorResult'
+              example: Subscription with id 'sub-456' not found
     SubscriptionResponse:
       type: object
       properties:
@@ -1380,7 +1731,47 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    SubscriptionWithoutSecret:
+    AuditLogStatsResponse:
+      type: object
+      required:
+      - total
+      - success
+      - failed
+      - successRate
+      properties:
+        total:
+          type: integer
+          example: 1000
+        success:
+          type: integer
+          example: 950
+        failed:
+          type: integer
+          example: 50
+        successRate:
+          type: string
+          example: 95.00%
+    PaginationResponse_2:
+      type: object
+      required:
+      - total
+      - limit
+      - offset
+      - hasMore
+      properties:
+        total:
+          type: integer
+          example: 100
+        limit:
+          type: integer
+          example: 50
+        offset:
+          type: integer
+          example: 0
+        hasMore:
+          type: boolean
+          example: true
+    SubscriptionWithoutSecret_2:
       type: object
       required:
       - id
@@ -1425,14 +1816,12 @@ components:
           type:
           - string
           - 'null'
-          description: Reason subscription was disabled (null if active)
           example: Max retries exceeded
         blockedAt:
           type:
           - string
           - 'null'
           format: date-time
-          description: When subscription was disabled (null if active)
           example: '2026-01-14T10:00:00.000Z'
         createdAt:
           type: string
@@ -1442,56 +1831,6 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    DeleteSubscriptionSuccessResult:
-      type: object
-      required:
-      - index
-      - success
-      - subscription
-      properties:
-        index:
-          type: integer
-          example: 0
-        success:
-          type: boolean
-          enum:
-          - true
-          example: true
-        subscription:
-          type: object
-          properties:
-            id:
-              type: string
-              example: sub-123
-            entityType:
-              type: string
-              example: contact
-            entityId:
-              type: string
-              example: '123'
-            name:
-              type: string
-              example: Contact Webhook
-    PaginationResponse:
-      type: object
-      required:
-      - total
-      - size
-      - page
-      - hasMore
-      properties:
-        total:
-          type: integer
-          example: 100
-        limit:
-          type: integer
-          example: 50
-        offset:
-          type: integer
-          example: 0
-        hasMore:
-          type: boolean
-          example: true
     CreateSubscriptionRequest_2:
       type: object
       required:
@@ -1615,86 +1954,43 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    SubscriptionWithoutSecret_2:
-      type: object
-      required:
-      - id
-      - entityType
-      - entityId
-      - signalTypes
-      - url
-      - isActive
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          example: 507f1f77bcf86cd799439011
-        entityType:
-          type: string
-          enum:
-          - contact
-          - company
-          example: contact
-        entityId:
-          type: string
-          example: '123456'
-        signalTypes:
-          type: array
-          items:
-            type: string
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-          - promotion
-          - companyChange
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhooks/lusha
-        name:
-          type: string
-          example: Contact Promotion Tracker
-        isActive:
-          type: boolean
-          example: true
-        blockReason:
-          type:
-          - string
-          - 'null'
-          example: Max retries exceeded
-        blockedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
-    PaginationResponse_2:
-      type: object
-      required:
-      - total
-      - limit
-      - offset
-      - hasMore
-      properties:
-        total:
-          type: integer
-          example: 100
-        limit:
-          type: integer
-          example: 50
-        offset:
-          type: integer
-          example: 0
-        hasMore:
-          type: boolean
-          example: true
+            statusCode: 400
+            message: Invalid request parameters
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
+    NotFound:
+      description: Not found - resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            message: Resource not found
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

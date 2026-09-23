@@ -26,9 +26,7 @@ tags:
   description: '**Lookalike APIs:** Use AI-powered recommendations to discover contacts and companies similar to your best existing customers. The Contact Lookalikes and Company Lookalikes endpoints return paginated results you can pipe directly into Enrich for full data.
 
 
-    Pass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables) or [Companies Tables](#tag/Companies-Tables).
-
-    '
+    Pass `tableId` to also persist matching results into an existing table. See Contacts Tables or Companies Tables.'
   x-tag-expanded: true
 paths:
   /v3/contacts/lookalike:
@@ -57,9 +55,7 @@ paths:
         > **Billing:** Charged per result via the `lookalikeContact` action.
 
 
-        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. See [Contacts Tables](#tag/Contacts-Tables).
-
-        '
+        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. See Contacts Tables.'
       requestBody:
         required: true
         content:
@@ -151,9 +147,7 @@ paths:
         > **Billing:** Charged per result via the `lookalikeCompany` action.
 
 
-        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. See [Companies Tables](#tag/Companies-Tables).
-
-        '
+        > **Persisting to a table:** Pass `tableId` to also persist matching results into an existing table. See Companies Tables.'
       requestBody:
         required: true
         content:
@@ -223,7 +217,35 @@ paths:
       tags:
       - Lookalikes
       summary: Contact Lookalikes
-      description: "Returns contact lookalikes based on seed contacts.\n\n*Endpoint*: **(POST) https://api.lusha.com/v3/lookalike/contacts**\n\n\n  #### How It Works\n\n\n**First Request (Start a New Run):**\n- Do not send `dedupeSessionId`\n- Server generates one and returns it in the response\n- Use returned `dedupeSessionId` for subsequent \"get more\" requests\n\n**Subsequent Requests (\"Get More\"):**\n- Send the returned `dedupeSessionId` to fetch more results without duplicates\n- Server dedupes against all contacts previously returned for the `dedupeSessionId`\n- User-provided `exclude.*` is applied on every request and combined with server-side dedupe\n- Session history retained for 30 days from last activity (sliding window)\n---\n"
+      description: 'Returns contact lookalikes based on seed contacts.
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/v3/lookalike/contacts**
+
+
+        #### How It Works
+
+
+        **First Request (Start a New Run):**
+
+        - Do not send `dedupeSessionId`
+
+        - Server generates one and returns it in the response
+
+        - Use returned `dedupeSessionId` for subsequent "get more" requests
+
+
+        **Subsequent Requests ("Get More"):**
+
+        - Send the returned `dedupeSessionId` to fetch more results without duplicates
+
+        - Server dedupes against all contacts previously returned for the `dedupeSessionId`
+
+        - User-provided `exclude.*` is applied on every request and combined with server-side dedupe
+
+        - Session history retained for 30 days from last activity (sliding window)
+
+        ---'
       operationId: getContactLookalikes
       requestBody:
         required: true
@@ -367,7 +389,33 @@ paths:
       tags:
       - Lookalikes
       summary: Company Lookalikes
-      description: "Returns company lookalikes based on seed companies.\n\n*Endpoint*: **(POST) https://api.lusha.com/v3/lookalike/companies**\n\n\n  #### How It Works\n\n\n**First Request (Start a New Run):**\n- Do not send `dedupeSessionId`\n- Server generates one and returns it in the response\n- Use returned `dedupeSessionId` for subsequent \"get more\" requests\n\n**Subsequent Requests (\"Get More\"):**\n- Send the returned `dedupeSessionId` to fetch more results without duplicates\n- Server uses `dedupeSessionId` to deduplicate companies already returned\n- Session history retained for 30 days from last activity (sliding window)\n---\n"
+      description: 'Returns company lookalikes based on seed companies.
+
+
+        *Endpoint*: **(POST) https://api.lusha.com/v3/lookalike/companies**
+
+
+        #### How It Works
+
+
+        **First Request (Start a New Run):**
+
+        - Do not send `dedupeSessionId`
+
+        - Server generates one and returns it in the response
+
+        - Use returned `dedupeSessionId` for subsequent "get more" requests
+
+
+        **Subsequent Requests ("Get More"):**
+
+        - Send the returned `dedupeSessionId` to fetch more results without duplicates
+
+        - Server uses `dedupeSessionId` to deduplicate companies already returned
+
+        - Session history retained for 30 days from last activity (sliding window)
+
+        ---'
       operationId: getCompanyLookalikes
       requestBody:
         required: true
@@ -479,82 +527,103 @@ paths:
     - url: https://api.lusha.com
       description: Production server
 components:
-  responses:
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
-    Forbidden_2:
-      description: Forbidden - account inactive or feature not available
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            featureNotAvailable:
-              summary: Feature not available for pricing plan
-              value:
-                statusCode: 403
-                message: Your pricing version does not support requesting individual datapoints [revealEmails, revealPhones]
-            subscriptionLimitReached:
-              summary: Subscription limit reached
-              value:
-                statusCode: 403
-                message: Maximum subscriptions limit reached for your account
-            dncNotSupported:
-              summary: DNC filter not supported on current plan
-              value:
-                statusCode: 403
-                message: Exclude DNC is not supported on your current plan. Please contact support or your account manager for assistance.
   schemas:
-    CompanyLookalikesMeta:
+    ErrorResponse:
       type: object
       required:
-      - returned
-      - hasMore
+      - statusCode
+      - message
       properties:
-        returned:
+        statusCode:
           type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
           example: 1
-        hasMore:
-          type: boolean
-          example: true
+    CompanyIdentifiersBatch:
+      type: object
+      properties:
+        domains:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - sap.com
+          - oracle.com
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - https://www.linkedin.com/company/sap
+      minProperties: 1
+    ContactIdentifiersBatch:
+      type:
+      - object
+      - 'null'
+      additionalProperties: false
+      properties:
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - https://www.linkedin.com/in/orit-shilvock-6243bb5
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactItem'
+          maxItems: 100
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          maxItems: 100
+          example:
+          - gal.ashkelon@lusha.com
+        ids:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          description: Lusha contact IDs as strings (preferred)
+          example:
+          - '1234'
+          - '4567'
+        contactIds:
+          type: array
+          items:
+            type: integer
+          maxItems: 100
+          description: Lusha contact IDs as numbers (legacy; prefer ids)
+          example:
+          - 1234
+          - 4567
     ContactItem:
       type: object
       additionalProperties: false
@@ -575,6 +644,66 @@ components:
         companyName:
           type: string
           example: Lusha
+    V3LookAlikeCompanyResult:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Marriott International
+        domain:
+          type: string
+          example: marriott.com
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 255334
+        industry:
+          type: string
+          example: Hospitality
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: United States
+            state:
+              type: string
+              example: Maryland
+            city:
+              type: string
+              example: Bethesda
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/marriott-international
+    CompanyLookalikesResponse:
+      type: object
+      required:
+      - dedupeSessionId
+      - results
+      - meta
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3LookAlikeCompanyResult'
+        meta:
+          $ref: '#/components/schemas/CompanyLookalikesMeta'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
     ContactLookalikesResponse:
       type: object
       additionalProperties: false
@@ -599,6 +728,56 @@ components:
           $ref: '#/components/schemas/TableWrite'
         billing:
           $ref: '#/components/schemas/V3Billing'
+    DedupeSessionInvalidError:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          example: DEDUPE_SESSION_INVALID
+        message:
+          type: string
+          example: The provided dedupeSessionId is invalid or expired. Generate a new request without dedupeSessionId to start a fresh run.
+    TableWrite:
+      type: object
+      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
+
+        '
+      properties:
+        tableId:
+          type: string
+          example: '482910'
+        added:
+          type: integer
+          description: Number of new entities added to the table by this call.
+          example: 3
+        alreadyPresent:
+          type: integer
+          description: Number of entities from this call that were already in the table.
+          example: 2
+        columnsCreated:
+          type: integer
+          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
+          example: 0
+        rowsProcessed:
+          type: integer
+          description: Number of rows the column-run touched as part of this call.
+          example: 5
+        rowsCharged:
+          type: integer
+          description: Number of those rows that incurred a credit charge.
+          example: 5
+        rowsAlreadyPaidInTable:
+          type: integer
+          description: Number of those rows that were already paid for in this table and were not re-charged.
+          example: 0
+        creditsCharged:
+          type: integer
+          description: Credits charged specifically for this table write.
+          example: 0
     V3LookAlikeContactResult:
       type: object
       properties:
@@ -656,206 +835,29 @@ components:
             city:
               type: string
               example: Tel Aviv
-    ContactLookalikesMeta:
-      type: object
-      additionalProperties: false
-      required:
-      - returned
-      - hasMore
-      properties:
-        returned:
-          type: integer
-          example: 25
-        hasMore:
-          type: boolean
-          example: true
-    CompanyLookalikesResponse:
+    CompanyLookalikesRequest:
       type: object
       required:
-      - dedupeSessionId
-      - results
-      - meta
+      - seeds
       properties:
         dedupeSessionId:
           type: string
           format: uuid
           example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3LookAlikeCompanyResult'
-        meta:
-          $ref: '#/components/schemas/CompanyLookalikesMeta'
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3LookAlikeCompanyResult:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Marriott International
-        domain:
-          type: string
-          example: marriott.com
-        employeeCount:
-          type: object
-          properties:
-            exact:
-              type: integer
-              example: 255334
-        industry:
-          type: string
-          example: Hospitality
-        location:
-          type: object
-          properties:
-            country:
-              type: string
-              example: United States
-            state:
-              type: string
-              example: Maryland
-            city:
-              type: string
-              example: Bethesda
-        socialLinks:
-          type: object
-          properties:
-            linkedin:
-              type: string
-              example: https://www.linkedin.com/company/marriott-international
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
+        seeds:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        exclude:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        limit:
           type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    ContactIdentifiersBatch:
-      type:
-      - object
-      - 'null'
-      additionalProperties: false
-      properties:
-        linkedinUrls:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          example:
-          - https://www.linkedin.com/in/orit-shilvock-6243bb5
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactItem'
-          maxItems: 100
-        emails:
-          type: array
-          items:
-            type: string
-            format: email
-          maxItems: 100
-          example:
-          - gal.ashkelon@lusha.com
-        ids:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          description: Lusha contact IDs as strings (preferred)
-          example:
-          - '1234'
-          - '4567'
-        contactIds:
-          type: array
-          items:
-            type: integer
-          maxItems: 100
-          description: Lusha contact IDs as numbers (legacy; prefer ids)
-          example:
-          - 1234
-          - 4567
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    DedupeSessionInvalidError:
-      type: object
-      additionalProperties: false
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: string
-          example: DEDUPE_SESSION_INVALID
-        message:
-          type: string
-          example: The provided dedupeSessionId is invalid or expired. Generate a new request without dedupeSessionId to start a fresh run.
-    TableWrite:
-      type: object
-      description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
-
-        '
-      properties:
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
         tableId:
           type: string
-          example: '482910'
-        added:
-          type: integer
-          description: Number of new entities added to the table by this call.
-          example: 3
-        alreadyPresent:
-          type: integer
-          description: Number of entities from this call that were already in the table.
-          example: 2
-        columnsCreated:
-          type: integer
-          description: Number of columns auto-created by this call (e.g. a Signals column created on first use).
-          example: 0
-        rowsProcessed:
-          type: integer
-          description: Number of rows the column-run touched as part of this call.
-          example: 5
-        rowsCharged:
-          type: integer
-          description: Number of those rows that incurred a credit charge.
-          example: 5
-        rowsAlreadyPaidInTable:
-          type: integer
-          description: Number of those rows that were already paid for in this table and were not re-charged.
-          example: 0
-        creditsCharged:
-          type: integer
-          description: Credits charged specifically for this table write.
-          example: 0
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '583021'
     ContactLookalikesRequest:
       type: object
       additionalProperties: false
@@ -880,47 +882,65 @@ components:
           type: string
           description: Optional. If provided, results are also persisted to this table. See the Tables API.
           example: '482910'
-    CompanyLookalikesRequest:
+    CompanyLookalikesMeta:
       type: object
       required:
-      - seeds
+      - returned
+      - hasMore
       properties:
-        dedupeSessionId:
-          type: string
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        seeds:
-          $ref: '#/components/schemas/CompanyIdentifiersBatch'
-        exclude:
-          $ref: '#/components/schemas/CompanyIdentifiersBatch'
-        limit:
+        returned:
           type: integer
-          minimum: 1
-          maximum: 100
-          default: 25
-          example: 25
-        tableId:
-          type: string
-          description: Optional. If provided, results are also persisted to this table. See the Tables API.
-          example: '583021'
-    CompanyIdentifiersBatch:
+          example: 1
+        hasMore:
+          type: boolean
+          example: true
+    ContactLookalikesMeta:
       type: object
+      additionalProperties: false
+      required:
+      - returned
+      - hasMore
       properties:
-        domains:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          example:
-          - sap.com
-          - oracle.com
+        returned:
+          type: integer
+          example: 25
+        hasMore:
+          type: boolean
+          example: true
+    ContactIdentifiersBatch_2:
+      type:
+      - object
+      - 'null'
+      additionalProperties: false
+      properties:
         linkedinUrls:
           type: array
           items:
             type: string
           maxItems: 100
           example:
-          - https://www.linkedin.com/company/sap
+          - https://www.linkedin.com/in/johndoe
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactItem_2'
+          maxItems: 100
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          maxItems: 100
+          example:
+          - john@acme.com
+        contactIds:
+          type: array
+          items:
+            type: integer
+          maxItems: 100
+          example:
+          - 1234
+          - 4567
       minProperties: 1
     ContactItem_2:
       type: object
@@ -941,6 +961,90 @@ components:
         companyName:
           type: string
           example: Acme Inc
+    ContactLookalikesResponse_2:
+      type: object
+      additionalProperties: false
+      required:
+      - dedupeSessionId
+      - results
+      - meta
+      properties:
+        dedupeSessionId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookalikeContactResult'
+        meta:
+          $ref: '#/components/schemas/ContactLookalikesMeta'
+        creditsCharged:
+          type: integer
+          example: 3
+          minimum: 0
+    CompanyLookalikesResponse_2:
+      type: object
+      required:
+      - dedupeSessionId
+      - results
+      - meta
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookalikeCompanyResult'
+        meta:
+          $ref: '#/components/schemas/CompanyLookalikesMeta'
+        creditsCharged:
+          type: integer
+          example: 3
+          minimum: 0
+    CompanyLookalikesRequest_2:
+      type: object
+      required:
+      - seeds
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        seeds:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        exclude:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
+    ContactLookalikesRequest_2:
+      type: object
+      additionalProperties: false
+      required:
+      - seeds
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        seeds:
+          $ref: '#/components/schemas/ContactIdentifiersBatch_2'
+        exclude:
+          $ref: '#/components/schemas/ContactIdentifiersBatch_2'
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
     LookalikeCompanyResult:
       type: object
       required:
@@ -996,105 +1100,6 @@ components:
               - string
               - 'null'
               example: Bethesda
-    ContactLookalikesResponse_2:
-      type: object
-      additionalProperties: false
-      required:
-      - dedupeSessionId
-      - results
-      - meta
-      properties:
-        dedupeSessionId:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/LookalikeContactResult'
-        meta:
-          $ref: '#/components/schemas/ContactLookalikesMeta'
-        creditsCharged:
-          type: integer
-          example: 3
-          minimum: 0
-    ContactLocation:
-      type: object
-      additionalProperties: false
-      properties:
-        country:
-          type:
-          - string
-          - 'null'
-          example: United States
-        state:
-          type:
-          - string
-          - 'null'
-          example: Maryland
-        city:
-          type:
-          - string
-          - 'null'
-          example: Bethesda
-    CompanyLookalikesResponse_2:
-      type: object
-      required:
-      - dedupeSessionId
-      - results
-      - meta
-      properties:
-        dedupeSessionId:
-          type: string
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/LookalikeCompanyResult'
-        meta:
-          $ref: '#/components/schemas/CompanyLookalikesMeta'
-        creditsCharged:
-          type: integer
-          example: 3
-          minimum: 0
-    ContactIdentifiersBatch_2:
-      type:
-      - object
-      - 'null'
-      additionalProperties: false
-      properties:
-        linkedinUrls:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          example:
-          - https://www.linkedin.com/in/johndoe
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactItem_2'
-          maxItems: 100
-        emails:
-          type: array
-          items:
-            type: string
-            format: email
-          maxItems: 100
-          example:
-          - john@acme.com
-        contactIds:
-          type: array
-          items:
-            type: integer
-          maxItems: 100
-          example:
-          - 1234
-          - 4567
-      minProperties: 1
     LookalikeContactResult:
       type: object
       additionalProperties: false
@@ -1157,45 +1162,88 @@ components:
               example: Director
         location:
           $ref: '#/components/schemas/ContactLocation'
-    ContactLookalikesRequest_2:
+    ContactLocation:
       type: object
       additionalProperties: false
-      required:
-      - seeds
       properties:
-        dedupeSessionId:
-          type: string
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        seeds:
-          $ref: '#/components/schemas/ContactIdentifiersBatch_2'
-        exclude:
-          $ref: '#/components/schemas/ContactIdentifiersBatch_2'
-        limit:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 25
-          example: 25
-    CompanyLookalikesRequest_2:
-      type: object
-      required:
-      - seeds
-      properties:
-        dedupeSessionId:
-          type: string
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        seeds:
-          $ref: '#/components/schemas/CompanyIdentifiersBatch'
-        exclude:
-          $ref: '#/components/schemas/CompanyIdentifiersBatch'
-        limit:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 25
-          example: 25
+        country:
+          type:
+          - string
+          - 'null'
+          example: United States
+        state:
+          type:
+          - string
+          - 'null'
+          example: Maryland
+        city:
+          type:
+          - string
+          - 'null'
+          example: Bethesda
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    Forbidden_2:
+      description: Forbidden - account inactive or feature not available
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            featureNotAvailable:
+              summary: Feature not available for pricing plan
+              value:
+                statusCode: 403
+                message: Your pricing version does not support requesting individual datapoints [revealEmails, revealPhones]
+            subscriptionLimitReached:
+              summary: Subscription limit reached
+              value:
+                statusCode: 403
+                message: Maximum subscriptions limit reached for your account
+            dncNotSupported:
+              summary: DNC filter not supported on current plan
+              value:
+                statusCode: 403
+                message: Exclude DNC is not supported on your current plan. Please contact support or your account manager for assistance.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

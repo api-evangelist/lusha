@@ -1,0 +1,34 @@
+# Front Door AI Index — lusha — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: lusha
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.lusha.com
+  final_host: www.lusha.com
+  ownership: own
+  owner: lusha
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 59
+  host_score: 59
+  density: 21.84
+  words: 2701
+  tiers:
+    agentic: 18
+    core: 14
+    model: 27
+  ambiguous: 18
+  top_terms:
+    AI: 14
+    Claude: 14
+    ChatGPT: 12
+    MCP: 11
+    agent: 9
+    intelligence: 8
+    AI agent: 6
+    AI assistant: 1
+    Gemini: 1
+    predictive: 1
