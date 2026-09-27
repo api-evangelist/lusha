@@ -231,60 +231,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    Technology:
-      type: object
-      properties:
-        name:
-          type: string
-          example: rss
-    SicCode:
-      type: object
-      properties:
-        code:
-          type: string
-          example: '1011'
-        label:
-          type: string
-          example: Iron ores
-    CompanyNameSearchRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: Search text for company name
-          example: lusha
-      required:
-      - text
-    TechnologySearchRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: Search text for technology
-          example: rss
-      required:
-      - text
     LocationSearchRequest:
       type: object
       properties:
@@ -294,51 +240,24 @@ components:
           example: un
       required:
       - text
-    RevenueRange:
-      type: object
-      properties:
-        min:
-          type: number
-          example: 1
-        max:
-          type: number
-          example: 1000000
-    NaicsCode:
+    SicCode:
       type: object
       properties:
         code:
           type: string
-          example: '11'
+          example: '1011'
         label:
           type: string
-          example: Agriculture, Forestry, Fishing and Hunting
-    CompanyLocationFilter:
+          example: Iron ores
+    TechnologySearchRequest:
       type: object
       properties:
-        country:
+        text:
           type: string
-          example: United States
-        continent:
-          type: string
-          example: North America
-        country_grouping:
-          type: string
-          example: na
-    CompanyNameResult:
-      type: object
-      properties:
-        companyId:
-          type: number
-          example: 33222678
-        name:
-          type: string
-          example: Lusha
-        logoUrl:
-          type: string
-          example: https://logo.lusha.co/d/company_33222678_logo.jpg
-        fqdn:
-          type: string
-          example: www.lusha.com
+          description: Search text for technology
+          example: rss
+      required:
+      - text
     IndustryLabel:
       type: object
       properties:
@@ -368,6 +287,87 @@ components:
         max:
           type: number
           example: 10
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    RevenueRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 1000000
+    CompanyNameSearchRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Search text for company name
+          example: lusha
+      required:
+      - text
+    CompanyNameResult:
+      type: object
+      properties:
+        companyId:
+          type: number
+          example: 33222678
+        name:
+          type: string
+          example: Lusha
+        logoUrl:
+          type: string
+          example: https://logo.lusha.co/d/company_33222678_logo.jpg
+        fqdn:
+          type: string
+          example: www.lusha.com
+    CompanyLocationFilter:
+      type: object
+      properties:
+        country:
+          type: string
+          example: United States
+        continent:
+          type: string
+          example: North America
+        country_grouping:
+          type: string
+          example: na
+    Technology:
+      type: object
+      properties:
+        name:
+          type: string
+          example: rss
+    NaicsCode:
+      type: object
+      properties:
+        code:
+          type: string
+          example: '11'
+        label:
+          type: string
+          example: Agriculture, Forestry, Fishing and Hunting
   responses:
     Unauthorized:
       description: Unauthorized - invalid or missing API key

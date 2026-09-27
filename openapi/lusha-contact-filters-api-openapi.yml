@@ -148,45 +148,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    LocationFilter:
-      type: object
-      properties:
-        continent:
-          type: string
-          example: North America
-        country:
-          type: string
-          example: United States
-        city:
-          type: string
-          example: New York
-        state:
-          type: string
-          example: New York
-        country_grouping:
-          type: string
-          example: na
     LocationSearchRequest:
       type: object
       properties:
@@ -208,6 +169,45 @@ components:
       required:
       - name
       - code
+    LocationFilter:
+      type: object
+      properties:
+        continent:
+          type: string
+          example: North America
+        country:
+          type: string
+          example: United States
+        city:
+          type: string
+          example: New York
+        state:
+          type: string
+          example: New York
+        country_grouping:
+          type: string
+          example: na
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
   responses:
     Unauthorized:
       description: Unauthorized - invalid or missing API key

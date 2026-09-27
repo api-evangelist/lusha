@@ -686,148 +686,165 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 components:
+  parameters:
+    signalsStartDate:
+      name: signalsStartDate
+      in: query
+      description: 'Start date for signal retrieval in YYYY-MM-DD format. Defaults to 6 months ago if not specified.
+
+        '
+      schema:
+        type: string
+        format: date
+      example: '2025-03-01'
+    signals:
+      name: signals
+      in: query
+      description: 'Array of signal types to retrieve for the contact.
+
+        - `allSignals`: All available signal types
+
+        - `promotion`: Promotion signals
+
+        - `companyChange`: Company change signals
+
+        '
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - allSignals
+          - promotion
+          - companyChange
+      example:
+      - promotion
+    lastName:
+      name: lastName
+      in: query
+      description: The last name of the person
+      schema:
+        type: string
+      example: Moskovitz
+    linkedinUrl:
+      name: linkedinUrl
+      in: query
+      description: The LinkedIn URL of the person
+      schema:
+        type: string
+      example: https://www.linkedin.com/in/dustin/
+    partialProfile:
+      name: partialProfile
+      in: query
+      description: 'Search for a single contact with the option to receive a partial profile.
+
+        '
+      required: false
+      schema:
+        type: boolean
+        default: false
+      example: true
+    companyName:
+      name: companyName
+      in: query
+      description: The name of the company the person works at
+      schema:
+        type: string
+      example: Lusha
+    refreshJobInfo:
+      name: refreshJobInfo
+      in: query
+      description: 'Set to true to refresh and update the job details for the person.
+
+        This ensures that outdated job information is replaced with the most recent data.
+
+        '
+      schema:
+        type: boolean
+        default: false
+      example: true
+    revealPhones:
+      name: revealPhones
+      in: query
+      description: 'Set `revealPhones=true` to retrieve only the phone number of the contact.
+
+        '
+      schema:
+        type: boolean
+        default: true
+      example: true
+    revealEmails:
+      name: revealEmails
+      in: query
+      description: 'Set `revealEmails=true` to retrieve only the email address of the contact.
+
+        '
+      schema:
+        type: boolean
+        default: true
+      example: true
+    email:
+      name: email
+      in: query
+      description: The email address of the person
+      schema:
+        type: string
+      example: dustin@lusha.com
+    companyDomain:
+      name: companyDomain
+      in: query
+      description: The domain name of the company
+      schema:
+        type: string
+      example: lusha.com
+    personId:
+      name: personId
+      in: query
+      description: The unique person identifier in Lusha
+      schema:
+        type: string
+      example: '4183886134'
+    firstName:
+      name: firstName
+      in: query
+      description: The first name of the person
+      schema:
+        type: string
+      example: Dustin
+    filterBy:
+      name: filterBy
+      in: query
+      description: 'Filters results based on specific contact details. Available options:
+
+        - `phoneNumbers`: Only return contacts with phone numbers
+
+        - `emailAddresses`: Only return contacts with email addresses
+
+
+        By default, results will include contacts with at least one contact detail.
+
+        '
+      schema:
+        type: string
+        enum:
+        - phoneNumbers
+        - emailAddresses
   schemas:
-    CompanyResponse:
+    SocialResponse:
       type: object
       properties:
-        name:
+        linkedin:
           type: string
-          example: Lusha
-        description:
+          example: https://www.linkedin.com/in/dustin/
+        crunchbase:
           type: string
-          example: Lusha is a company that provides a platform for companies to find and connect with potential customers.
-        domains:
-          type: object
-          properties:
-            homepage:
-              type: string
-              example: https://www.lusha.com
-            email:
-              type: string
-              example: contact@lusha.com
-        homepageUrl:
+          example: https://www.crunchbase.com/person/dustin-moskovitz
+        twitter:
           type: string
-          example: https://www.lusha.com
-        fqdn:
+          example: https://twitter.com/dustin
+        facebook:
           type: string
-          example: lusha.com
-        location:
-          $ref: '#/components/schemas/LocationResponse'
-        companySize:
-          example:
-          - 100
-          - 1000
-          type: array
-          items:
-            type: number
-        revenueRange:
-          example:
-          - 1000000
-          - 10000000
-          type: array
-          items:
-            type: number
-        industryPrimaryGroup:
-          type: string
-          example: Software
-        logoUrl:
-          type: string
-          example: https://www.lusha.com/logo.png
-        social:
-          $ref: '#/components/schemas/SocialResponse'
-        specialities:
-          example:
-          - Software
-          - Sales
-          type: array
-          items:
-            type: string
-        technologies:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyTechnology'
-          example:
-          - name: JavaScript
-          - name: Python
-        funding:
-          $ref: '#/components/schemas/FundingData'
-        industry:
-          $ref: '#/components/schemas/CompanyIndustryData'
-        intent:
-          $ref: '#/components/schemas/BuyerIntent'
-        industryPrimaryGroupDetails:
-          $ref: '#/components/schemas/IndustryPrimaryGroupDetailsResponse'
-      required:
-      - name
-      - fqdn
-    CompanyCrunchbaseResponse:
-      type: object
-      properties:
-        url:
-          type: string
-          example: https://crunchbase.com/company/lusha
-      required:
-      - url
-    Company:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the company, Required if no domain.
-          example: Lusha
-        domain:
-          type: string
-          description: The domain of the company, Required if no name.
-          example: lusha.com
-        isCurrent:
-          type: boolean
-          description: Indicates whether this is the person's current company
-          example: true
-        jobTitle:
-          type: string
-          description: The job title of the person at the company
-          example: Software Engineer
-        fqdn:
-          type: string
-          description: The fully qualified domain name of the company
-          example: https://lusha.com
-        companySocialId:
-          type: string
-          description: The social ID associated with the company (if available)
-          example: '1234567890'
-      required:
-      - isCurrent
-    IndustryPrimaryGroupDetailsResponse:
-      type: object
-      properties:
-        sicCodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanySic'
-        naicsCodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNaics'
-    CompanyFundingRound:
-      type: object
-      properties:
-        currency:
-          type: string
-          example: USD
-        roundAmount:
-          type: number
-          example: 205000000
-        roundType:
-          type: string
-          example: Private Equity Round
-        roundDate:
-          type: string
-          example: Nov 10, 2021
-      required:
-      - currency
-      - roundAmount
-      - roundType
-      - roundDate
+          example: https://www.facebook.com/dustin
     CompanyLinkedinResponse:
       type: object
       properties:
@@ -836,712 +853,6 @@ components:
           example: https://linkedin.com/company/lusha
       required:
       - url
-    ContactSearchBulk:
-      type: object
-      properties:
-        contactId:
-          type: string
-          description: A unique sequential ID to associate with the contact object in the API response
-          example: '1234'
-        personId:
-          type: string
-          description: The unique person identifier in Lusha
-          example: '4183886134'
-        fullName:
-          type: string
-          description: The full name of the person
-          example: Dustin Moskovitz
-        location:
-          type: string
-          description: The raw location of the person
-          example: Singapore,Chicago
-        linkedinUrl:
-          type: string
-          description: The LinkedIn URL of the person
-          example: https://www.linkedin.com/in/dustin/
-        email:
-          type: string
-          description: The email address of the person
-          example: dustin@lusha.com
-        companies:
-          description: Details of the company where the contact is currently employed (or previously employed if applicable)
-          type: array
-          items:
-            $ref: '#/components/schemas/Company'
-      required:
-      - contactId
-    CompanySurgeInHiringSignal:
-      type: object
-      properties:
-        companyId:
-          type: string
-          example: '3416'
-        signalId:
-          type: string
-          example: '1503905'
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        newJobsPostedLastWeek:
-          type: number
-          example: 25
-        historicalAvg:
-          type: number
-          example: 10
-        changeRatePercent:
-          type: number
-          example: 150
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-    CompanyIntent:
-      type: object
-      properties:
-        detectedTopics:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyIntentTopic'
-        topicCount:
-          type: number
-          example: 6
-      required:
-      - detectedTopics
-      - topicCount
-    CompanyFunding:
-      type: object
-      properties:
-        rounds:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyFundingRound'
-        totalRounds:
-          type: number
-          example: 2
-        totalRoundsAmount:
-          type: number
-          example: 245000000
-        currency:
-          type: string
-          example: USD
-        isIpo:
-          type: boolean
-          example: false
-        lastRoundType:
-          type: string
-          example: Private Equity Round
-        lastRoundAmount:
-          type: number
-          example: 205000000
-        lastRoundDate:
-          type: string
-          example: Nov 10, 2021
-      required:
-      - totalRounds
-      - currency
-      - isIpo
-    CompaniesBulkResponse:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/CompanyBulkResponse'
-    ContactWithCompany:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Contact'
-      - type: object
-        properties:
-          company:
-            $ref: '#/components/schemas/CompanyResponse'
-        required:
-        - company
-    LinkedinCourse:
-      type: object
-      properties:
-        activities:
-          type:
-          - string
-          - 'null'
-        degree:
-          type:
-          - string
-          - 'null'
-        endDateMonth:
-          oneOf:
-          - type:
-            - integer
-            - 'null'
-          - type:
-            - string
-            - 'null'
-        endDateYear:
-          oneOf:
-          - type:
-            - integer
-            - 'null'
-          - type:
-            - string
-            - 'null'
-        fieldOfStudy:
-          type:
-          - object
-          - 'null'
-          properties:
-            id:
-              type:
-              - string
-              - 'null'
-            name:
-              type:
-              - string
-              - 'null'
-        grade:
-          type:
-          - string
-          - 'null'
-        school:
-          type:
-          - object
-          - 'null'
-          properties:
-            id:
-              type:
-              - string
-              - 'null'
-            logoUrl:
-              type:
-              - string
-              - 'null'
-            name:
-              type:
-              - string
-              - 'null'
-        startDateMonth:
-          oneOf:
-          - type:
-            - number
-            - 'null'
-          - type:
-            - string
-            - 'null'
-        startDateYear:
-          oneOf:
-          - type:
-            - number
-            - 'null'
-          - type:
-            - string
-            - 'null'
-        linkedinSchoolId:
-          type:
-          - number
-          - 'null'
-    ContactError:
-      type: object
-      properties:
-        code:
-          type: number
-          description: The code of the contact error
-          example: 3
-        name:
-          type: string
-          description: The name of the contact error
-          example: EMPTY_DATA
-        message:
-          type: string
-          description: The message of the contact error
-          example: Could not find requested data
-    CompanyIndustryPrimaryGroupDetails:
-      type: object
-      properties:
-        sicCodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanySic'
-        naicsCodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNaics'
-    LinkedinAward:
-      type: object
-      properties:
-        companyName:
-          type:
-          - string
-          - 'null'
-          example: Columbia Southern University
-        dateDay:
-          oneOf:
-          - type: number
-          - type: string
-          example: 15
-        dateMonth:
-          oneOf:
-          - type: number
-          - type: string
-          example: 7
-        dateYear:
-          oneOf:
-          - type: number
-          - type: string
-          example: 2023
-        linkedinCompanyId:
-          type:
-          - string
-          - 'null'
-        summary:
-          type:
-          - string
-          - 'null'
-          example: Certificate of Recognition for Exceptional Teaching
-        title:
-          type: string
-          example: Raising the Bar Award
-    CompanyNaics:
-      type: object
-      properties:
-        naicsCodes:
-          type: number
-          example: 541511
-        description:
-          type: string
-          example: Custom Computer Programming Services
-      required:
-      - naics
-      - description
-    LocationResponse:
-      type: object
-      properties:
-        country:
-          type: string
-          description: The country where the person is located.
-          example: Israel
-        countryIso2:
-          type: string
-          description: The ISO 3166-1 alpha-2 country code of the person.
-          example: IL
-        country_iso2:
-          type: string
-          description: The ISO 3166-1 alpha-2 country code of the person.
-          example: IL
-        continent:
-          type: string
-          description: The continent where the person is located.
-          example: Asia
-        rawLocation:
-          type: string
-          example: 800 Boylston St, Suite 1410, Boston, MA 02199, US
-          description: The detailed address.
-        region:
-          type: string
-          description: The region where the person is located.
-          example: Tel Aviv
-        city:
-          type: string
-          description: The city where the person is located.
-          example: Tel Aviv
-        cityId:
-          type: number
-          description: The ID of the city where the person is located.
-          example: 123
-        state:
-          type: string
-          description: The state where the person is located.
-          example: Tel Aviv
-        stateCode:
-          type: string
-          description: The state code of the person.
-          example: IL
-        state_code:
-          type: string
-          description: The state code of the person.
-          example: IL
-        street:
-          type: string
-          description: The street where the person is located.
-          example: 123 Main St
-        locationCoordinates:
-          description: The coordinates of the person.
-          example:
-          - 32.0853
-          - 34.7818
-          type: array
-          items:
-            type: number
-        isEuContact:
-          type: boolean
-          description: Indicates whether the person is in the EU.
-          example: true
-      required:
-      - country
-      - countryIso2
-      - continent
-      - rawLocation
-    PhoneNumbers:
-      type: object
-      properties:
-        number:
-          type: string
-          description: The phone number
-          example: '+1234567890'
-        phoneType:
-          type: string
-          description: The type of phone number
-          example: Mobile
-          enum:
-          - Mobile
-          - Direct
-          - Phone
-        doNotCall:
-          type: boolean
-          description: Indicates whether the phone number is listed as "Do Not Call" (DNC).
-          example: false
-        updateDate:
-          type: string
-          description: The update date of the phone number
-          example: '2020-01-01'
-      required:
-      - phoneType
-      - doNotCall
-      - updateDate
-    BuyerIntent:
-      type: object
-      properties:
-        topicCount:
-          type: integer
-          example: 6
-        detectedTopics:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyIntentTopic'
-      required:
-      - topicCount
-      - detectedTopics
-    CompanySurgeInHiringByLocationSignal:
-      type: object
-      properties:
-        signalId:
-          type: string
-          example: '1503907'
-        companyId:
-          type: string
-          example: '3416'
-        country:
-          type: string
-          example: United States
-        state:
-          type: string
-          example: California
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        newJobsPostedLast4Weeks:
-          type: number
-          example: 20
-        historicalAvg:
-          type: number
-          example: 8
-        changeRatePercent:
-          type: number
-          example: 150
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-    SearchBulkContactsRequest:
-      type: object
-      properties:
-        contacts:
-          description: This is a required parameter that should contain a list of contact objects. Each contact will be processed based on the provided contact details.
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactSearchBulk'
-        metadata:
-          description: Metadata for the search to filter the results
-          $ref: '#/components/schemas/Metadata'
-      required:
-      - contacts
-    CompanySignalFiltersInclude:
-      type: object
-      description: 'Optional sub-filters to narrow results within a signal type.
-
-        - Multi-value filters use **OR** logic
-
-        - Filter values are **not** case-sensitive
-
-        - `state` without `country` in `hiringByLocations` returns HTTP **400**
-
-        '
-      properties:
-        newsEventTypes:
-          type: array
-          items:
-            type: string
-            enum:
-            - Asset Investment
-            - Asset Sale
-            - Competitor Activity
-            - Event Participation
-            - Executive Departure
-            - Executive Hire
-            - Executive Promotion
-            - Facilities Expansion
-            - Facility Closure
-            - Funding Round
-            - Headcount Decrease
-            - Headcount Increase
-            - IPO
-            - Lawsuit Faced
-            - Lawsuit Filed
-            - M&A
-            - New Customer
-            - New Location
-            - New Vendor
-            - Partnership
-            - Product Development
-            - Product Integration
-            - Product Launch
-            - Recognition
-            - Security Issue
-            - Strategic Investment
-          example:
-          - Partnership
-          - New Customer
-        hiringByDepartments:
-          type: array
-          items:
-            type: string
-            enum:
-            - Business Development
-            - Consulting
-            - Customer Service
-            - Engineering & Technical
-            - Finance
-            - General Management
-            - Health Care & Medical
-            - Human Resources
-            - Information Technology
-            - Legal
-            - Marketing
-            - Operations
-            - Other
-            - Product
-            - Research & Analytics
-            - Sales
-          example:
-          - Engineering & Technical
-          - Sales
-        hiringByLocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/SignalFilterLocation'
-          example:
-          - country: United States
-            state: California
-          - country: Germany
-    ContactSingleResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/ContactError'
-        isCreditCharged:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/ContactWithCompany'
-      required:
-      - error
-      - isCreditCharged
-    CompanyNewsSignal:
-      type: object
-      properties:
-        companyId:
-          type: string
-          example: '33222678'
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-        signalId:
-          type: string
-          example: '1503910'
-        eventType:
-          type: string
-          example: partnership
-        eventSummary:
-          type: string
-          example: Lusha announced a strategic partnership with Salesforce.
-        articlePublishedDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        articleTitle:
-          type: string
-          example: Lusha Partners with Salesforce
-        articleHighlight:
-          type: string
-          example: The partnership enables Salesforce users to access Lusha data directly within their CRM.
-        eventEffectiveDate:
-          type: string
-          format: date
-          example: '2025-06-10'
-        articleUrl:
-          type: string
-          format: uri
-          example: https://example.com/lusha-salesforce-partnership
-    Contact:
-      type: object
-      properties:
-        companyId:
-          type: number
-          example: 123
-        firstName:
-          type: string
-          example: Dustin
-        lastName:
-          type: string
-          example: Moskovitz
-        fullName:
-          type: string
-          example: Dustin Moskovitz
-        emails:
-          description: Simple array of email addresses (deprecated - use emailAddresses)
-          type: array
-          items:
-            type: string
-          example:
-          - john.doe@example.com
-        emailAddresses:
-          description: Detailed email addresses with metadata
-          type: array
-          items:
-            $ref: '#/components/schemas/EmailAddress'
-        phones:
-          description: Simple array of phone numbers (deprecated - use phoneNumbers)
-          type: string
-          example: +1 555-123-4567
-        phoneNumbers:
-          description: Detailed phone numbers with metadata
-          type: array
-          items:
-            $ref: '#/components/schemas/PhoneNumbers'
-        personId:
-          type: number
-          example: 123456
-        location:
-          $ref: '#/components/schemas/LocationResponse'
-        jobTitle:
-          $ref: '#/components/schemas/JobTitle'
-        socialLinks:
-          $ref: '#/components/schemas/SocialLinks'
-        jobStartDate:
-          type: string
-          example: '2020-01-01'
-        previousJob:
-          $ref: '#/components/schemas/PreviousJobResponse'
-        contactTags:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactTag'
-        updateDate:
-          type: string
-          example: '2020-01-01'
-        linkedinFollowersCount:
-          type: integer
-          example: 1250
-        linkedinConnectionsCount:
-          type: integer
-          example: 500
-        linkedinCertifications:
-          type: array
-          items:
-            $ref: '#/components/schemas/LinkedinCertification'
-        linkedinCourses:
-          type: array
-          items:
-            $ref: '#/components/schemas/LinkedinCourse'
-        linkedinAwards:
-          type: array
-          items:
-            $ref: '#/components/schemas/LinkedinAward'
-        linkedinSkills:
-          type: array
-          items:
-            type: string
-          example:
-          - Microsoft Office
-          - Project Management
-          - Strategic Planning
-      required:
-      - companyId
-      - firstName
-      - lastName
-      - fullName
-    BulkPersonResponse:
-      type: object
-      properties:
-        contacts:
-          type: object
-          description: The contacts of the bulk person output, keyed by contactId
-          additionalProperties:
-            $ref: '#/components/schemas/ContactResponse'
-        companies:
-          type: object
-          description: The companies of the bulk person output, keyed by companyId
-          additionalProperties:
-            $ref: '#/components/schemas/CompanyResponse'
-      required:
-      - contacts
-      - companies
-    PreviousJobResponse:
-      type: object
-      properties:
-        jobTitle:
-          $ref: '#/components/schemas/JobTitle'
-        company:
-          $ref: '#/components/schemas/Company'
-      required:
-      - jobTitle
-      - company
-    ContactResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/ContactError'
-        isCreditCharged:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/Contact'
-      required:
-      - error
-      - isCreditCharged
-    CompanyIndustryData:
-      type: object
-      properties:
-        mainIndustry:
-          type: string
-          example: Software
-        subIndustry:
-          type: string
-          example: Sales
-      required:
-      - mainIndustry
-      - subIndustry
-    CompanySocialResponse:
-      type: object
-      properties:
-        crunchbase:
-          $ref: '#/components/schemas/CompanyCrunchbaseResponse'
-        linkedin:
-          $ref: '#/components/schemas/CompanyLinkedinResponse'
     CompanyItSpendSignal:
       type: object
       properties:
@@ -1567,628 +878,39 @@ components:
         domain:
           type: string
           example: lusha.com
-    CompanySic:
+    ContactResponse:
       type: object
       properties:
-        sicCodes:
-          type: number
-          example: 1234
-        description:
-          type: string
-          example: Software Publishing
-      required:
-      - sic
-      - description
-    SingleContactResponse:
-      type: object
-      properties:
-        contact:
-          $ref: '#/components/schemas/ContactSingleResponse'
-      required:
-      - contact
-    SignalFilterLocation:
-      type: object
-      description: 'Location filter for hiring signals. `country` is required; `state` is optional.
-
-        '
-      required:
-      - country
-      properties:
-        country:
-          type: string
-          example: United States
-        state:
-          type: string
-          example: California
-    LinkedinCertification:
-      type: object
-      properties:
-        companyId:
-          type: integer
-          example: 1035
-        companyName:
-          type: string
-          example: Microsoft
-        credentialId:
-          type: string
-          example: abc123
-        dateMonth:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 6
-        dateYear:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 2020
-        expireDateMonth:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 6
-        expireDateYear:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 2025
-        linkedinCompanyId:
-          type:
-          - integer
-          - 'null'
-          example: 1441
-        summary:
-          type:
-          - string
-          - 'null'
-          example: Azure fundamentals certification covering cloud concepts
-        title:
-          type: string
-          example: 'Microsoft Certified: Azure Fundamentals'
-        verifyUrl:
-          type:
-          - string
-          - 'null'
-          example: https://www.youracclaim.com/badges/5ccf865c-dd6e-4dcc-9184-c8999d31f83d
-    CompanyLocationResponse:
-      type: object
-      description: HQ location only. For all company site locations, see companyLocations.
-      properties:
-        city:
-          type: string
-          example: Boston
-        country:
-          type: string
-          example: United States
-        fullLocation:
-          type: string
-          example: 800 Boylston St, Suite 1410, Boston, Massachusetts 02199, US
-        state:
-          type: string
-          example: Massachusetts
-        stateCode:
-          type: string
-          example: MA
-        countryIso2:
-          type: string
-          example: US
-        rawLocation:
-          type: string
-          example: 800 Boylston St; Suite 1410; Boston, Massachusetts 02199, US
-    EmailAddress:
-      type: object
-      properties:
-        email:
-          type: string
-          description: The email address (alternative to 'address')
-          example: dustin@lusha.com
-        address:
-          type: string
-          description: The email address (alternative to 'email')
-          example: dustin@lusha.com
-        emailType:
-          type: string
-          description: The type of email address (alternative to 'type')
-          example: work
-          enum:
-          - work
-          - private
-        emailConfidence:
-          type: string
-          description: The confidence level of the email address
-          example: A+
-        updateDate:
-          type: string
-          description: The update date of the email address
-          example: '2020-01-01'
-    FundingDataRound:
-      type: object
-      properties:
-        announcedOn:
-          type: string
-          example: '2020-01-01'
-        leadInvestors:
-          example:
-          - Investor 1
-          - Investor 2
-          type: array
-          items:
-            type: string
-        currency:
-          type: string
-          example: USD
-        title:
-          type: string
-          example: Series A
-        moneyRaised:
-          type: number
-          example: 1000000
-      required:
-      - currency
-      - title
-    CompanyBulkRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '1'
-        domain:
-          type: string
-          example: lusha.com
-        fqdn:
-          type: string
-        name:
-          type: string
-          example: Lusha
-        companyId:
-          type: string
-          example: '1234567890'
-      required:
-      - id
-    CompanyErrorResponse:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Something went wrong
-      required:
-      - message
-    CompaniesBulkRequest:
-      type: object
-      properties:
-        companies:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyBulkRequest'
-        signals:
-          type: array
-          items:
-            type: string
-            enum:
-            - allSignals
-            - websiteTrafficIncrease
-            - websiteTrafficDecrease
-            - itSpendIncrease
-            - itSpendDecrease
-            - headcountIncrease1m
-            - headcountDecrease1m
-            - headcountIncrease3m
-            - headcountDecrease3m
-            - headcountIncrease6m
-            - headcountDecrease6m
-            - headcountIncrease12m
-            - headcountDecrease12m
-            - surgeInHiring
-            - surgeInHiringByDepartment
-            - surgeInHiringByLocation
-            - riskNews
-            - commercialActivityNews
-            - corporateStrategyNews
-            - financialEventsNews
-            - peopleNews
-            - marketIntelligenceNews
-            - productActivityNews
-          example:
-          - surgeInHiringByLocation
-        signalsStartDate:
-          type: string
-          format: date
-          example: '2025-03-01'
-        signalsFilters:
-          type: object
-          description: 'Optional filters to narrow signal results within the requested signal types.
-
-            - Multi-value filters use **OR** logic
-
-            - Filter values are **not** case-sensitive
-
-            - Unrecognized values are **silently ignored**
-
-            - `state` without `country` in `hiringByLocations` returns HTTP **400**
-
-            '
-          properties:
-            include:
-              $ref: '#/components/schemas/CompanySignalFiltersInclude'
-        partialCompany:
-          type: boolean
-          default: true
-          example: false
-      required:
-      - companies
-    CompanySurgeInHiringByDepartmentSignal:
-      type: object
-      properties:
-        signalId:
-          type: string
-          example: '1503906'
-        companyId:
-          type: string
-          example: '3416'
-        department:
-          type: string
-          example: Engineering
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        newJobsPostedLast4Weeks:
-          type: number
-          example: 15
-        historicalAvg:
-          type: number
-          example: 5
-        changeRatePercent:
-          type: number
-          example: 200
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    CompanyTechnology:
-      type: object
-      properties:
-        name:
-          type: string
-          example: salesforce
-      required:
-      - name
-    SocialLinks:
-      type: object
-      properties:
-        linkedin:
-          type: string
-          example: https://www.linkedin.com/in/dustin/
-        xUrl:
-          type: string
-          example: https://twitter.com/dustin
-      required:
-      - linkedin
-    CompanySingleResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/CompanySingleResponseData'
-        errors:
-          $ref: '#/components/schemas/CompanyErrorResponse'
-        meta:
-          type: object
-          description: Currently returns an empty value; this field should be deprecated in future releases.
-          example: {}
-    CompanyBulkResponse:
-      type: object
-      properties:
-        id:
-          type: number
-          example: 33222678
-        lushaCompanyId:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Lusha
-        companySize:
-          example:
-          - 201
-          - 500
-          type: array
-          items:
-            type: number
-        linkedinFollowers:
-          type: integer
-          example: 1950
-        emailDomain:
-          type: string
-          example: bitcoinromania.ro
-        companyLocations:
-          type: array
-          items:
-            type: object
-            properties:
-              city:
-                type: string
-              continent:
-                type: string
-              country:
-                type: string
-              country_iso2:
-                type: string
-              location_coordinates:
-                type: array
-                items:
-                  type: number
-              state:
-                type:
-                - string
-                - 'null'
-              state_code:
-                type:
-                - string
-                - 'null'
-        alternativeName:
-          type: string
-          example: bitcoin romania
-        companyType:
-          type: string
-          example: Private company
-        lushaPopularityTier:
-          type: integer
-          example: 1
-        employeesInLinkedin:
-          type: number
-          example: 32
-        revenueRange:
-          example:
-          - 10000000
-          - 50000000
-          type: array
-          items:
-            type: number
-        fqdn:
-          type: string
-          example: www.lusha.com
-        founded:
-          type: string
-          example: '2016'
-        description:
-          type: string
-          example: Lusha is the sales intelligence platform...
-        logoUrl:
-          type: string
-          example: https://logo.lusha.co/logo.jpg
-        industryPrimaryGroupDetails:
-          $ref: '#/components/schemas/CompanyIndustryPrimaryGroupDetails'
-        linkedin:
-          type: string
-          example: https://www.linkedin.com/company/lushadata
-        mainIndustry:
-          type: string
-          example: Technology, Information & Media
-        subIndustry:
-          type: string
-          example: Software Development
-        city:
-          type: string
-          example: Boston
-        state:
-          type: string
-          example: Massachusetts
-        country:
-          type: string
-          example: United States
-        countryIso2:
-          type: string
-          example: US
-        continent:
-          type: string
-          example: North America
-        rawLocation:
-          type: string
-          example: 800 Boylston St; Suite 1410; Boston, Massachusetts 02199, US
-        crunchbase:
-          type: string
-          example: https://www.crunchbase.com/organization/lusha
-        specialities:
-          type: array
-          items:
-            type: string
-          example:
-          - data accuracy
-          - sales intelligence
-        funding:
-          $ref: '#/components/schemas/CompanyFunding'
-        intent:
-          $ref: '#/components/schemas/CompanyIntent'
-        technologies:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyTechnology'
-        riskNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        commercialActivityNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        corporateStrategyNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        financialEventsNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        peopleNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        marketIntelligenceNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        productActivityNews:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyNewsSignal'
-        surgeInHiring:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanySurgeInHiringSignal'
-        surgeInHiringByDepartment:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanySurgeInHiringByDepartmentSignal'
-        surgeInHiringByLocation:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanySurgeInHiringByLocationSignal'
-        websiteTrafficIncrease:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
-        websiteTrafficDecrease:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
-        itSpendIncrease:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyItSpendSignal'
-        itSpendDecrease:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyItSpendSignal'
-        headcountIncrease1m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountDecrease1m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountIncrease3m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountDecrease3m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountIncrease6m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountDecrease6m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountIncrease12m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-        headcountDecrease12m:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-    FundingData:
-      type: object
-      properties:
-        totalRounds:
-          type: number
-          example: 10
-        totalRoundsAmount:
-          type: number
-          example: 1000000
-        currency:
-          type: string
-          example: USD
-        isIpo:
+        error:
+          $ref: '#/components/schemas/ContactError'
+        isCreditCharged:
           type: boolean
           example: true
-        lastFundingEventDate:
-          type: string
-          example: '2020-01-01'
-        lastFundingEventAmount:
-          type: number
-          example: 1000000
-        lastFundingEventName:
-          type: string
-          example: Series A
-        rounds:
-          type: array
-          items:
-            $ref: '#/components/schemas/FundingDataRound'
+        data:
+          $ref: '#/components/schemas/Contact'
       required:
-      - totalRounds
+      - error
+      - isCreditCharged
+    CompanyFundingRound:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: USD
+        roundAmount:
+          type: number
+          example: 205000000
+        roundType:
+          type: string
+          example: Private Equity Round
+        roundDate:
+          type: string
+          example: Nov 10, 2021
+      required:
       - currency
-      - isIpo
-    SocialResponse:
-      type: object
-      properties:
-        linkedin:
-          type: string
-          example: https://www.linkedin.com/in/dustin/
-        crunchbase:
-          type: string
-          example: https://www.crunchbase.com/person/dustin-moskovitz
-        twitter:
-          type: string
-          example: https://twitter.com/dustin
-        facebook:
-          type: string
-          example: https://www.facebook.com/dustin
-    CompanyHeadcountChangeSignal:
-      type: object
-      properties:
-        companyId:
-          type: string
-          example: '3416'
-        signalId:
-          type: string
-          example: '1503904'
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        baselineEmployeesCount:
-          type: number
-          example: 500
-        newEmployeesCount:
-          type: number
-          example: 550
-        changeRatePercent:
-          type: number
-          example: 10
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
+      - roundAmount
+      - roundType
+      - roundDate
     CompanySingleResponseData:
       type: object
       properties:
@@ -2458,6 +1180,503 @@ components:
       required:
       - id
       - name
+    PreviousJobResponse:
+      type: object
+      properties:
+        jobTitle:
+          $ref: '#/components/schemas/JobTitle'
+        company:
+          $ref: '#/components/schemas/Company'
+      required:
+      - jobTitle
+      - company
+    FundingDataRound:
+      type: object
+      properties:
+        announcedOn:
+          type: string
+          example: '2020-01-01'
+        leadInvestors:
+          example:
+          - Investor 1
+          - Investor 2
+          type: array
+          items:
+            type: string
+        currency:
+          type: string
+          example: USD
+        title:
+          type: string
+          example: Series A
+        moneyRaised:
+          type: number
+          example: 1000000
+      required:
+      - currency
+      - title
+    CompanyIntent:
+      type: object
+      properties:
+        detectedTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyIntentTopic'
+        topicCount:
+          type: number
+          example: 6
+      required:
+      - detectedTopics
+      - topicCount
+    ContactSearchBulk:
+      type: object
+      properties:
+        contactId:
+          type: string
+          description: A unique sequential ID to associate with the contact object in the API response
+          example: '1234'
+        personId:
+          type: string
+          description: The unique person identifier in Lusha
+          example: '4183886134'
+        fullName:
+          type: string
+          description: The full name of the person
+          example: Dustin Moskovitz
+        location:
+          type: string
+          description: The raw location of the person
+          example: Singapore,Chicago
+        linkedinUrl:
+          type: string
+          description: The LinkedIn URL of the person
+          example: https://www.linkedin.com/in/dustin/
+        email:
+          type: string
+          description: The email address of the person
+          example: dustin@lusha.com
+        companies:
+          description: Details of the company where the contact is currently employed (or previously employed if applicable)
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+      required:
+      - contactId
+    CompanyCrunchbaseResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://crunchbase.com/company/lusha
+      required:
+      - url
+    LinkedinAward:
+      type: object
+      properties:
+        companyName:
+          type:
+          - string
+          - 'null'
+          example: Columbia Southern University
+        dateDay:
+          oneOf:
+          - type: number
+          - type: string
+          example: 15
+        dateMonth:
+          oneOf:
+          - type: number
+          - type: string
+          example: 7
+        dateYear:
+          oneOf:
+          - type: number
+          - type: string
+          example: 2023
+        linkedinCompanyId:
+          type:
+          - string
+          - 'null'
+        summary:
+          type:
+          - string
+          - 'null'
+          example: Certificate of Recognition for Exceptional Teaching
+        title:
+          type: string
+          example: Raising the Bar Award
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    CompanyBulkRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        domain:
+          type: string
+          example: lusha.com
+        fqdn:
+          type: string
+        name:
+          type: string
+          example: Lusha
+        companyId:
+          type: string
+          example: '1234567890'
+      required:
+      - id
+    SearchBulkContactsRequest:
+      type: object
+      properties:
+        contacts:
+          description: This is a required parameter that should contain a list of contact objects. Each contact will be processed based on the provided contact details.
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactSearchBulk'
+        metadata:
+          description: Metadata for the search to filter the results
+          $ref: '#/components/schemas/Metadata'
+      required:
+      - contacts
+    CompanyLocationResponse:
+      type: object
+      description: HQ location only. For all company site locations, see companyLocations.
+      properties:
+        city:
+          type: string
+          example: Boston
+        country:
+          type: string
+          example: United States
+        fullLocation:
+          type: string
+          example: 800 Boylston St, Suite 1410, Boston, Massachusetts 02199, US
+        state:
+          type: string
+          example: Massachusetts
+        stateCode:
+          type: string
+          example: MA
+        countryIso2:
+          type: string
+          example: US
+        rawLocation:
+          type: string
+          example: 800 Boylston St; Suite 1410; Boston, Massachusetts 02199, US
+    CompanyIndustryPrimaryGroupDetails:
+      type: object
+      properties:
+        sicCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySic'
+        naicsCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNaics'
+    CompanySignalFiltersInclude:
+      type: object
+      description: 'Optional sub-filters to narrow results within a signal type.
+
+        - Multi-value filters use **OR** logic
+
+        - Filter values are **not** case-sensitive
+
+        - `state` without `country` in `hiringByLocations` returns HTTP **400**
+
+        '
+      properties:
+        newsEventTypes:
+          type: array
+          items:
+            type: string
+            enum:
+            - Asset Investment
+            - Asset Sale
+            - Competitor Activity
+            - Event Participation
+            - Executive Departure
+            - Executive Hire
+            - Executive Promotion
+            - Facilities Expansion
+            - Facility Closure
+            - Funding Round
+            - Headcount Decrease
+            - Headcount Increase
+            - IPO
+            - Lawsuit Faced
+            - Lawsuit Filed
+            - M&A
+            - New Customer
+            - New Location
+            - New Vendor
+            - Partnership
+            - Product Development
+            - Product Integration
+            - Product Launch
+            - Recognition
+            - Security Issue
+            - Strategic Investment
+          example:
+          - Partnership
+          - New Customer
+        hiringByDepartments:
+          type: array
+          items:
+            type: string
+            enum:
+            - Business Development
+            - Consulting
+            - Customer Service
+            - Engineering & Technical
+            - Finance
+            - General Management
+            - Health Care & Medical
+            - Human Resources
+            - Information Technology
+            - Legal
+            - Marketing
+            - Operations
+            - Other
+            - Product
+            - Research & Analytics
+            - Sales
+          example:
+          - Engineering & Technical
+          - Sales
+        hiringByLocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignalFilterLocation'
+          example:
+          - country: United States
+            state: California
+          - country: Germany
+    CompanyIntentTopic:
+      type: object
+      properties:
+        topicName:
+          type: string
+          example: Remote Sales
+        metadata:
+          $ref: '#/components/schemas/CompanyIntentTopicMetadata'
+      required:
+      - topicName
+      - metadata
+    CompanyTechnology:
+      type: object
+      properties:
+        name:
+          type: string
+          example: salesforce
+      required:
+      - name
+    CompaniesBulkRequest:
+      type: object
+      properties:
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyBulkRequest'
+        signals:
+          type: array
+          items:
+            type: string
+            enum:
+            - allSignals
+            - websiteTrafficIncrease
+            - websiteTrafficDecrease
+            - itSpendIncrease
+            - itSpendDecrease
+            - headcountIncrease1m
+            - headcountDecrease1m
+            - headcountIncrease3m
+            - headcountDecrease3m
+            - headcountIncrease6m
+            - headcountDecrease6m
+            - headcountIncrease12m
+            - headcountDecrease12m
+            - surgeInHiring
+            - surgeInHiringByDepartment
+            - surgeInHiringByLocation
+            - riskNews
+            - commercialActivityNews
+            - corporateStrategyNews
+            - financialEventsNews
+            - peopleNews
+            - marketIntelligenceNews
+            - productActivityNews
+          example:
+          - surgeInHiringByLocation
+        signalsStartDate:
+          type: string
+          format: date
+          example: '2025-03-01'
+        signalsFilters:
+          type: object
+          description: 'Optional filters to narrow signal results within the requested signal types.
+
+            - Multi-value filters use **OR** logic
+
+            - Filter values are **not** case-sensitive
+
+            - Unrecognized values are **silently ignored**
+
+            - `state` without `country` in `hiringByLocations` returns HTTP **400**
+
+            '
+          properties:
+            include:
+              $ref: '#/components/schemas/CompanySignalFiltersInclude'
+        partialCompany:
+          type: boolean
+          default: true
+          example: false
+      required:
+      - companies
+    CompanySurgeInHiringByDepartmentSignal:
+      type: object
+      properties:
+        signalId:
+          type: string
+          example: '1503906'
+        companyId:
+          type: string
+          example: '3416'
+        department:
+          type: string
+          example: Engineering
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 15
+        historicalAvg:
+          type: number
+          example: 5
+        changeRatePercent:
+          type: number
+          example: 200
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanySingleResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/CompanySingleResponseData'
+        errors:
+          $ref: '#/components/schemas/CompanyErrorResponse'
+        meta:
+          type: object
+          description: Currently returns an empty value; this field should be deprecated in future releases.
+          example: {}
+    LinkedinCourse:
+      type: object
+      properties:
+        activities:
+          type:
+          - string
+          - 'null'
+        degree:
+          type:
+          - string
+          - 'null'
+        endDateMonth:
+          oneOf:
+          - type:
+            - integer
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        endDateYear:
+          oneOf:
+          - type:
+            - integer
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        fieldOfStudy:
+          type:
+          - object
+          - 'null'
+          properties:
+            id:
+              type:
+              - string
+              - 'null'
+            name:
+              type:
+              - string
+              - 'null'
+        grade:
+          type:
+          - string
+          - 'null'
+        school:
+          type:
+          - object
+          - 'null'
+          properties:
+            id:
+              type:
+              - string
+              - 'null'
+            logoUrl:
+              type:
+              - string
+              - 'null'
+            name:
+              type:
+              - string
+              - 'null'
+        startDateMonth:
+          oneOf:
+          - type:
+            - number
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        startDateYear:
+          oneOf:
+          - type:
+            - number
+            - 'null'
+          - type:
+            - string
+            - 'null'
+        linkedinSchoolId:
+          type:
+          - number
+          - 'null'
     JobTitle:
       type: object
       properties:
@@ -2478,6 +1697,161 @@ components:
       - seniority
       - title
       - departments
+    ContactWithCompany:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Contact'
+      - type: object
+        properties:
+          company:
+            $ref: '#/components/schemas/CompanyResponse'
+        required:
+        - company
+    CompanyHeadcountChangeSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503904'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        baselineEmployeesCount:
+          type: number
+          example: 500
+        newEmployeesCount:
+          type: number
+          example: 550
+        changeRatePercent:
+          type: number
+          example: 10
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    SingleContactResponse:
+      type: object
+      properties:
+        contact:
+          $ref: '#/components/schemas/ContactSingleResponse'
+      required:
+      - contact
+    FundingData:
+      type: object
+      properties:
+        totalRounds:
+          type: number
+          example: 10
+        totalRoundsAmount:
+          type: number
+          example: 1000000
+        currency:
+          type: string
+          example: USD
+        isIpo:
+          type: boolean
+          example: true
+        lastFundingEventDate:
+          type: string
+          example: '2020-01-01'
+        lastFundingEventAmount:
+          type: number
+          example: 1000000
+        lastFundingEventName:
+          type: string
+          example: Series A
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/FundingDataRound'
+      required:
+      - totalRounds
+      - currency
+      - isIpo
+    CompanySurgeInHiringByLocationSignal:
+      type: object
+      properties:
+        signalId:
+          type: string
+          example: '1503907'
+        companyId:
+          type: string
+          example: '3416'
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 20
+        historicalAvg:
+          type: number
+          example: 8
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    ContactTag:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '123'
+        name:
+          type: string
+          example: Prospect
+        color:
+          type: string
+          example: '#000000'
+      required:
+      - id
+      - name
+      - color
+    CompanySurgeInHiringSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503905'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLastWeek:
+          type: number
+          example: 25
+        historicalAvg:
+          type: number
+          example: 10
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
     Metadata:
       type: object
       properties:
@@ -2535,45 +1909,677 @@ components:
             '
           default: false
           example: true
-    CompanyIntentTopic:
+    LinkedinCertification:
       type: object
       properties:
-        topicName:
+        companyId:
+          type: integer
+          example: 1035
+        companyName:
           type: string
-          example: Remote Sales
-        metadata:
-          $ref: '#/components/schemas/CompanyIntentTopicMetadata'
+          example: Microsoft
+        credentialId:
+          type: string
+          example: abc123
+        dateMonth:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 6
+        dateYear:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 2020
+        expireDateMonth:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 6
+        expireDateYear:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 2025
+        linkedinCompanyId:
+          type:
+          - integer
+          - 'null'
+          example: 1441
+        summary:
+          type:
+          - string
+          - 'null'
+          example: Azure fundamentals certification covering cloud concepts
+        title:
+          type: string
+          example: 'Microsoft Certified: Azure Fundamentals'
+        verifyUrl:
+          type:
+          - string
+          - 'null'
+          example: https://www.youracclaim.com/badges/5ccf865c-dd6e-4dcc-9184-c8999d31f83d
+    PhoneNumbers:
+      type: object
+      properties:
+        number:
+          type: string
+          description: The phone number
+          example: '+1234567890'
+        phoneType:
+          type: string
+          description: The type of phone number
+          example: Mobile
+          enum:
+          - Mobile
+          - Direct
+          - Phone
+        doNotCall:
+          type: boolean
+          description: Indicates whether the phone number is listed as "Do Not Call" (DNC).
+          example: false
+        updateDate:
+          type: string
+          description: The update date of the phone number
+          example: '2020-01-01'
       required:
-      - topicName
-      - metadata
-    ContactTag:
+      - phoneType
+      - doNotCall
+      - updateDate
+    CompanyNewsSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '33222678'
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+        signalId:
+          type: string
+          example: '1503910'
+        eventType:
+          type: string
+          example: partnership
+        eventSummary:
+          type: string
+          example: Lusha announced a strategic partnership with Salesforce.
+        articlePublishedDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        articleTitle:
+          type: string
+          example: Lusha Partners with Salesforce
+        articleHighlight:
+          type: string
+          example: The partnership enables Salesforce users to access Lusha data directly within their CRM.
+        eventEffectiveDate:
+          type: string
+          format: date
+          example: '2025-06-10'
+        articleUrl:
+          type: string
+          format: uri
+          example: https://example.com/lusha-salesforce-partnership
+    LocationResponse:
+      type: object
+      properties:
+        country:
+          type: string
+          description: The country where the person is located.
+          example: Israel
+        countryIso2:
+          type: string
+          description: The ISO 3166-1 alpha-2 country code of the person.
+          example: IL
+        country_iso2:
+          type: string
+          description: The ISO 3166-1 alpha-2 country code of the person.
+          example: IL
+        continent:
+          type: string
+          description: The continent where the person is located.
+          example: Asia
+        rawLocation:
+          type: string
+          example: 800 Boylston St, Suite 1410, Boston, MA 02199, US
+          description: The detailed address.
+        region:
+          type: string
+          description: The region where the person is located.
+          example: Tel Aviv
+        city:
+          type: string
+          description: The city where the person is located.
+          example: Tel Aviv
+        cityId:
+          type: number
+          description: The ID of the city where the person is located.
+          example: 123
+        state:
+          type: string
+          description: The state where the person is located.
+          example: Tel Aviv
+        stateCode:
+          type: string
+          description: The state code of the person.
+          example: IL
+        state_code:
+          type: string
+          description: The state code of the person.
+          example: IL
+        street:
+          type: string
+          description: The street where the person is located.
+          example: 123 Main St
+        locationCoordinates:
+          description: The coordinates of the person.
+          example:
+          - 32.0853
+          - 34.7818
+          type: array
+          items:
+            type: number
+        isEuContact:
+          type: boolean
+          description: Indicates whether the person is in the EU.
+          example: true
+      required:
+      - country
+      - countryIso2
+      - continent
+      - rawLocation
+    CompanySocialResponse:
+      type: object
+      properties:
+        crunchbase:
+          $ref: '#/components/schemas/CompanyCrunchbaseResponse'
+        linkedin:
+          $ref: '#/components/schemas/CompanyLinkedinResponse'
+    CompaniesBulkResponse:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/CompanyBulkResponse'
+    BulkPersonResponse:
+      type: object
+      properties:
+        contacts:
+          type: object
+          description: The contacts of the bulk person output, keyed by contactId
+          additionalProperties:
+            $ref: '#/components/schemas/ContactResponse'
+        companies:
+          type: object
+          description: The companies of the bulk person output, keyed by companyId
+          additionalProperties:
+            $ref: '#/components/schemas/CompanyResponse'
+      required:
+      - contacts
+      - companies
+    SignalFilterLocation:
+      type: object
+      description: 'Location filter for hiring signals. `country` is required; `state` is optional.
+
+        '
+      required:
+      - country
+      properties:
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+    IndustryPrimaryGroupDetailsResponse:
+      type: object
+      properties:
+        sicCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySic'
+        naicsCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNaics'
+    BuyerIntent:
+      type: object
+      properties:
+        topicCount:
+          type: integer
+          example: 6
+        detectedTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyIntentTopic'
+      required:
+      - topicCount
+      - detectedTopics
+    CompanyIndustryData:
+      type: object
+      properties:
+        mainIndustry:
+          type: string
+          example: Software
+        subIndustry:
+          type: string
+          example: Sales
+      required:
+      - mainIndustry
+      - subIndustry
+    CompanyResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Lusha
+        description:
+          type: string
+          example: Lusha is a company that provides a platform for companies to find and connect with potential customers.
+        domains:
+          type: object
+          properties:
+            homepage:
+              type: string
+              example: https://www.lusha.com
+            email:
+              type: string
+              example: contact@lusha.com
+        homepageUrl:
+          type: string
+          example: https://www.lusha.com
+        fqdn:
+          type: string
+          example: lusha.com
+        location:
+          $ref: '#/components/schemas/LocationResponse'
+        companySize:
+          example:
+          - 100
+          - 1000
+          type: array
+          items:
+            type: number
+        revenueRange:
+          example:
+          - 1000000
+          - 10000000
+          type: array
+          items:
+            type: number
+        industryPrimaryGroup:
+          type: string
+          example: Software
+        logoUrl:
+          type: string
+          example: https://www.lusha.com/logo.png
+        social:
+          $ref: '#/components/schemas/SocialResponse'
+        specialities:
+          example:
+          - Software
+          - Sales
+          type: array
+          items:
+            type: string
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyTechnology'
+          example:
+          - name: JavaScript
+          - name: Python
+        funding:
+          $ref: '#/components/schemas/FundingData'
+        industry:
+          $ref: '#/components/schemas/CompanyIndustryData'
+        intent:
+          $ref: '#/components/schemas/BuyerIntent'
+        industryPrimaryGroupDetails:
+          $ref: '#/components/schemas/IndustryPrimaryGroupDetailsResponse'
+      required:
+      - name
+      - fqdn
+    ContactError:
+      type: object
+      properties:
+        code:
+          type: number
+          description: The code of the contact error
+          example: 3
+        name:
+          type: string
+          description: The name of the contact error
+          example: EMPTY_DATA
+        message:
+          type: string
+          description: The message of the contact error
+          example: Could not find requested data
+    CompanyBulkResponse:
       type: object
       properties:
         id:
+          type: number
+          example: 33222678
+        lushaCompanyId:
           type: string
-          example: '123'
+          example: '16303253'
         name:
           type: string
-          example: Prospect
-        color:
+          example: Lusha
+        companySize:
+          example:
+          - 201
+          - 500
+          type: array
+          items:
+            type: number
+        linkedinFollowers:
+          type: integer
+          example: 1950
+        emailDomain:
           type: string
-          example: '#000000'
-      required:
-      - id
-      - name
-      - color
-    CompanyIntentTopicMetadata:
+          example: bitcoinromania.ro
+        companyLocations:
+          type: array
+          items:
+            type: object
+            properties:
+              city:
+                type: string
+              continent:
+                type: string
+              country:
+                type: string
+              country_iso2:
+                type: string
+              location_coordinates:
+                type: array
+                items:
+                  type: number
+              state:
+                type:
+                - string
+                - 'null'
+              state_code:
+                type:
+                - string
+                - 'null'
+        alternativeName:
+          type: string
+          example: bitcoin romania
+        companyType:
+          type: string
+          example: Private company
+        lushaPopularityTier:
+          type: integer
+          example: 1
+        employeesInLinkedin:
+          type: number
+          example: 32
+        revenueRange:
+          example:
+          - 10000000
+          - 50000000
+          type: array
+          items:
+            type: number
+        fqdn:
+          type: string
+          example: www.lusha.com
+        founded:
+          type: string
+          example: '2016'
+        description:
+          type: string
+          example: Lusha is the sales intelligence platform...
+        logoUrl:
+          type: string
+          example: https://logo.lusha.co/logo.jpg
+        industryPrimaryGroupDetails:
+          $ref: '#/components/schemas/CompanyIndustryPrimaryGroupDetails'
+        linkedin:
+          type: string
+          example: https://www.linkedin.com/company/lushadata
+        mainIndustry:
+          type: string
+          example: Technology, Information & Media
+        subIndustry:
+          type: string
+          example: Software Development
+        city:
+          type: string
+          example: Boston
+        state:
+          type: string
+          example: Massachusetts
+        country:
+          type: string
+          example: United States
+        countryIso2:
+          type: string
+          example: US
+        continent:
+          type: string
+          example: North America
+        rawLocation:
+          type: string
+          example: 800 Boylston St; Suite 1410; Boston, Massachusetts 02199, US
+        crunchbase:
+          type: string
+          example: https://www.crunchbase.com/organization/lusha
+        specialities:
+          type: array
+          items:
+            type: string
+          example:
+          - data accuracy
+          - sales intelligence
+        funding:
+          $ref: '#/components/schemas/CompanyFunding'
+        intent:
+          $ref: '#/components/schemas/CompanyIntent'
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyTechnology'
+        riskNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        commercialActivityNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        corporateStrategyNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        financialEventsNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        peopleNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        marketIntelligenceNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        productActivityNews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyNewsSignal'
+        surgeInHiring:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringSignal'
+        surgeInHiringByDepartment:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringByDepartmentSignal'
+        surgeInHiringByLocation:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySurgeInHiringByLocationSignal'
+        websiteTrafficIncrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
+        websiteTrafficDecrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyWebsiteTrafficSignal'
+        itSpendIncrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyItSpendSignal'
+        itSpendDecrease:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyItSpendSignal'
+        headcountIncrease1m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease1m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease3m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease3m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease6m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease6m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountIncrease12m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+        headcountDecrease12m:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
+    CompanyFunding:
       type: object
       properties:
-        topicScore:
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyFundingRound'
+        totalRounds:
           type: number
-          example: 83
-        topicTrend:
+          example: 2
+        totalRoundsAmount:
+          type: number
+          example: 245000000
+        currency:
           type: string
-          example: '-5'
+          example: USD
+        isIpo:
+          type: boolean
+          example: false
+        lastRoundType:
+          type: string
+          example: Private Equity Round
+        lastRoundAmount:
+          type: number
+          example: 205000000
+        lastRoundDate:
+          type: string
+          example: Nov 10, 2021
       required:
-      - topicScore
-      - topicTrend
+      - totalRounds
+      - currency
+      - isIpo
+    CompanySic:
+      type: object
+      properties:
+        sicCodes:
+          type: number
+          example: 1234
+        description:
+          type: string
+          example: Software Publishing
+      required:
+      - sic
+      - description
+    SocialLinks:
+      type: object
+      properties:
+        linkedin:
+          type: string
+          example: https://www.linkedin.com/in/dustin/
+        xUrl:
+          type: string
+          example: https://twitter.com/dustin
+      required:
+      - linkedin
+    ContactSingleResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ContactError'
+        isCreditCharged:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ContactWithCompany'
+      required:
+      - error
+      - isCreditCharged
+    EmailAddress:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email address (alternative to 'address')
+          example: dustin@lusha.com
+        address:
+          type: string
+          description: The email address (alternative to 'email')
+          example: dustin@lusha.com
+        emailType:
+          type: string
+          description: The type of email address (alternative to 'type')
+          example: work
+          enum:
+          - work
+          - private
+        emailConfidence:
+          type: string
+          description: The confidence level of the email address
+          example: A+
+        updateDate:
+          type: string
+          description: The update date of the email address
+          example: '2020-01-01'
+    CompanyNaics:
+      type: object
+      properties:
+        naicsCodes:
+          type: number
+          example: 541511
+        description:
+          type: string
+          example: Custom Computer Programming Services
+      required:
+      - naics
+      - description
     CompanyWebsiteTrafficSignal:
       type: object
       properties:
@@ -2602,159 +2608,144 @@ components:
         domain:
           type: string
           example: lusha.com
-  parameters:
-    lastName:
-      name: lastName
-      in: query
-      description: The last name of the person
-      schema:
-        type: string
-      example: Moskovitz
-    linkedinUrl:
-      name: linkedinUrl
-      in: query
-      description: The LinkedIn URL of the person
-      schema:
-        type: string
-      example: https://www.linkedin.com/in/dustin/
-    partialProfile:
-      name: partialProfile
-      in: query
-      description: 'Search for a single contact with the option to receive a partial profile.
-
-        '
-      required: false
-      schema:
-        type: boolean
-        default: false
-      example: true
-    firstName:
-      name: firstName
-      in: query
-      description: The first name of the person
-      schema:
-        type: string
-      example: Dustin
-    refreshJobInfo:
-      name: refreshJobInfo
-      in: query
-      description: 'Set to true to refresh and update the job details for the person.
-
-        This ensures that outdated job information is replaced with the most recent data.
-
-        '
-      schema:
-        type: boolean
-        default: false
-      example: true
-    personId:
-      name: personId
-      in: query
-      description: The unique person identifier in Lusha
-      schema:
-        type: string
-      example: '4183886134'
-    companyName:
-      name: companyName
-      in: query
-      description: The name of the company the person works at
-      schema:
-        type: string
-      example: Lusha
-    filterBy:
-      name: filterBy
-      in: query
-      description: 'Filters results based on specific contact details. Available options:
-
-        - `phoneNumbers`: Only return contacts with phone numbers
-
-        - `emailAddresses`: Only return contacts with email addresses
-
-
-        By default, results will include contacts with at least one contact detail.
-
-        '
-      schema:
-        type: string
-        enum:
-        - phoneNumbers
-        - emailAddresses
-    companyDomain:
-      name: companyDomain
-      in: query
-      description: The domain name of the company
-      schema:
-        type: string
-      example: lusha.com
-    revealEmails:
-      name: revealEmails
-      in: query
-      description: 'Set `revealEmails=true` to retrieve only the email address of the contact.
-
-        '
-      schema:
-        type: boolean
-        default: true
-      example: true
-    revealPhones:
-      name: revealPhones
-      in: query
-      description: 'Set `revealPhones=true` to retrieve only the phone number of the contact.
-
-        '
-      schema:
-        type: boolean
-        default: true
-      example: true
-    signalsStartDate:
-      name: signalsStartDate
-      in: query
-      description: 'Start date for signal retrieval in YYYY-MM-DD format. Defaults to 6 months ago if not specified.
-
-        '
-      schema:
-        type: string
-        format: date
-      example: '2025-03-01'
-    email:
-      name: email
-      in: query
-      description: The email address of the person
-      schema:
-        type: string
-      example: dustin@lusha.com
-    signals:
-      name: signals
-      in: query
-      description: 'Array of signal types to retrieve for the contact.
-
-        - `allSignals`: All available signal types
-
-        - `promotion`: Promotion signals
-
-        - `companyChange`: Company change signals
-
-        '
-      schema:
-        type: array
-        items:
+    CompanyIntentTopicMetadata:
+      type: object
+      properties:
+        topicScore:
+          type: number
+          example: 83
+        topicTrend:
           type: string
-          enum:
-          - allSignals
-          - promotion
-          - companyChange
-      example:
-      - promotion
-  responses:
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+          example: '-5'
+      required:
+      - topicScore
+      - topicTrend
+    Company:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the company, Required if no domain.
+          example: Lusha
+        domain:
+          type: string
+          description: The domain of the company, Required if no name.
+          example: lusha.com
+        isCurrent:
+          type: boolean
+          description: Indicates whether this is the person's current company
+          example: true
+        jobTitle:
+          type: string
+          description: The job title of the person at the company
+          example: Software Engineer
+        fqdn:
+          type: string
+          description: The fully qualified domain name of the company
+          example: https://lusha.com
+        companySocialId:
+          type: string
+          description: The social ID associated with the company (if available)
+          example: '1234567890'
+      required:
+      - isCurrent
+    Contact:
+      type: object
+      properties:
+        companyId:
+          type: number
+          example: 123
+        firstName:
+          type: string
+          example: Dustin
+        lastName:
+          type: string
+          example: Moskovitz
+        fullName:
+          type: string
+          example: Dustin Moskovitz
+        emails:
+          description: Simple array of email addresses (deprecated - use emailAddresses)
+          type: array
+          items:
+            type: string
           example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
+          - john.doe@example.com
+        emailAddresses:
+          description: Detailed email addresses with metadata
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        phones:
+          description: Simple array of phone numbers (deprecated - use phoneNumbers)
+          type: string
+          example: +1 555-123-4567
+        phoneNumbers:
+          description: Detailed phone numbers with metadata
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumbers'
+        personId:
+          type: number
+          example: 123456
+        location:
+          $ref: '#/components/schemas/LocationResponse'
+        jobTitle:
+          $ref: '#/components/schemas/JobTitle'
+        socialLinks:
+          $ref: '#/components/schemas/SocialLinks'
+        jobStartDate:
+          type: string
+          example: '2020-01-01'
+        previousJob:
+          $ref: '#/components/schemas/PreviousJobResponse'
+        contactTags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactTag'
+        updateDate:
+          type: string
+          example: '2020-01-01'
+        linkedinFollowersCount:
+          type: integer
+          example: 1250
+        linkedinConnectionsCount:
+          type: integer
+          example: 500
+        linkedinCertifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedinCertification'
+        linkedinCourses:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedinCourse'
+        linkedinAwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedinAward'
+        linkedinSkills:
+          type: array
+          items:
+            type: string
+          example:
+          - Microsoft Office
+          - Project Management
+          - Strategic Planning
+      required:
+      - companyId
+      - firstName
+      - lastName
+      - fullName
+    CompanyErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Something went wrong
+      required:
+      - message
+  responses:
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -2821,15 +2812,6 @@ components:
           example:
             statusCode: 451
             message: We are unable to process this contact request due to our GDPR regulations
-    NotFound:
-      description: Not found - resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 404
-            message: Resource not found
     BadRequest:
       description: Bad request - invalid input data
       content:
@@ -2839,6 +2821,15 @@ components:
           example:
             statusCode: 400
             message: Invalid request parameters
+    NotFound:
+      description: Not found - resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            message: Resource not found
     Unauthorized:
       description: Unauthorized - invalid or missing API key
       content:
@@ -2848,6 +2839,15 @@ components:
           example:
             statusCode: 401
             message: Invalid API key
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

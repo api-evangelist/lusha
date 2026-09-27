@@ -376,27 +376,559 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
-    ErrorResponse:
+    CompanySearchRequest:
       type: object
-      required:
-      - statusCode
-      - message
       properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
+        pages:
+          $ref: '#/components/schemas/PaginationParams'
+        filters:
+          type: object
+          properties:
+            companies:
+              $ref: '#/components/schemas/CompanyFilters'
+      required:
+      - filters
+    CompanyFilters:
+      type: object
+      properties:
+        include:
+          type: object
+          properties:
+            names:
+              type: array
+              items:
+                type: string
+              example:
+              - Apple
+            domains:
+              type: array
+              items:
+                type: string
+                example: lusha.com
+            locations:
+              type: array
+              items:
+                type: object
+                properties:
+                  country:
+                    type: string
+                    example: United States
+            technologies:
+              type: array
+              items:
+                $ref: '#/components/schemas/CompanyTechnology'
+              example:
+              - name: Amazon
+            intentTopics:
+              type: array
+              items:
+                type: string
+              example:
+              - Digital Sales
+            sizes:
+              type: array
+              items:
+                $ref: '#/components/schemas/CompanySizeRange'
+            revenues:
+              type: array
+              items:
+                $ref: '#/components/schemas/RevenueRange'
+            sicCodes:
+              type: array
+              items:
+                type: string
+              example:
+              - '1011'
+              - '1021'
+            naicsCodes:
+              type: array
+              items:
+                type: string
+              example:
+              - '11'
+              - '21'
+            mainIndustriesIds:
+              type: array
+              items:
+                type: number
+              example:
+              - 4
+              - 5
+            subIndustriesIds:
+              type: array
+              items:
+                type: number
+              example:
+              - 101
+            searchText:
+              type: string
+              description: Free-text search across company fields
+              example: Finance Marketing in Germany DE
+            excludePartialCompanies:
+              type: boolean
+              example: false
+            companyLocations:
+              type: array
+              description: 'Filter by company site-level office locations as reported by LinkedIn.
+
+                This includes all physical office locations where the company has a presence.
+
+                '
+              items:
+                $ref: '#/components/schemas/CompanyLocationFilter2'
+              example:
+              - country: United States
+                state: California
+              - country: Germany
+            employeesInLinkedIn:
+              $ref: '#/components/schemas/EmployeesInLinkedInFilter'
+            signal:
+              type: object
+              description: 'Filter companies by signal types (premium filter - charges apply per signal type).
+
+                '
+              properties:
+                names:
+                  type: array
+                  description: Signal types to filter by
+                  items:
+                    type: string
+                    enum:
+                    - allSignals
+                    - websiteTrafficIncrease
+                    - websiteTrafficDecrease
+                    - itSpendIncrease
+                    - itSpendDecrease
+                    - headcountIncrease1m
+                    - headcountDecrease1m
+                    - headcountIncrease3m
+                    - headcountDecrease3m
+                    - headcountIncrease6m
+                    - headcountDecrease6m
+                    - headcountIncrease12m
+                    - headcountDecrease12m
+                    - surgeInHiring
+                    - surgeInHiringByDepartment
+                    - surgeInHiringByLocation
+                    - riskNews
+                    - commercialActivityNews
+                    - corporateStrategyNews
+                    - financialEventsNews
+                    - peopleNews
+                    - marketIntelligenceNews
+                    - productActivityNews
+                  example:
+                  - commercialActivityNews
+                  - financialEventsNews
+                startDate:
+                  type: string
+                  format: date
+                  description: Start date for signal detection (YYYY-MM-DD format)
+                  example: '2025-11-01'
+        exclude:
+          type: object
+          description: Same structure as include, for exclusion filters
+    ContactFilters:
+      type: object
+      properties:
+        include:
+          type: object
+          properties:
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Engineering & Technical
+            seniority:
+              type: array
+              items:
+                type: integer
+              example:
+              - 4
+              - 5
+            existing_data_points:
+              type: array
+              items:
+                type: string
+              example:
+              - phone
+              - work_email
+            locations:
+              type: array
+              items:
+                $ref: '#/components/schemas/LocationFilter'
+            jobTitles:
+              type: array
+              items:
+                type: string
+              example:
+              - CTO
+              - Chief Technology Officer
+              - VP Engineering
+              - Senior Developer
+            linkedinUrls:
+              type: array
+              description: Filter contacts by LinkedIn profile URLs
+              items:
+                type: string
+              example:
+              - https://www.linkedin.com/in/justin-pernitz
+              - https://www.linkedin.com/in/andrewbarrettbettcher
+            searchText:
+              type: string
+              description: Free-text search across contact fields
+              example: Amit
+            signal:
+              type: object
+              description: Filter contacts by signal types (premium filter - charges apply per signal type)
+              properties:
+                names:
+                  type: array
+                  description: Signal types to filter by
+                  items:
+                    type: string
+                    enum:
+                    - allSignals
+                    - promotion
+                    - companyChange
+                    example:
+                    - promotion
+                    - companyChange
+                startDate:
+                  type: string
+                  format: date
+                  description: Start date for signal detection (YYYY-MM-DD format)
+                  example: '2025-11-01'
+          exclude:
+            type: object
+            description: Same structure as include, for exclusion filters
+    PaginationParams:
+      type: object
+      properties:
+        page:
+          type: number
+          description: Page number (0-1000)
+          minimum: 0
+          maximum: 1000
+          default: 0
+        size:
+          type: number
+          description: Page size (10-50)
+          minimum: 10
+          maximum: 50
+          default: 20
+    RevenueRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 1000000
+    CompanySurgeInHiringByLocationSignal:
+      type: object
+      properties:
+        signalId:
           type: string
-          description: Error message
-          example: Validation failed
-        errors:
+          example: '1503907'
+        companyId:
+          type: string
+          example: '3416'
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
+          type: number
+          example: 20
+        historicalAvg:
+          type: number
+          example: 8
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyItSpendSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503903'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        estimatedAnnualItSpend:
+          type: number
+          example: 5000000
+        changeRatePercent:
+          type: number
+          example: 25
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanySurgeInHiringSignal:
+      type: object
+      properties:
+        companyId:
+          type: string
+          example: '3416'
+        signalId:
+          type: string
+          example: '1503905'
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLastWeek:
+          type: number
+          example: 25
+        historicalAvg:
+          type: number
+          example: 10
+        changeRatePercent:
+          type: number
+          example: 150
+        companyName:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyEnrichRequest:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId from the Prospecting Search response
+          example: 5ad275c8-7dd4-462a-bd45-6bc1970da64e
+        companiesIds:
           type: array
+          description: An array of company IDs for enrichment. Min 1, max 100.
           items:
             type: string
-          description: Detailed error messages (optional, only for validation errors)
           example:
-          - 'entityType must be one of: contact, company'
+          - '1586'
+      required:
+      - requestId
+      - companiesIds
+    CompanyFunding:
+      type: object
+      properties:
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyFundingRound'
+        totalRounds:
+          type: number
+          example: 2
+        totalRoundsAmount:
+          type: number
+          example: 245000000
+        currency:
+          type: string
+          example: USD
+        isIpo:
+          type: boolean
+          example: false
+        lastRoundType:
+          type: string
+          example: Private Equity Round
+        lastRoundAmount:
+          type: number
+          example: 205000000
+        lastRoundDate:
+          type: string
+          example: Nov 10, 2021
+      required:
+      - totalRounds
+      - currency
+      - isIpo
+    CompanySizeRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 10
+    LinkedinCertification:
+      type: object
+      properties:
+        companyId:
+          type: integer
+          example: 1035
+        companyName:
+          type: string
+          example: Microsoft
+        credentialId:
+          type: string
+          example: abc123
+        dateMonth:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 6
+        dateYear:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 2020
+        expireDateMonth:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 6
+        expireDateYear:
+          anyOf:
+          - type: integer
+          - type: string
+          example: 2025
+        linkedinCompanyId:
+          type:
+          - integer
+          - 'null'
+          example: 1441
+        summary:
+          type:
+          - string
+          - 'null'
+          example: Azure fundamentals certification covering cloud concepts
+        title:
+          type: string
+          example: 'Microsoft Certified: Azure Fundamentals'
+        verifyUrl:
+          type:
+          - string
+          - 'null'
+          example: https://www.youracclaim.com/badges/5ccf865c-dd6e-4dcc-9184-c8999d31f83d
+    CompanySearchData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for a Lusha company
+        name:
+          type: string
+          description: The name of the company
+        fqdn:
+          type: string
+          description: The fqdn of the company
+        description:
+          type: string
+          description: A description of the company
+        logoUrl:
+          type: string
+          description: The URL of the company's logo
+        hasCompanyEmployeesCount:
+          type: boolean
+        hasCompanyRevenue:
+          type: boolean
+        hasCompanyMainIndustry:
+          type: boolean
+        hasCompanySubIndustry:
+          type: boolean
+        hasCompanyFunding:
+          type: boolean
+        hasCompanyIntent:
+          type: boolean
+        hasCompanyTechnologies:
+          type: boolean
+        hasCompanyCity:
+          type: boolean
+        hasCompanyCountry:
+          type: boolean
+        signalTypes:
+          type: array
+          description: Types of signals detected for this company
+          items:
+            type: string
+    CompanyFundingRound:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: USD
+        roundAmount:
+          type: number
+          example: 205000000
+        roundType:
+          type: string
+          example: Private Equity Round
+        roundDate:
+          type: string
+          example: Nov 10, 2021
+      required:
+      - currency
+      - roundAmount
+      - roundType
+      - roundDate
+    CompanySearchResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The requestId that should be used in Prospecting Enrich request API params
+        currentPage:
+          type: number
+          description: Current page of search results
+        pageLength:
+          type: number
+          description: Page length
+        totalResults:
+          type: number
+          description: Total search results
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanySearchData'
+    PhoneNumbers:
+      type: object
+      properties:
+        number:
+          type: string
+          description: The phone number
+          example: '+1234567890'
+        phoneType:
+          type: string
+          description: The type of phone number
+          example: Mobile
+          enum:
+          - Mobile
+          - Direct
+          - Phone
+        doNotCall:
+          type: boolean
+          description: Indicates whether the phone number is listed as "Do Not Call" (DNC).
+          example: false
+        updateDate:
+          type: string
+          description: The update date of the phone number
+          example: '2020-01-01'
+      required:
+      - phoneType
+      - doNotCall
+      - updateDate
     ContactEnrichData:
       type: object
       properties:
@@ -517,211 +1049,6 @@ components:
           - Microsoft Office
           - Project Management
           - Strategic Planning
-    ContactSearchData:
-      type: object
-      properties:
-        contactId:
-          type: string
-          description: A unique serial contact ID generated for each search response
-          example: 06de9b18-516d-5512-5cb5-6ec5pb215776
-        isShown:
-          type: boolean
-          description: Indicates whether the contact was already revealed by any of the account users
-          example: false
-        name:
-          type: string
-          description: The full name of the contact
-          example: Chris Karageorge
-        jobTitle:
-          type: string
-          description: The job title held by the person at their current company
-          example: Senior Director of Technical Operations
-        companyId:
-          type: number
-          description: A unique identifier for a Lusha company
-          example: 28054532
-        companyName:
-          type: string
-          description: The name of the company where the person currently works
-          example: Lusha
-        fqdn:
-          type: string
-          description: The fqdn of the company
-          example: lusha.com
-        hasCompanyEmployeesCount:
-          type: boolean
-        hasCompanyRevenue:
-          type: boolean
-        hasCompanyMainIndustry:
-          type: boolean
-        hasCompanySubIndustry:
-          type: boolean
-        hasCompanyFunding:
-          type: boolean
-        hasCompanyIntent:
-          type: boolean
-        hasCompanyTechnologies:
-          type: boolean
-        hasDepartment:
-          type: boolean
-        hasSeniority:
-          type: boolean
-        hasContactLocation:
-          type: boolean
-        hasSocialLink:
-          type: boolean
-        hasEmails:
-          type: boolean
-        hasWorkEmail:
-          type: boolean
-        hasPrivateEmail:
-          type: boolean
-        hasPhones:
-          type: boolean
-        hasMobilePhone:
-          type: boolean
-        hasDirectPhone:
-          type: boolean
-        hasCompanyCity:
-          type: boolean
-        hasCompanyCountry:
-          type: boolean
-        signalTypes:
-          type: array
-          description: Types of signals detected for this contact
-          items:
-            type: string
-          example:
-          - companyChange
-          - promotion
-    CompanyTechnology:
-      type: object
-      properties:
-        name:
-          type: string
-          example: salesforce
-      required:
-      - name
-    EmployeesInLinkedInFilter:
-      type: object
-      description: 'Filter companies by LinkedIn-reported employee count.
-
-        Both `min` and `max` are optional — provide either or both.
-
-        '
-      properties:
-        min:
-          type: integer
-          format: int64
-          description: Minimum employee count (inclusive)
-          example: 100
-        max:
-          type: integer
-          format: int64
-          description: Maximum employee count (inclusive)
-          example: 5000
-    PhoneNumbers:
-      type: object
-      properties:
-        number:
-          type: string
-          description: The phone number
-          example: '+1234567890'
-        phoneType:
-          type: string
-          description: The type of phone number
-          example: Mobile
-          enum:
-          - Mobile
-          - Direct
-          - Phone
-        doNotCall:
-          type: boolean
-          description: Indicates whether the phone number is listed as "Do Not Call" (DNC).
-          example: false
-        updateDate:
-          type: string
-          description: The update date of the phone number
-          example: '2020-01-01'
-      required:
-      - phoneType
-      - doNotCall
-      - updateDate
-    CompanySearchData:
-      type: object
-      properties:
-        id:
-          type: string
-          description: A unique identifier for a Lusha company
-        name:
-          type: string
-          description: The name of the company
-        fqdn:
-          type: string
-          description: The fqdn of the company
-        description:
-          type: string
-          description: A description of the company
-        logoUrl:
-          type: string
-          description: The URL of the company's logo
-        hasCompanyEmployeesCount:
-          type: boolean
-        hasCompanyRevenue:
-          type: boolean
-        hasCompanyMainIndustry:
-          type: boolean
-        hasCompanySubIndustry:
-          type: boolean
-        hasCompanyFunding:
-          type: boolean
-        hasCompanyIntent:
-          type: boolean
-        hasCompanyTechnologies:
-          type: boolean
-        hasCompanyCity:
-          type: boolean
-        hasCompanyCountry:
-          type: boolean
-        signalTypes:
-          type: array
-          description: Types of signals detected for this company
-          items:
-            type: string
-    CompanyLocationFilter2:
-      type: object
-      description: 'Site-level office location filter. At least `country` is required.
-
-        '
-      required:
-      - country
-      properties:
-        country:
-          type: string
-          example: United States
-        state:
-          type: string
-          example: California
-    CompanyFundingRound:
-      type: object
-      properties:
-        currency:
-          type: string
-          example: USD
-        roundAmount:
-          type: number
-          example: 205000000
-        roundType:
-          type: string
-          example: Private Equity Round
-        roundDate:
-          type: string
-          example: Nov 10, 2021
-      required:
-      - currency
-      - roundAmount
-      - roundType
-      - roundDate
     CompanyEnrichResponse:
       type: object
       properties:
@@ -732,108 +1059,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CompanyEnrichData'
-    LinkedinCertification:
-      type: object
-      properties:
-        companyId:
-          type: integer
-          example: 1035
-        companyName:
-          type: string
-          example: Microsoft
-        credentialId:
-          type: string
-          example: abc123
-        dateMonth:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 6
-        dateYear:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 2020
-        expireDateMonth:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 6
-        expireDateYear:
-          anyOf:
-          - type: integer
-          - type: string
-          example: 2025
-        linkedinCompanyId:
-          type:
-          - integer
-          - 'null'
-          example: 1441
-        summary:
-          type:
-          - string
-          - 'null'
-          example: Azure fundamentals certification covering cloud concepts
-        title:
-          type: string
-          example: 'Microsoft Certified: Azure Fundamentals'
-        verifyUrl:
-          type:
-          - string
-          - 'null'
-          example: https://www.youracclaim.com/badges/5ccf865c-dd6e-4dcc-9184-c8999d31f83d
-    LocationFilter:
-      type: object
-      properties:
-        continent:
-          type: string
-          example: North America
-        country:
-          type: string
-          example: United States
-        city:
-          type: string
-          example: New York
-        state:
-          type: string
-          example: New York
-        country_grouping:
-          type: string
-          example: na
-    CompanySurgeInHiringByLocationSignal:
-      type: object
-      properties:
-        signalId:
-          type: string
-          example: '1503907'
-        companyId:
-          type: string
-          example: '3416'
-        country:
-          type: string
-          example: United States
-        state:
-          type: string
-          example: California
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        newJobsPostedLast4Weeks:
-          type: number
-          example: 20
-        historicalAvg:
-          type: number
-          example: 8
-        changeRatePercent:
-          type: number
-          example: 150
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
     CompanyNewsSignal:
       type: object
       properties:
@@ -873,63 +1098,6 @@ components:
           type: string
           format: uri
           example: https://example.com/lusha-salesforce-partnership
-    CompanySurgeInHiringByDepartmentSignal:
-      type: object
-      properties:
-        signalId:
-          type: string
-          example: '1503906'
-        companyId:
-          type: string
-          example: '3416'
-        department:
-          type: string
-          example: Engineering
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        newJobsPostedLast4Weeks:
-          type: number
-          example: 15
-        historicalAvg:
-          type: number
-          example: 5
-        changeRatePercent:
-          type: number
-          example: 200
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-    EmailAddress:
-      type: object
-      properties:
-        email:
-          type: string
-          description: The email address (alternative to 'address')
-          example: dustin@lusha.com
-        address:
-          type: string
-          description: The email address (alternative to 'email')
-          example: dustin@lusha.com
-        emailType:
-          type: string
-          description: The type of email address (alternative to 'type')
-          example: work
-          enum:
-          - work
-          - private
-        emailConfidence:
-          type: string
-          description: The confidence level of the email address
-          example: A+
-        updateDate:
-          type: string
-          description: The update date of the email address
-          example: '2020-01-01'
     CompanyEnrichData:
       type: object
       properties:
@@ -1175,49 +1343,178 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CompanyHeadcountChangeSignal'
-    CompanySurgeInHiringSignal:
+    CompanyIntentTopic:
       type: object
       properties:
+        topicName:
+          type: string
+          example: Remote Sales
+        metadata:
+          $ref: '#/components/schemas/CompanyIntentTopicMetadata'
+      required:
+      - topicName
+      - metadata
+    CompanyTechnology:
+      type: object
+      properties:
+        name:
+          type: string
+          example: salesforce
+      required:
+      - name
+    ContactSearchData:
+      type: object
+      properties:
+        contactId:
+          type: string
+          description: A unique serial contact ID generated for each search response
+          example: 06de9b18-516d-5512-5cb5-6ec5pb215776
+        isShown:
+          type: boolean
+          description: Indicates whether the contact was already revealed by any of the account users
+          example: false
+        name:
+          type: string
+          description: The full name of the contact
+          example: Chris Karageorge
+        jobTitle:
+          type: string
+          description: The job title held by the person at their current company
+          example: Senior Director of Technical Operations
         companyId:
-          type: string
-          example: '3416'
-        signalId:
-          type: string
-          example: '1503905'
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        newJobsPostedLastWeek:
           type: number
-          example: 25
-        historicalAvg:
-          type: number
-          example: 10
-        changeRatePercent:
-          type: number
-          example: 150
+          description: A unique identifier for a Lusha company
+          example: 28054532
         companyName:
           type: string
+          description: The name of the company where the person currently works
           example: Lusha
-        domain:
+        fqdn:
           type: string
+          description: The fqdn of the company
           example: lusha.com
-    PaginationParams:
+        hasCompanyEmployeesCount:
+          type: boolean
+        hasCompanyRevenue:
+          type: boolean
+        hasCompanyMainIndustry:
+          type: boolean
+        hasCompanySubIndustry:
+          type: boolean
+        hasCompanyFunding:
+          type: boolean
+        hasCompanyIntent:
+          type: boolean
+        hasCompanyTechnologies:
+          type: boolean
+        hasDepartment:
+          type: boolean
+        hasSeniority:
+          type: boolean
+        hasContactLocation:
+          type: boolean
+        hasSocialLink:
+          type: boolean
+        hasEmails:
+          type: boolean
+        hasWorkEmail:
+          type: boolean
+        hasPrivateEmail:
+          type: boolean
+        hasPhones:
+          type: boolean
+        hasMobilePhone:
+          type: boolean
+        hasDirectPhone:
+          type: boolean
+        hasCompanyCity:
+          type: boolean
+        hasCompanyCountry:
+          type: boolean
+        signalTypes:
+          type: array
+          description: Types of signals detected for this contact
+          items:
+            type: string
+          example:
+          - companyChange
+          - promotion
+    LocationFilter:
       type: object
       properties:
-        page:
-          type: number
-          description: Page number (0-1000)
-          minimum: 0
-          maximum: 1000
-          default: 0
-        size:
-          type: number
-          description: Page size (10-50)
-          minimum: 10
-          maximum: 50
-          default: 20
+        continent:
+          type: string
+          example: North America
+        country:
+          type: string
+          example: United States
+        city:
+          type: string
+          example: New York
+        state:
+          type: string
+          example: New York
+        country_grouping:
+          type: string
+          example: na
+    EmployeesInLinkedInFilter:
+      type: object
+      description: 'Filter companies by LinkedIn-reported employee count.
+
+        Both `min` and `max` are optional — provide either or both.
+
+        '
+      properties:
+        min:
+          type: integer
+          format: int64
+          description: Minimum employee count (inclusive)
+          example: 100
+        max:
+          type: integer
+          format: int64
+          description: Maximum employee count (inclusive)
+          example: 5000
+    EmailAddress:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email address (alternative to 'address')
+          example: dustin@lusha.com
+        address:
+          type: string
+          description: The email address (alternative to 'email')
+          example: dustin@lusha.com
+        emailType:
+          type: string
+          description: The type of email address (alternative to 'type')
+          example: work
+          enum:
+          - work
+          - private
+        emailConfidence:
+          type: string
+          description: The confidence level of the email address
+          example: A+
+        updateDate:
+          type: string
+          description: The update date of the email address
+          example: '2020-01-01'
+    CompanyLocationFilter2:
+      type: object
+      description: 'Site-level office location filter. At least `country` is required.
+
+        '
+      required:
+      - country
+      properties:
+        country:
+          type: string
+          example: United States
+        state:
+          type: string
+          example: California
     CompanyIntent:
       type: object
       properties:
@@ -1231,39 +1528,38 @@ components:
       required:
       - detectedTopics
       - topicCount
-    CompanyFunding:
+    CompanySurgeInHiringByDepartmentSignal:
       type: object
       properties:
-        rounds:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanyFundingRound'
-        totalRounds:
-          type: number
-          example: 2
-        totalRoundsAmount:
-          type: number
-          example: 245000000
-        currency:
+        signalId:
           type: string
-          example: USD
-        isIpo:
-          type: boolean
-          example: false
-        lastRoundType:
+          example: '1503906'
+        companyId:
           type: string
-          example: Private Equity Round
-        lastRoundAmount:
+          example: '3416'
+        department:
+          type: string
+          example: Engineering
+        signalDate:
+          type: string
+          format: date
+          example: '2025-06-15'
+        newJobsPostedLast4Weeks:
           type: number
-          example: 205000000
-        lastRoundDate:
+          example: 15
+        historicalAvg:
+          type: number
+          example: 5
+        changeRatePercent:
+          type: number
+          example: 200
+        companyName:
           type: string
-          example: Nov 10, 2021
-      required:
-      - totalRounds
-      - currency
-      - isIpo
-    CompanyHeadcountChangeSignal:
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    CompanyWebsiteTrafficSignal:
       type: object
       properties:
         companyId:
@@ -1271,38 +1567,57 @@ components:
           example: '3416'
         signalId:
           type: string
-          example: '1503904'
+          example: '1503902'
         signalDate:
           type: string
           format: date
           example: '2025-06-15'
-        baselineEmployeesCount:
+        historicalAvg:
           type: number
-          example: 500
-        newEmployeesCount:
+          example: 50000
+        lastMonthVisits:
           type: number
-          example: 550
+          example: 75000
         changeRatePercent:
           type: number
-          example: 10
+          example: 50
         companyName:
           type: string
           example: Lusha
         domain:
           type: string
           example: lusha.com
-    CompanySearchRequest:
+    ContactEnrichResponse:
       type: object
       properties:
-        pages:
-          $ref: '#/components/schemas/PaginationParams'
-        filters:
-          type: object
-          properties:
-            companies:
-              $ref: '#/components/schemas/CompanyFilters'
+        requestId:
+          type: string
+          description: The requestId that was used in the request
+        contacts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The ID of the contact from the enrichment request
+              isSuccess:
+                type: boolean
+                description: Indicates whether the enrichment process was successful
+              data:
+                $ref: '#/components/schemas/ContactEnrichData'
+    CompanyIntentTopicMetadata:
+      type: object
+      properties:
+        topicScore:
+          type: number
+          example: 83
+        topicTrend:
+          type: string
+          example: '-5'
       required:
-      - filters
+      - topicScore
+      - topicTrend
     ContactSearchRequest:
       type: object
       properties:
@@ -1331,25 +1646,6 @@ components:
               $ref: '#/components/schemas/CompanyFilters'
       required:
       - filters
-    CompanySearchResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          description: The requestId that should be used in Prospecting Enrich request API params
-        currentPage:
-          type: number
-          description: Current page of search results
-        pageLength:
-          type: number
-          description: Page length
-        totalResults:
-          type: number
-          description: Total search results
-        companies:
-          type: array
-          items:
-            $ref: '#/components/schemas/CompanySearchData'
     LinkedinCourse:
       type: object
       properties:
@@ -1431,343 +1727,6 @@ components:
           type:
           - number
           - 'null'
-    ContactSearchResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          description: The unique request ID used for subsequent enrichment requests
-        currentPage:
-          type: number
-          description: The current page of the search results
-        pageLength:
-          type: number
-          description: The number of results on the page
-        totalResults:
-          type: number
-          description: The total number of search results
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactSearchData'
-    ContactFilters:
-      type: object
-      properties:
-        include:
-          type: object
-          properties:
-            departments:
-              type: array
-              items:
-                type: string
-              example:
-              - Engineering & Technical
-            seniority:
-              type: array
-              items:
-                type: integer
-              example:
-              - 4
-              - 5
-            existing_data_points:
-              type: array
-              items:
-                type: string
-              example:
-              - phone
-              - work_email
-            locations:
-              type: array
-              items:
-                $ref: '#/components/schemas/LocationFilter'
-            jobTitles:
-              type: array
-              items:
-                type: string
-              example:
-              - CTO
-              - Chief Technology Officer
-              - VP Engineering
-              - Senior Developer
-            linkedinUrls:
-              type: array
-              description: Filter contacts by LinkedIn profile URLs
-              items:
-                type: string
-              example:
-              - https://www.linkedin.com/in/justin-pernitz
-              - https://www.linkedin.com/in/andrewbarrettbettcher
-            searchText:
-              type: string
-              description: Free-text search across contact fields
-              example: Amit
-            signal:
-              type: object
-              description: Filter contacts by signal types (premium filter - charges apply per signal type)
-              properties:
-                names:
-                  type: array
-                  description: Signal types to filter by
-                  items:
-                    type: string
-                    enum:
-                    - allSignals
-                    - promotion
-                    - companyChange
-                    example:
-                    - promotion
-                    - companyChange
-                startDate:
-                  type: string
-                  format: date
-                  description: Start date for signal detection (YYYY-MM-DD format)
-                  example: '2025-11-01'
-          exclude:
-            type: object
-            description: Same structure as include, for exclusion filters
-    ContactEnrichRequest:
-      type: object
-      properties:
-        requestId:
-          type: string
-          description: The requestId generated in the Prospecting Search response (UUID)
-          example: b6effae6-35b8-493d-91aa-7d3b1b7c7dc7
-        contactIds:
-          type: array
-          description: An array containing the contact IDs for enrichment. Min 1, max 100.
-          items:
-            type: string
-          example:
-          - 37b4c536-eaec-11ef-ad4b-a75f8e9e1484
-        revealEmails:
-          type: boolean
-          description: 'Set `revealEmails=true` to retrieve only the email address of the contact. Only available to customers on the **Unified Credits** pricing plan.
-
-            '
-          example: false
-        revealPhones:
-          type: boolean
-          description: 'Set `revealPhones=true` to retrieve only the phone number of the contact. Only available to customers on the **Unified Credits** pricing plan.
-
-            '
-          example: true
-      required:
-      - requestId
-      - contactIds
-    CompanyFilters:
-      type: object
-      properties:
-        include:
-          type: object
-          properties:
-            names:
-              type: array
-              items:
-                type: string
-              example:
-              - Apple
-            domains:
-              type: array
-              items:
-                type: string
-                example: lusha.com
-            locations:
-              type: array
-              items:
-                type: object
-                properties:
-                  country:
-                    type: string
-                    example: United States
-            technologies:
-              type: array
-              items:
-                $ref: '#/components/schemas/CompanyTechnology'
-              example:
-              - name: Amazon
-            intentTopics:
-              type: array
-              items:
-                type: string
-              example:
-              - Digital Sales
-            sizes:
-              type: array
-              items:
-                $ref: '#/components/schemas/CompanySizeRange'
-            revenues:
-              type: array
-              items:
-                $ref: '#/components/schemas/RevenueRange'
-            sicCodes:
-              type: array
-              items:
-                type: string
-              example:
-              - '1011'
-              - '1021'
-            naicsCodes:
-              type: array
-              items:
-                type: string
-              example:
-              - '11'
-              - '21'
-            mainIndustriesIds:
-              type: array
-              items:
-                type: number
-              example:
-              - 4
-              - 5
-            subIndustriesIds:
-              type: array
-              items:
-                type: number
-              example:
-              - 101
-            searchText:
-              type: string
-              description: Free-text search across company fields
-              example: Finance Marketing in Germany DE
-            excludePartialCompanies:
-              type: boolean
-              example: false
-            companyLocations:
-              type: array
-              description: 'Filter by company site-level office locations as reported by LinkedIn.
-
-                This includes all physical office locations where the company has a presence.
-
-                '
-              items:
-                $ref: '#/components/schemas/CompanyLocationFilter2'
-              example:
-              - country: United States
-                state: California
-              - country: Germany
-            employeesInLinkedIn:
-              $ref: '#/components/schemas/EmployeesInLinkedInFilter'
-            signal:
-              type: object
-              description: 'Filter companies by signal types (premium filter - charges apply per signal type).
-
-                '
-              properties:
-                names:
-                  type: array
-                  description: Signal types to filter by
-                  items:
-                    type: string
-                    enum:
-                    - allSignals
-                    - websiteTrafficIncrease
-                    - websiteTrafficDecrease
-                    - itSpendIncrease
-                    - itSpendDecrease
-                    - headcountIncrease1m
-                    - headcountDecrease1m
-                    - headcountIncrease3m
-                    - headcountDecrease3m
-                    - headcountIncrease6m
-                    - headcountDecrease6m
-                    - headcountIncrease12m
-                    - headcountDecrease12m
-                    - surgeInHiring
-                    - surgeInHiringByDepartment
-                    - surgeInHiringByLocation
-                    - riskNews
-                    - commercialActivityNews
-                    - corporateStrategyNews
-                    - financialEventsNews
-                    - peopleNews
-                    - marketIntelligenceNews
-                    - productActivityNews
-                  example:
-                  - commercialActivityNews
-                  - financialEventsNews
-                startDate:
-                  type: string
-                  format: date
-                  description: Start date for signal detection (YYYY-MM-DD format)
-                  example: '2025-11-01'
-        exclude:
-          type: object
-          description: Same structure as include, for exclusion filters
-    CompanyIntentTopic:
-      type: object
-      properties:
-        topicName:
-          type: string
-          example: Remote Sales
-        metadata:
-          $ref: '#/components/schemas/CompanyIntentTopicMetadata'
-      required:
-      - topicName
-      - metadata
-    RevenueRange:
-      type: object
-      properties:
-        min:
-          type: number
-          example: 1
-        max:
-          type: number
-          example: 1000000
-    CompanyItSpendSignal:
-      type: object
-      properties:
-        companyId:
-          type: string
-          example: '3416'
-        signalId:
-          type: string
-          example: '1503903'
-        signalDate:
-          type: string
-          format: date
-          example: '2025-06-15'
-        estimatedAnnualItSpend:
-          type: number
-          example: 5000000
-        changeRatePercent:
-          type: number
-          example: 25
-        companyName:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-    CompanyIntentTopicMetadata:
-      type: object
-      properties:
-        topicScore:
-          type: number
-          example: 83
-        topicTrend:
-          type: string
-          example: '-5'
-      required:
-      - topicScore
-      - topicTrend
-    CompanyEnrichRequest:
-      type: object
-      properties:
-        requestId:
-          type: string
-          description: The requestId from the Prospecting Search response
-          example: 5ad275c8-7dd4-462a-bd45-6bc1970da64e
-        companiesIds:
-          type: array
-          description: An array of company IDs for enrichment. Min 1, max 100.
-          items:
-            type: string
-          example:
-          - '1586'
-      required:
-      - requestId
-      - companiesIds
     LinkedinAward:
       type: object
       properties:
@@ -1803,7 +1762,47 @@ components:
         title:
           type: string
           example: Raising the Bar Award
-    CompanyWebsiteTrafficSignal:
+    ContactSearchResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: The unique request ID used for subsequent enrichment requests
+        currentPage:
+          type: number
+          description: The current page of the search results
+        pageLength:
+          type: number
+          description: The number of results on the page
+        totalResults:
+          type: number
+          description: The total number of search results
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactSearchData'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    CompanyHeadcountChangeSignal:
       type: object
       properties:
         companyId:
@@ -1811,64 +1810,56 @@ components:
           example: '3416'
         signalId:
           type: string
-          example: '1503902'
+          example: '1503904'
         signalDate:
           type: string
           format: date
           example: '2025-06-15'
-        historicalAvg:
+        baselineEmployeesCount:
           type: number
-          example: 50000
-        lastMonthVisits:
+          example: 500
+        newEmployeesCount:
           type: number
-          example: 75000
+          example: 550
         changeRatePercent:
           type: number
-          example: 50
+          example: 10
         companyName:
           type: string
           example: Lusha
         domain:
           type: string
           example: lusha.com
-    ContactEnrichResponse:
+    ContactEnrichRequest:
       type: object
       properties:
         requestId:
           type: string
-          description: The requestId that was used in the request
-        contacts:
+          description: The requestId generated in the Prospecting Search response (UUID)
+          example: b6effae6-35b8-493d-91aa-7d3b1b7c7dc7
+        contactIds:
           type: array
+          description: An array containing the contact IDs for enrichment. Min 1, max 100.
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The ID of the contact from the enrichment request
-              isSuccess:
-                type: boolean
-                description: Indicates whether the enrichment process was successful
-              data:
-                $ref: '#/components/schemas/ContactEnrichData'
-    CompanySizeRange:
-      type: object
-      properties:
-        min:
-          type: number
-          example: 1
-        max:
-          type: number
-          example: 10
-  responses:
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            type: string
           example:
-            statusCode: 400
-            message: Invalid request parameters
+          - 37b4c536-eaec-11ef-ad4b-a75f8e9e1484
+        revealEmails:
+          type: boolean
+          description: 'Set `revealEmails=true` to retrieve only the email address of the contact. Only available to customers on the **Unified Credits** pricing plan.
+
+            '
+          example: false
+        revealPhones:
+          type: boolean
+          description: 'Set `revealPhones=true` to retrieve only the phone number of the contact. Only available to customers on the **Unified Credits** pricing plan.
+
+            '
+          example: true
+      required:
+      - requestId
+      - contactIds
+  responses:
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -1899,15 +1890,6 @@ components:
           description: The time when your daily quota will reset
           schema:
             type: integer
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     Forbidden:
       description: Forbidden - account inactive or feature not available
       content:
@@ -1935,6 +1917,15 @@ components:
               value:
                 statusCode: 403
                 message: Exclude DNC is not supported on your current plan. Please contact support or your account manager for assistance.
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
     InternalServerError:
       description: Internal server error
       content:
@@ -1944,6 +1935,15 @@ components:
           example:
             statusCode: 500
             message: Internal server error. Please try again later.
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

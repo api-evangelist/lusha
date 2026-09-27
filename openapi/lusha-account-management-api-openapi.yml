@@ -73,6 +73,31 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
+    AccountUsageStatsResponse:
+      type: object
+      properties:
+        usage:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/UsageStats'
+      required:
+      - usage
+    UsageStats:
+      type: object
+      properties:
+        used:
+          type: number
+          example: 10
+        total:
+          type: number
+          example: 100
+        remaining:
+          type: number
+          example: 90
+      required:
+      - used
+      - total
+      - remaining
     ErrorResponse:
       type: object
       required:
@@ -94,32 +119,16 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
-    UsageStats:
-      type: object
-      properties:
-        used:
-          type: number
-          example: 10
-        total:
-          type: number
-          example: 100
-        remaining:
-          type: number
-          example: 90
-      required:
-      - used
-      - total
-      - remaining
-    AccountUsageStatsResponse:
-      type: object
-      properties:
-        usage:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/UsageStats'
-      required:
-      - usage
   responses:
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -150,15 +159,6 @@ components:
           description: The time when your daily quota will reset
           schema:
             type: integer
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     InternalServerError:
       description: Internal server error
       content:

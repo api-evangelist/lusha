@@ -81,7 +81,7 @@ apis:
     url: overlays/lusha-search-overlay.yaml
   - type: Documentation
     url: https://docs.lusha.com/apis/openapi/search
-- aid: lusha:lusha-enrichment-api
+- aid: lusha:lusha-enrich-api
   name: Lusha Enrich API
   description: >-
     Reveal full contact and company profiles by Lusha id, with an explicit `reveal` list controlling which
