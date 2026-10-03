@@ -93,34 +93,27 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
-    CreditsUsage:
+    ErrorResponse:
       type: object
+      required:
+      - statusCode
+      - message
       properties:
-        total:
-          type: number
-          example: 10000
-        used:
-          type: number
-          example: 1500
-        remaining:
-          type: number
-          example: 8500
-    RateLimitTier:
-      type: object
-      properties:
-        limit:
-          type: number
-          example: 5000
-        used:
-          type: number
-          example: 120
-        remaining:
-          type: number
-          example: 4880
-        resetsAt:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
           type: string
-          format: date-time
-          example: '2026-03-31T00:00:00.000Z'
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
     RateLimits:
       type: object
       properties:
@@ -153,36 +146,18 @@ components:
           format: date-time
           description: Renewal/end date. Omitted (null) for free accounts, since they have no renewal cycle.
           example: '2027-01-01T00:00:00.000Z'
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    PricingEntry:
+    CreditsUsage:
       type: object
       properties:
-        credits:
+        total:
           type: number
-          example: 1
-        perQuantity:
+          example: 10000
+        used:
           type: number
-          example: 25
+          example: 1500
+        remaining:
+          type: number
+          example: 8500
     AccountUsageResponse:
       type: object
       properties:
@@ -196,24 +171,32 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/PricingEntry'
+    PricingEntry:
+      type: object
+      properties:
+        credits:
+          type: number
+          example: 1
+        perQuantity:
+          type: number
+          example: 25
+    RateLimitTier:
+      type: object
+      properties:
+        limit:
+          type: number
+          example: 5000
+        used:
+          type: number
+          example: 120
+        remaining:
+          type: number
+          example: 4880
+        resetsAt:
+          type: string
+          format: date-time
+          example: '2026-03-31T00:00:00.000Z'
   responses:
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -257,6 +240,23 @@ components:
           example:
             statusCode: 401
             message: Invalid API key
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
     InternalServerError:
       description: Internal server error
       content:

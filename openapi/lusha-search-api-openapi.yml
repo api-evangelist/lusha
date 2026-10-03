@@ -402,6 +402,15 @@ components:
           description: Requests remaining in current minute window
           schema:
             type: integer
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
     Forbidden:
       description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
       content:
@@ -419,15 +428,6 @@ components:
               value:
                 statusCode: 403
                 message: V3 API access is not enabled for your account
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
     PaymentRequired:
       description: Payment required - insufficient credits
       content:
@@ -447,130 +447,6 @@ components:
             statusCode: 401
             message: Invalid API key
   schemas:
-    V3ContactSignalsDto:
-      type: object
-      required:
-      - types
-      properties:
-        types:
-          type: array
-          items:
-            type: string
-            enum:
-            - allSignals
-            - promotion
-            - companyChange
-          example:
-          - promotion
-          - companyChange
-        startDate:
-          type: string
-          format: date
-          example: '2025-01-01'
-        maxResultsPerSignal:
-          type: integer
-          minimum: 1
-          maximum: 100
-          example: 10
-    V3CompanySearchItem:
-      type: object
-      properties:
-        clientReferenceId:
-          type: string
-          example: comp-ref-1
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
-    V3ContactPreview:
-      type: object
-      properties:
-        clientReferenceId:
-          type: string
-          example: my-ref-1
-        id:
-          type: string
-          example: '4389064704'
-        firstName:
-          type: string
-          example: Orit
-        lastName:
-          type: string
-          example: Shilvock
-        jobTitle:
-          type: object
-          properties:
-            title:
-              type: string
-              example: Vice President of Partnerships
-            departments:
-              type: array
-              items:
-                type: string
-              example:
-              - Business Development
-            seniority:
-              type: string
-              example: Vice President
-        company:
-          type: object
-          properties:
-            id:
-              type: string
-              example: '16303253'
-            name:
-              type: string
-              example: Lusha
-            domain:
-              type: string
-              example: www.lusha.com
-        location:
-          type: object
-          properties:
-            country:
-              type: string
-              example: Israel
-            state:
-              type: string
-              example: Tel Aviv District
-            city:
-              type: string
-              example: Tel Aviv
-        socialLinks:
-          type: object
-          properties:
-            linkedin:
-              type: string
-              example: https://www.linkedin.com/in/orit-shilvock-6243bb5
-        has:
-          type: array
-          items:
-            type: string
-          example:
-          - firstName
-          - lastName
-          - jobTitle
-          - location
-          - socialLinks
-          - emails
-        canReveal:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3CanRevealItem'
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - promotion
-          - companyChange
-        error:
-          $ref: '#/components/schemas/V3ItemError'
     V3CompanySignalsDto:
       type: object
       required:
@@ -737,41 +613,6 @@ components:
           - headcountIncrease3m
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3SearchOptions:
-      type: object
-      description: Additional options for search requests
-      properties:
-        includePartialProfiles:
-          type: boolean
-          description: Include partial profiles in results
-          example: true
-    V3ContactsSearchRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3ContactSearchItem'
-          minItems: 1
-          maxItems: 100
-        options:
-          $ref: '#/components/schemas/V3SearchOptions'
-        signals:
-          $ref: '#/components/schemas/V3ContactSignalsDto'
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
     V3ContactSearchItem:
       type: object
       properties:
@@ -800,6 +641,110 @@ components:
         companyDomain:
           type: string
           example: lusha.com
+    V3ContactPreview:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: my-ref-1
+        id:
+          type: string
+          example: '4389064704'
+        firstName:
+          type: string
+          example: Orit
+        lastName:
+          type: string
+          example: Shilvock
+        jobTitle:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Vice President of Partnerships
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Business Development
+            seniority:
+              type: string
+              example: Vice President
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '16303253'
+            name:
+              type: string
+              example: Lusha
+            domain:
+              type: string
+              example: www.lusha.com
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: Israel
+            state:
+              type: string
+              example: Tel Aviv District
+            city:
+              type: string
+              example: Tel Aviv
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/in/orit-shilvock-6243bb5
+        has:
+          type: array
+          items:
+            type: string
+          example:
+          - firstName
+          - lastName
+          - jobTitle
+          - location
+          - socialLinks
+          - emails
+        canReveal:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CanRevealItem'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - promotion
+          - companyChange
+        error:
+          $ref: '#/components/schemas/V3ItemError'
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    V3SearchOptions:
+      type: object
+      description: Additional options for search requests
+      properties:
+        includePartialProfiles:
+          type: boolean
+          description: Include partial profiles in results
+          example: true
     V3CanRevealItem:
       type: object
       description: Indicates a data type that can be revealed and its credit cost
@@ -814,61 +759,6 @@ components:
           type: integer
           description: Credit cost (0 when already revealed for this account)
           example: 1
-    V3CompaniesSearchResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3CompanyPreview'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3ContactsSearchResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-          example: 3c7f6d96-4a72-40cd-96c1-2efcfabeb727
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3ContactPreview'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3ItemError:
-      type: object
-      description: Per-item error in a batch response
-      properties:
-        code:
-          type: string
-          enum:
-          - NOT_FOUND
-          - COMPLIANCE_RESTRICTED
-          - ENRICH_FAILED
-          - NO_SCORE
-          example: NOT_FOUND
-        message:
-          type: string
-          example: Contact not found
-    V3CompaniesSearchRequest:
-      type: object
-      required:
-      - companies
-      properties:
-        companies:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3CompanySearchItem'
-          minItems: 1
-          maxItems: 100
-        options:
-          $ref: '#/components/schemas/V3SearchOptions'
-        signals:
-          $ref: '#/components/schemas/V3CompanySignalsDto'
     ErrorResponse:
       type: object
       required:
@@ -890,6 +780,116 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    V3CompaniesSearchResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CompanyPreview'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3ContactsSearchRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3ContactSearchItem'
+          minItems: 1
+          maxItems: 100
+        options:
+          $ref: '#/components/schemas/V3SearchOptions'
+        signals:
+          $ref: '#/components/schemas/V3ContactSignalsDto'
+    V3CompaniesSearchRequest:
+      type: object
+      required:
+      - companies
+      properties:
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CompanySearchItem'
+          minItems: 1
+          maxItems: 100
+        options:
+          $ref: '#/components/schemas/V3SearchOptions'
+        signals:
+          $ref: '#/components/schemas/V3CompanySignalsDto'
+    V3CompanySearchItem:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: comp-ref-1
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
+    V3ContactsSearchResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          example: 3c7f6d96-4a72-40cd-96c1-2efcfabeb727
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3ContactPreview'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3ContactSignalsDto:
+      type: object
+      required:
+      - types
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+            enum:
+            - allSignals
+            - promotion
+            - companyChange
+          example:
+          - promotion
+          - companyChange
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        maxResultsPerSignal:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

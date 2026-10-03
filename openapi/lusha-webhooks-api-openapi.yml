@@ -1139,18 +1139,6 @@ paths:
       description: Production server
 components:
   schemas:
-    SubscriptionListResponse:
-      type: object
-      required:
-      - data
-      - pagination
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubscriptionWithoutSecret'
-        pagination:
-          $ref: '#/components/schemas/PaginationResponse'
     CreateSubscriptionRequest:
       type: object
       required:
@@ -1217,6 +1205,42 @@ components:
                 type: string
                 maxLength: 100
                 description: Overrides default name
+    AuditLogsResponse:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEntry'
+        pagination:
+          $ref: '#/components/schemas/PaginationResponse'
+    CreateOptOutSubscriptionRequest:
+      type: object
+      required:
+      - entityType
+      - url
+      description: Request body for creating an opt-out webhook subscription
+      properties:
+        entityType:
+          type: string
+          enum:
+          - contact
+          description: Entity type for opt-out subscriptions. Currently only `contact` is supported.
+          example: contact
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+          description: Your webhook endpoint URL (HTTPS required in production)
+          example: https://example.com/webhook
+        name:
+          type: string
+          maxLength: 100
+          description: Descriptive name for this subscription
+          example: Account opt-out webhook
     CreateSubscriptionSuccessResult:
       type: object
       required:
@@ -1234,51 +1258,60 @@ components:
           example: true
         subscription:
           $ref: '#/components/schemas/SubscriptionWithoutSecret'
-    AuditLogEntry:
+    CreateSubscriptionErrorResult:
       type: object
       required:
-      - id
-      - subscriptionId
-      - payloadId
-      - status
-      - url
-      - deliveredAt
+      - index
+      - success
+      - error
       properties:
-        id:
-          type: string
-          example: log-123
-        subscriptionId:
-          type: string
-          example: sub-123
-        payloadId:
-          type: string
-          example: payload-456
-        status:
-          type: string
+        index:
+          type: integer
+          example: 1
+        success:
+          type: boolean
           enum:
-          - success
-          - failed
-          - permanent_failure
-          example: success
-        statusCode:
-          type: integer
-          example: 200
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        deliveredAt:
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000Z'
-        durationMs:
-          type: integer
-          example: 150
+          - false
+          example: false
         error:
-          type:
-          - string
-          - 'null'
-          example: null
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: string
+              enum:
+              - VALIDATION_ERROR
+              - DUPLICATE_SUBSCRIPTION
+              - URL_VALIDATION_FAILED
+              - WEBHOOK_VERIFICATION_FAILED
+              - FORBIDDEN
+              - UNKNOWN_ERROR
+              example: DUPLICATE_SUBSCRIPTION
+            message:
+              type: string
+              example: Subscription already exists for entity type 'contact' with entity ID '456'
+    PaginationResponse:
+      type: object
+      required:
+      - total
+      - size
+      - page
+      - hasMore
+      properties:
+        total:
+          type: integer
+          example: 100
+        limit:
+          type: integer
+          example: 50
+        offset:
+          type: integer
+          example: 0
+        hasMore:
+          type: boolean
+          example: true
     SubscriptionWithoutSecret:
       type: object
       required:
@@ -1341,296 +1374,6 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    SubscriptionResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 507f1f77bcf86cd799439011
-        entityType:
-          type: string
-          enum:
-          - contact
-          - company
-          example: contact
-        entityId:
-          type: string
-          example: '123456'
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - promotion
-          - companyChange
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhooks/lusha
-        name:
-          type: string
-          example: Contact Promotion Tracker
-        isActive:
-          type: boolean
-          example: true
-        secret:
-          type: string
-          description: Webhook secret (only returned during creation or regeneration)
-          example: whsec_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
-    PaginationResponse:
-      type: object
-      required:
-      - total
-      - size
-      - page
-      - hasMore
-      properties:
-        total:
-          type: integer
-          example: 100
-        limit:
-          type: integer
-          example: 50
-        offset:
-          type: integer
-          example: 0
-        hasMore:
-          type: boolean
-          example: true
-    AuditLogsResponse:
-      type: object
-      required:
-      - data
-      - pagination
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogEntry'
-        pagination:
-          $ref: '#/components/schemas/PaginationResponse'
-    CreateOptOutSubscriptionRequest:
-      type: object
-      required:
-      - entityType
-      - url
-      description: Request body for creating an opt-out webhook subscription
-      properties:
-        entityType:
-          type: string
-          enum:
-          - contact
-          description: Entity type for opt-out subscriptions. Currently only `contact` is supported.
-          example: contact
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-          description: Your webhook endpoint URL (HTTPS required in production)
-          example: https://example.com/webhook
-        name:
-          type: string
-          maxLength: 100
-          description: Descriptive name for this subscription
-          example: Account opt-out webhook
-    DeleteSubscriptionSuccessResult:
-      type: object
-      required:
-      - index
-      - success
-      - subscription
-      properties:
-        index:
-          type: integer
-          example: 0
-        success:
-          type: boolean
-          enum:
-          - true
-          example: true
-        subscription:
-          type: object
-          properties:
-            id:
-              type: string
-              example: sub-123
-            entityType:
-              type: string
-              example: contact
-            entityId:
-              type: string
-              example: '123'
-            name:
-              type: string
-              example: Contact Webhook
-    CreateSubscriptionErrorResult:
-      type: object
-      required:
-      - index
-      - success
-      - error
-      properties:
-        index:
-          type: integer
-          example: 1
-        success:
-          type: boolean
-          enum:
-          - false
-          example: false
-        error:
-          type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: string
-              enum:
-              - VALIDATION_ERROR
-              - DUPLICATE_SUBSCRIPTION
-              - URL_VALIDATION_FAILED
-              - WEBHOOK_VERIFICATION_FAILED
-              - FORBIDDEN
-              - UNKNOWN_ERROR
-              example: DUPLICATE_SUBSCRIPTION
-            message:
-              type: string
-              example: Subscription already exists for entity type 'contact' with entity ID '456'
-    UpdateSubscriptionRequest:
-      type: object
-      properties:
-        signalTypes:
-          type: array
-          items:
-            type: string
-          description: New signal types to subscribe to
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-          description: New webhook URL
-        name:
-          type: string
-          maxLength: 100
-          description: New subscription name
-        isActive:
-          type: boolean
-          description: Enable or disable subscription
-        regenerateSecret:
-          type: boolean
-          description: Generate new webhook secret (secret will be returned in response)
-    DeleteSubscriptionErrorResult:
-      type: object
-      required:
-      - index
-      - success
-      - error
-      properties:
-        index:
-          type: integer
-          example: 1
-        success:
-          type: boolean
-          enum:
-          - false
-          example: false
-        error:
-          type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: string
-              enum:
-              - NOT_FOUND
-              - VALIDATION_ERROR
-              - FORBIDDEN
-              - UNKNOWN_ERROR
-              example: NOT_FOUND
-            message:
-              type: string
-              example: Subscription with id 'sub-456' not found
-    OptOutSubscriptionResponse:
-      type: object
-      description: Response body returned when an opt-out subscription is created successfully
-      required:
-      - id
-      - entityType
-      - entityId
-      - signalTypes
-      - url
-      - isActive
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          example: 6a0ca910b402df368d2aff07
-        entityType:
-          type: string
-          enum:
-          - contact
-          example: contact
-        entityId:
-          type: string
-          example: '431705'
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - optOut
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        name:
-          type: string
-          example: Account opt-out webhook
-        isActive:
-          type: boolean
-          example: true
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-05-19T18:16:48.360Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2026-05-19T18:16:48.360Z'
-    CreateSubscriptionResponse:
-      type: object
-      required:
-      - total
-      - successful
-      - failed
-      - results
-      properties:
-        total:
-          type: integer
-          example: 3
-        successful:
-          type: integer
-          example: 2
-        failed:
-          type: integer
-          example: 1
-        results:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/CreateSubscriptionSuccessResult'
-            - $ref: '#/components/schemas/CreateSubscriptionErrorResult'
     TestSubscriptionResponse:
       type: object
       required:
@@ -1687,27 +1430,6 @@ components:
           type: string
           format: date-time
           example: '2024-01-01T00:00:00.000Z'
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
     DeleteSubscriptionResponse:
       type: object
       required:
@@ -1731,6 +1453,284 @@ components:
             oneOf:
             - $ref: '#/components/schemas/DeleteSubscriptionSuccessResult'
             - $ref: '#/components/schemas/DeleteSubscriptionErrorResult'
+    DeleteSubscriptionSuccessResult:
+      type: object
+      required:
+      - index
+      - success
+      - subscription
+      properties:
+        index:
+          type: integer
+          example: 0
+        success:
+          type: boolean
+          enum:
+          - true
+          example: true
+        subscription:
+          type: object
+          properties:
+            id:
+              type: string
+              example: sub-123
+            entityType:
+              type: string
+              example: contact
+            entityId:
+              type: string
+              example: '123'
+            name:
+              type: string
+              example: Contact Webhook
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    DeleteSubscriptionErrorResult:
+      type: object
+      required:
+      - index
+      - success
+      - error
+      properties:
+        index:
+          type: integer
+          example: 1
+        success:
+          type: boolean
+          enum:
+          - false
+          example: false
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: string
+              enum:
+              - NOT_FOUND
+              - VALIDATION_ERROR
+              - FORBIDDEN
+              - UNKNOWN_ERROR
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Subscription with id 'sub-456' not found
+    SubscriptionListResponse:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionWithoutSecret'
+        pagination:
+          $ref: '#/components/schemas/PaginationResponse'
+    OptOutSubscriptionResponse:
+      type: object
+      description: Response body returned when an opt-out subscription is created successfully
+      required:
+      - id
+      - entityType
+      - entityId
+      - signalTypes
+      - url
+      - isActive
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          example: 6a0ca910b402df368d2aff07
+        entityType:
+          type: string
+          enum:
+          - contact
+          example: contact
+        entityId:
+          type: string
+          example: '431705'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - optOut
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        name:
+          type: string
+          example: Account opt-out webhook
+        isActive:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-05-19T18:16:48.360Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-05-19T18:16:48.360Z'
+    UpdateSubscriptionRequest:
+      type: object
+      properties:
+        signalTypes:
+          type: array
+          items:
+            type: string
+          description: New signal types to subscribe to
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+          description: New webhook URL
+        name:
+          type: string
+          maxLength: 100
+          description: New subscription name
+        isActive:
+          type: boolean
+          description: Enable or disable subscription
+        regenerateSecret:
+          type: boolean
+          description: Generate new webhook secret (secret will be returned in response)
+    AuditLogEntry:
+      type: object
+      required:
+      - id
+      - subscriptionId
+      - payloadId
+      - status
+      - url
+      - deliveredAt
+      properties:
+        id:
+          type: string
+          example: log-123
+        subscriptionId:
+          type: string
+          example: sub-123
+        payloadId:
+          type: string
+          example: payload-456
+        status:
+          type: string
+          enum:
+          - success
+          - failed
+          - permanent_failure
+          example: success
+        statusCode:
+          type: integer
+          example: 200
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        deliveredAt:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00.000Z'
+        durationMs:
+          type: integer
+          example: 150
+        error:
+          type:
+          - string
+          - 'null'
+          example: null
+    SubscriptionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 507f1f77bcf86cd799439011
+        entityType:
+          type: string
+          enum:
+          - contact
+          - company
+          example: contact
+        entityId:
+          type: string
+          example: '123456'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - promotion
+          - companyChange
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhooks/lusha
+        name:
+          type: string
+          example: Contact Promotion Tracker
+        isActive:
+          type: boolean
+          example: true
+        secret:
+          type: string
+          description: Webhook secret (only returned during creation or regeneration)
+          example: whsec_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-01-14T10:00:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-01-14T10:00:00.000Z'
+    CreateSubscriptionResponse:
+      type: object
+      required:
+      - total
+      - successful
+      - failed
+      - results
+      properties:
+        total:
+          type: integer
+          example: 3
+        successful:
+          type: integer
+          example: 2
+        failed:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CreateSubscriptionSuccessResult'
+            - $ref: '#/components/schemas/CreateSubscriptionErrorResult'
     AuditLogStatsResponse:
       type: object
       required:
@@ -1813,6 +1813,26 @@ components:
               name:
                 type: string
                 maxLength: 100
+    PaginationResponse_2:
+      type: object
+      required:
+      - total
+      - limit
+      - offset
+      - hasMore
+      properties:
+        total:
+          type: integer
+          example: 100
+        limit:
+          type: integer
+          example: 50
+        offset:
+          type: integer
+          example: 0
+        hasMore:
+          type: boolean
+          example: true
     SubscriptionWithoutSecret_2:
       type: object
       required:
@@ -1873,6 +1893,24 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
+    UpdateSubscriptionRequest_2:
+      type: object
+      properties:
+        signalTypes:
+          type: array
+          items:
+            type: string
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+        name:
+          type: string
+          maxLength: 100
+        isActive:
+          type: boolean
+        regenerateSecret:
+          type: boolean
     SubscriptionResponse_2:
       type: object
       properties:
@@ -1916,44 +1954,6 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    PaginationResponse_2:
-      type: object
-      required:
-      - total
-      - limit
-      - offset
-      - hasMore
-      properties:
-        total:
-          type: integer
-          example: 100
-        limit:
-          type: integer
-          example: 50
-        offset:
-          type: integer
-          example: 0
-        hasMore:
-          type: boolean
-          example: true
-    UpdateSubscriptionRequest_2:
-      type: object
-      properties:
-        signalTypes:
-          type: array
-          items:
-            type: string
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-        name:
-          type: string
-          maxLength: 100
-        isActive:
-          type: boolean
-        regenerateSecret:
-          type: boolean
   responses:
     BadRequest:
       description: Bad request - invalid input data
@@ -1973,15 +1973,6 @@ components:
           example:
             statusCode: 404
             message: Resource not found
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
     Unauthorized:
       description: Unauthorized - invalid or missing API key
       content:
@@ -1991,6 +1982,15 @@ components:
           example:
             statusCode: 401
             message: Invalid API key
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
