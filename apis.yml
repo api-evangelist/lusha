@@ -37,6 +37,9 @@ accessModel:
   generated: '2026-07-22'
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/lusha.png
+x-docs-platform: mintlify
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-10-03
 tags:
   - Sales Intelligence
   - B2B
@@ -447,6 +450,9 @@ apis:
   - type: OpenAPI
     url: openapi/lusha-prospecting-search-enrich-api-openapi.yml
 common:
+  - type: CapabilityMap
+    url: capabilities/lusha-capability-edges.yml
+    name: Lusha Business Capability Map
   - type: Website
     url: https://www.lusha.com/
   - type: DeveloperPortal
