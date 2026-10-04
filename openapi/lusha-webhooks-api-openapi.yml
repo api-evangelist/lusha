@@ -1139,6 +1139,295 @@ paths:
       description: Production server
 components:
   schemas:
+    CreateSubscriptionSuccessResult:
+      type: object
+      required:
+      - index
+      - success
+      - subscription
+      properties:
+        index:
+          type: integer
+          example: 0
+        success:
+          type: boolean
+          enum:
+          - true
+          example: true
+        subscription:
+          $ref: '#/components/schemas/SubscriptionWithoutSecret'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    CreateSubscriptionResponse:
+      type: object
+      required:
+      - total
+      - successful
+      - failed
+      - results
+      properties:
+        total:
+          type: integer
+          example: 3
+        successful:
+          type: integer
+          example: 2
+        failed:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CreateSubscriptionSuccessResult'
+            - $ref: '#/components/schemas/CreateSubscriptionErrorResult'
+    DeleteSubscriptionResponse:
+      type: object
+      required:
+      - total
+      - successful
+      - failed
+      - results
+      properties:
+        total:
+          type: integer
+          example: 3
+        successful:
+          type: integer
+          example: 2
+        failed:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/DeleteSubscriptionSuccessResult'
+            - $ref: '#/components/schemas/DeleteSubscriptionErrorResult'
+    TestSubscriptionResponse:
+      type: object
+      required:
+      - subscriptionId
+      - url
+      - mode
+      - isSuccess
+      - timestamp
+      properties:
+        subscriptionId:
+          type: string
+          example: 507f1f77bcf86cd799439011
+        subscriptionName:
+          type: string
+          example: My Test Webhook
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        mode:
+          type: string
+          enum:
+          - direct
+          - kafka
+          - full
+          example: full
+        flowCheck:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            statusCode:
+              type: integer
+              example: 200
+            durationMs:
+              type: integer
+              example: 150
+        testPayload:
+          type: object
+          properties:
+            entityType:
+              type: string
+              example: contact
+            signalType:
+              type: string
+              example: promotion
+            data:
+              type: object
+        isSuccess:
+          type: boolean
+          example: true
+        timestamp:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00.000Z'
+    SubscriptionListResponse:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionWithoutSecret'
+        pagination:
+          $ref: '#/components/schemas/PaginationResponse'
+    SubscriptionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 507f1f77bcf86cd799439011
+        entityType:
+          type: string
+          enum:
+          - contact
+          - company
+          example: contact
+        entityId:
+          type: string
+          example: '123456'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - promotion
+          - companyChange
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhooks/lusha
+        name:
+          type: string
+          example: Contact Promotion Tracker
+        isActive:
+          type: boolean
+          example: true
+        secret:
+          type: string
+          description: Webhook secret (only returned during creation or regeneration)
+          example: whsec_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-01-14T10:00:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-01-14T10:00:00.000Z'
+    AuditLogEntry:
+      type: object
+      required:
+      - id
+      - subscriptionId
+      - payloadId
+      - status
+      - url
+      - deliveredAt
+      properties:
+        id:
+          type: string
+          example: log-123
+        subscriptionId:
+          type: string
+          example: sub-123
+        payloadId:
+          type: string
+          example: payload-456
+        status:
+          type: string
+          enum:
+          - success
+          - failed
+          - permanent_failure
+          example: success
+        statusCode:
+          type: integer
+          example: 200
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        deliveredAt:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00.000Z'
+        durationMs:
+          type: integer
+          example: 150
+        error:
+          type:
+          - string
+          - 'null'
+          example: null
+    OptOutSubscriptionResponse:
+      type: object
+      description: Response body returned when an opt-out subscription is created successfully
+      required:
+      - id
+      - entityType
+      - entityId
+      - signalTypes
+      - url
+      - isActive
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          example: 6a0ca910b402df368d2aff07
+        entityType:
+          type: string
+          enum:
+          - contact
+          example: contact
+        entityId:
+          type: string
+          example: '431705'
+        signalTypes:
+          type: array
+          items:
+            type: string
+          example:
+          - optOut
+        url:
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        name:
+          type: string
+          example: Account opt-out webhook
+        isActive:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-05-19T18:16:48.360Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-05-19T18:16:48.360Z'
     CreateSubscriptionRequest:
       type: object
       required:
@@ -1241,23 +1530,81 @@ components:
           maxLength: 100
           description: Descriptive name for this subscription
           example: Account opt-out webhook
-    CreateSubscriptionSuccessResult:
+    PaginationResponse:
+      type: object
+      required:
+      - total
+      - size
+      - page
+      - hasMore
+      properties:
+        total:
+          type: integer
+          example: 100
+        limit:
+          type: integer
+          example: 50
+        offset:
+          type: integer
+          example: 0
+        hasMore:
+          type: boolean
+          example: true
+    DeleteSubscriptionErrorResult:
       type: object
       required:
       - index
       - success
-      - subscription
+      - error
       properties:
         index:
           type: integer
-          example: 0
+          example: 1
         success:
           type: boolean
           enum:
-          - true
-          example: true
-        subscription:
-          $ref: '#/components/schemas/SubscriptionWithoutSecret'
+          - false
+          example: false
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: string
+              enum:
+              - NOT_FOUND
+              - VALIDATION_ERROR
+              - FORBIDDEN
+              - UNKNOWN_ERROR
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Subscription with id 'sub-456' not found
+    UpdateSubscriptionRequest:
+      type: object
+      properties:
+        signalTypes:
+          type: array
+          items:
+            type: string
+          description: New signal types to subscribe to
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+          description: New webhook URL
+        name:
+          type: string
+          maxLength: 100
+          description: New subscription name
+        isActive:
+          type: boolean
+          description: Enable or disable subscription
+        regenerateSecret:
+          type: boolean
+          description: Generate new webhook secret (secret will be returned in response)
     CreateSubscriptionErrorResult:
       type: object
       required:
@@ -1292,26 +1639,26 @@ components:
             message:
               type: string
               example: Subscription already exists for entity type 'contact' with entity ID '456'
-    PaginationResponse:
+    AuditLogStatsResponse:
       type: object
       required:
       - total
-      - size
-      - page
-      - hasMore
+      - success
+      - failed
+      - successRate
       properties:
         total:
           type: integer
-          example: 100
-        limit:
+          example: 1000
+        success:
+          type: integer
+          example: 950
+        failed:
           type: integer
           example: 50
-        offset:
-          type: integer
-          example: 0
-        hasMore:
-          type: boolean
-          example: true
+        successRate:
+          type: string
+          example: 95.00%
     SubscriptionWithoutSecret:
       type: object
       required:
@@ -1374,85 +1721,6 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    TestSubscriptionResponse:
-      type: object
-      required:
-      - subscriptionId
-      - url
-      - mode
-      - isSuccess
-      - timestamp
-      properties:
-        subscriptionId:
-          type: string
-          example: 507f1f77bcf86cd799439011
-        subscriptionName:
-          type: string
-          example: My Test Webhook
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        mode:
-          type: string
-          enum:
-          - direct
-          - kafka
-          - full
-          example: full
-        flowCheck:
-          type: object
-          properties:
-            success:
-              type: boolean
-              example: true
-            statusCode:
-              type: integer
-              example: 200
-            durationMs:
-              type: integer
-              example: 150
-        testPayload:
-          type: object
-          properties:
-            entityType:
-              type: string
-              example: contact
-            signalType:
-              type: string
-              example: promotion
-            data:
-              type: object
-        isSuccess:
-          type: boolean
-          example: true
-        timestamp:
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000Z'
-    DeleteSubscriptionResponse:
-      type: object
-      required:
-      - total
-      - successful
-      - failed
-      - results
-      properties:
-        total:
-          type: integer
-          example: 3
-        successful:
-          type: integer
-          example: 2
-        failed:
-          type: integer
-          example: 1
-        results:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/DeleteSubscriptionSuccessResult'
-            - $ref: '#/components/schemas/DeleteSubscriptionErrorResult'
     DeleteSubscriptionSuccessResult:
       type: object
       required:
@@ -1483,188 +1751,7 @@ components:
             name:
               type: string
               example: Contact Webhook
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    DeleteSubscriptionErrorResult:
-      type: object
-      required:
-      - index
-      - success
-      - error
-      properties:
-        index:
-          type: integer
-          example: 1
-        success:
-          type: boolean
-          enum:
-          - false
-          example: false
-        error:
-          type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: string
-              enum:
-              - NOT_FOUND
-              - VALIDATION_ERROR
-              - FORBIDDEN
-              - UNKNOWN_ERROR
-              example: NOT_FOUND
-            message:
-              type: string
-              example: Subscription with id 'sub-456' not found
-    SubscriptionListResponse:
-      type: object
-      required:
-      - data
-      - pagination
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubscriptionWithoutSecret'
-        pagination:
-          $ref: '#/components/schemas/PaginationResponse'
-    OptOutSubscriptionResponse:
-      type: object
-      description: Response body returned when an opt-out subscription is created successfully
-      required:
-      - id
-      - entityType
-      - entityId
-      - signalTypes
-      - url
-      - isActive
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          example: 6a0ca910b402df368d2aff07
-        entityType:
-          type: string
-          enum:
-          - contact
-          example: contact
-        entityId:
-          type: string
-          example: '431705'
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - optOut
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        name:
-          type: string
-          example: Account opt-out webhook
-        isActive:
-          type: boolean
-          example: true
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-05-19T18:16:48.360Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2026-05-19T18:16:48.360Z'
-    UpdateSubscriptionRequest:
-      type: object
-      properties:
-        signalTypes:
-          type: array
-          items:
-            type: string
-          description: New signal types to subscribe to
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-          description: New webhook URL
-        name:
-          type: string
-          maxLength: 100
-          description: New subscription name
-        isActive:
-          type: boolean
-          description: Enable or disable subscription
-        regenerateSecret:
-          type: boolean
-          description: Generate new webhook secret (secret will be returned in response)
-    AuditLogEntry:
-      type: object
-      required:
-      - id
-      - subscriptionId
-      - payloadId
-      - status
-      - url
-      - deliveredAt
-      properties:
-        id:
-          type: string
-          example: log-123
-        subscriptionId:
-          type: string
-          example: sub-123
-        payloadId:
-          type: string
-          example: payload-456
-        status:
-          type: string
-          enum:
-          - success
-          - failed
-          - permanent_failure
-          example: success
-        statusCode:
-          type: integer
-          example: 200
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhook
-        deliveredAt:
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000Z'
-        durationMs:
-          type: integer
-          example: 150
-        error:
-          type:
-          - string
-          - 'null'
-          example: null
-    SubscriptionResponse:
+    SubscriptionResponse_2:
       type: object
       properties:
         id:
@@ -1698,7 +1785,6 @@ components:
           example: true
         secret:
           type: string
-          description: Webhook secret (only returned during creation or regeneration)
           example: whsec_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
         createdAt:
           type: string
@@ -1708,49 +1794,6 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    CreateSubscriptionResponse:
-      type: object
-      required:
-      - total
-      - successful
-      - failed
-      - results
-      properties:
-        total:
-          type: integer
-          example: 3
-        successful:
-          type: integer
-          example: 2
-        failed:
-          type: integer
-          example: 1
-        results:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/CreateSubscriptionSuccessResult'
-            - $ref: '#/components/schemas/CreateSubscriptionErrorResult'
-    AuditLogStatsResponse:
-      type: object
-      required:
-      - total
-      - success
-      - failed
-      - successRate
-      properties:
-        total:
-          type: integer
-          example: 1000
-        success:
-          type: integer
-          example: 950
-        failed:
-          type: integer
-          example: 50
-        successRate:
-          type: string
-          example: 95.00%
     CreateSubscriptionRequest_2:
       type: object
       required:
@@ -1833,6 +1876,24 @@ components:
         hasMore:
           type: boolean
           example: true
+    UpdateSubscriptionRequest_2:
+      type: object
+      properties:
+        signalTypes:
+          type: array
+          items:
+            type: string
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+        name:
+          type: string
+          maxLength: 100
+        isActive:
+          type: boolean
+        regenerateSecret:
+          type: boolean
     SubscriptionWithoutSecret_2:
       type: object
       required:
@@ -1893,67 +1954,6 @@ components:
           type: string
           format: date-time
           example: '2026-01-14T10:00:00.000Z'
-    UpdateSubscriptionRequest_2:
-      type: object
-      properties:
-        signalTypes:
-          type: array
-          items:
-            type: string
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-        name:
-          type: string
-          maxLength: 100
-        isActive:
-          type: boolean
-        regenerateSecret:
-          type: boolean
-    SubscriptionResponse_2:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 507f1f77bcf86cd799439011
-        entityType:
-          type: string
-          enum:
-          - contact
-          - company
-          example: contact
-        entityId:
-          type: string
-          example: '123456'
-        signalTypes:
-          type: array
-          items:
-            type: string
-          example:
-          - promotion
-          - companyChange
-        url:
-          type: string
-          format: uri
-          example: https://example.com/webhooks/lusha
-        name:
-          type: string
-          example: Contact Promotion Tracker
-        isActive:
-          type: boolean
-          example: true
-        secret:
-          type: string
-          example: whsec_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2026-01-14T10:00:00.000Z'
   responses:
     BadRequest:
       description: Bad request - invalid input data
@@ -1973,15 +1973,6 @@ components:
           example:
             statusCode: 404
             message: Resource not found
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     InternalServerError:
       description: Internal server error
       content:
@@ -1991,6 +1982,15 @@ components:
           example:
             statusCode: 500
             message: Internal server error. Please try again later.
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

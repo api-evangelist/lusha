@@ -136,6 +136,16 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
+    WebsiteVisitsFloatRange:
+      type: object
+      description: Float range filter (non-negative)
+      properties:
+        min:
+          type: number
+          minimum: 0
+        max:
+          type: number
+          minimum: 0
     WebsiteVisitsIntRange:
       type: object
       description: Integer range filter (non-negative)
@@ -146,23 +156,27 @@ components:
         max:
           type: integer
           minimum: 0
-    WebsiteVisitsPagination:
+    ErrorResponse:
       type: object
       required:
-      - page
-      - size
-      - total
+      - statusCode
+      - message
       properties:
-        size:
+        statusCode:
           type: integer
-          example: 25
-        page:
-          type: integer
-          example: 0
-        total:
-          type: integer
-          description: Total results across all pages.
-          example: 142
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
     V3ItemError:
       type: object
       description: Per-item error in a batch response
@@ -178,6 +192,68 @@ components:
         message:
           type: string
           example: Contact not found
+    V3CanRevealItem:
+      type: object
+      description: Indicates a data type that can be revealed and its credit cost
+      properties:
+        field:
+          type: string
+          enum:
+          - emails
+          - phones
+          example: emails
+        credits:
+          type: integer
+          description: Credit cost (0 when already revealed for this account)
+          example: 1
+    WebsiteVisitsFilters:
+      type: object
+      properties:
+        scoreBands:
+          type: array
+          items:
+            type: string
+            enum:
+            - cold
+            - warm
+            - hot
+          description: Restrict to specific score bands.
+          example:
+          - hot
+          - warm
+        visitorCountries:
+          type: object
+          description: ISO 3166-1 alpha-2 country code filters.
+          properties:
+            include:
+              type: array
+              items:
+                type: string
+              example:
+              - US
+              - GB
+            exclude:
+              type: array
+              items:
+                type: string
+              example:
+              - CN
+        score:
+          allOf:
+          - $ref: '#/components/schemas/WebsiteVisitsIntRange'
+          description: Score range (1–100).
+        totalSessions:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        avgSessionMinutes:
+          $ref: '#/components/schemas/WebsiteVisitsFloatRange'
+        uniqueVisitors:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        daysVisited:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        highIntentPageviews:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        daysSinceLastVisit:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
     WebsiteVisitsCompanyResult:
       allOf:
       - $ref: '#/components/schemas/V3CompanyPreview'
@@ -229,6 +305,23 @@ components:
             type: string
             description: Primary visitor country (ISO 3166-1 alpha-2). Omitted if unavailable.
             example: US
+    WebsiteVisitsPagination:
+      type: object
+      required:
+      - page
+      - size
+      - total
+      properties:
+        size:
+          type: integer
+          example: 25
+        page:
+          type: integer
+          example: 0
+        total:
+          type: integer
+          description: Total results across all pages.
+          example: 142
     WebsiteVisitsRequest:
       type: object
       required:
@@ -418,68 +511,6 @@ components:
           - headcountIncrease3m
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3CanRevealItem:
-      type: object
-      description: Indicates a data type that can be revealed and its credit cost
-      properties:
-        field:
-          type: string
-          enum:
-          - emails
-          - phones
-          example: emails
-        credits:
-          type: integer
-          description: Credit cost (0 when already revealed for this account)
-          example: 1
-    WebsiteVisitsFilters:
-      type: object
-      properties:
-        scoreBands:
-          type: array
-          items:
-            type: string
-            enum:
-            - cold
-            - warm
-            - hot
-          description: Restrict to specific score bands.
-          example:
-          - hot
-          - warm
-        visitorCountries:
-          type: object
-          description: ISO 3166-1 alpha-2 country code filters.
-          properties:
-            include:
-              type: array
-              items:
-                type: string
-              example:
-              - US
-              - GB
-            exclude:
-              type: array
-              items:
-                type: string
-              example:
-              - CN
-        score:
-          allOf:
-          - $ref: '#/components/schemas/WebsiteVisitsIntRange'
-          description: Score range (1–100).
-        totalSessions:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        avgSessionMinutes:
-          $ref: '#/components/schemas/WebsiteVisitsFloatRange'
-        uniqueVisitors:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        daysVisited:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        highIntentPageviews:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        daysSinceLastVisit:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
     WebsiteVisitsResponse:
       type: object
       properties:
@@ -495,47 +526,33 @@ components:
           $ref: '#/components/schemas/WebsiteVisitsPagination'
         billing:
           $ref: '#/components/schemas/V3Billing'
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    WebsiteVisitsFloatRange:
-      type: object
-      description: Float range filter (non-negative)
-      properties:
-        min:
-          type: number
-          minimum: 0
-        max:
-          type: number
-          minimum: 0
   responses:
-    PaymentRequired:
-      description: Payment required - insufficient credits
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
-            statusCode: 402
-            message: Insufficient credits for this operation
+            statusCode: 401
+            message: Invalid API key
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:
@@ -570,15 +587,6 @@ components:
           description: Requests remaining in current minute window
           schema:
             type: integer
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     BadRequest:
       description: Bad request - invalid input data
       content:
@@ -588,23 +596,15 @@ components:
           example:
             statusCode: 400
             message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+    PaymentRequired:
+      description: Payment required - insufficient credits
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

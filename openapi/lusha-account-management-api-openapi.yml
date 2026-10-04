@@ -72,72 +72,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 components:
-  responses:
-    TooManyRequests:
-      description: Too many requests - rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 429
-            message: Too many requests. Please wait before making another request.
-      headers:
-        RateLimit-Limit:
-          description: The total number of allowed requests per second
-          schema:
-            type: integer
-        RateLimit-Remaining:
-          description: The number of remaining requests in the current window
-          schema:
-            type: integer
-        RateLimit-Reset:
-          description: The time (in seconds) until the rate limit quota is reset
-          schema:
-            type: integer
-        X-RateLimit-Remaining-Daily:
-          description: The number of remaining requests for your daily quota
-          schema:
-            type: integer
-        X-RateLimit-Reset-Daily:
-          description: The time when your daily quota will reset
-          schema:
-            type: integer
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
   schemas:
-    UsageStats:
-      type: object
-      properties:
-        used:
-          type: number
-          example: 10
-        total:
-          type: number
-          example: 100
-        remaining:
-          type: number
-          example: 90
-      required:
-      - used
-      - total
-      - remaining
     AccountUsageStatsResponse:
       type: object
       properties:
@@ -168,6 +103,71 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    UsageStats:
+      type: object
+      properties:
+        used:
+          type: number
+          example: 10
+        total:
+          type: number
+          example: 100
+        remaining:
+          type: number
+          example: 90
+      required:
+      - used
+      - total
+      - remaining
+  responses:
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        RateLimit-Limit:
+          description: The total number of allowed requests per second
+          schema:
+            type: integer
+        RateLimit-Remaining:
+          description: The number of remaining requests in the current window
+          schema:
+            type: integer
+        RateLimit-Reset:
+          description: The time (in seconds) until the rate limit quota is reset
+          schema:
+            type: integer
+        X-RateLimit-Remaining-Daily:
+          description: The number of remaining requests for your daily quota
+          schema:
+            type: integer
+        X-RateLimit-Reset-Daily:
+          description: The time when your daily quota will reset
+          schema:
+            type: integer
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

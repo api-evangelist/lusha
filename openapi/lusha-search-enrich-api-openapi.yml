@@ -310,109 +310,7 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    TooManyRequests:
-      description: Too many requests - rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 429
-            message: Too many requests. Please wait before making another request.
-      headers:
-        x-rate-limit-daily:
-          description: Total requests allowed per day
-          schema:
-            type: integer
-        x-daily-requests-left:
-          description: Requests remaining in daily quota
-          schema:
-            type: integer
-        x-rate-limit-hourly:
-          description: Total requests allowed per hour
-          schema:
-            type: integer
-        x-hourly-requests-left:
-          description: Requests remaining in hourly quota
-          schema:
-            type: integer
-        x-rate-limit-minute:
-          description: Total requests allowed per minute
-          schema:
-            type: integer
-        x-minute-requests-left:
-          description: Requests remaining in current minute window
-          schema:
-            type: integer
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 400
-            message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
-    PaymentRequired:
-      description: Payment required - insufficient credits
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 402
-            message: Insufficient credits for this operation
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
   schemas:
-    V3ContactsSearchAndEnrichRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3ContactSearchItem'
-          minItems: 1
-          maxItems: 100
-        reveal:
-          type: array
-          items:
-            type: string
-            enum:
-            - emails
-            - phones
-          example:
-          - emails
-          - phones
-        options:
-          $ref: '#/components/schemas/V3SearchOptions'
     V3EnrichedCompany:
       type: object
       properties:
@@ -738,6 +636,82 @@ components:
           - plumbing
         error:
           $ref: '#/components/schemas/V3ItemError'
+    V3CompanySearchItem:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: comp-ref-1
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Lusha
+        domain:
+          type: string
+          example: lusha.com
+    V3ContactsSearchAndEnrichResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SearchAndEnrichContactResult'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
+    V3ContactSearchItem:
+      type: object
+      properties:
+        clientReferenceId:
+          type: string
+          example: my-ref-1
+        id:
+          type: string
+          example: '12345'
+        linkedinUrl:
+          type: string
+          example: https://www.linkedin.com/in/orit-shilvock-6243bb5
+        email:
+          type: string
+          format: email
+          example: orit.shilvock@lusha.com
+        firstName:
+          type: string
+          example: Orit
+        lastName:
+          type: string
+          example: Shilvock
+        companyName:
+          type: string
+          example: Lusha
+        companyDomain:
+          type: string
+          example: lusha.com
     V3PhoneNumber:
       type: object
       properties:
@@ -759,16 +733,86 @@ components:
           type: string
           format: date
           example: '2026-04-23'
-    V3ContactTag:
+    V3Billing:
+      type: object
+      description: Credit usage summary for a V3 API request
+      properties:
+        creditsCharged:
+          type: integer
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
+    V3SicCode:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 7371
+        description:
+          type: string
+          example: Custom computer programming services
+    V3NaicsCode:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 541511
+        description:
+          type: string
+          example: Custom Computer Programming Services
+    V3CompaniesSearchAndEnrichResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3SearchAndEnrichCompanyResult'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    V3EmailAddress:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: orit.shilvock@lusha.com
+        type:
+          type: string
+          enum:
+          - work
+          - private
+          - unknown
+          example: work
+        confidence:
+          type:
+          - string
+          - 'null'
+          example: A+
+        updateDate:
+          type: string
+          format: date
+          example: '2026-04-23'
+    V3EnrichedContactCompanyRef:
       type: object
       properties:
         id:
           type: string
+          example: '16303253'
         name:
           type: string
-        color:
+          example: Lusha
+        domain:
           type: string
-          example: '#FF5733'
+          example: www.lusha.com
+        industry:
+          type: string
+          example: Technology, Information & Media
     V3EnrichedContact:
       type: object
       properties:
@@ -879,75 +923,16 @@ components:
           example: '2026-04-23'
         error:
           $ref: '#/components/schemas/V3ItemError'
-    V3NaicsCode:
+    V3ContactTag:
       type: object
       properties:
-        code:
-          type: integer
-          example: 541511
-        description:
-          type: string
-          example: Custom Computer Programming Services
-    V3CompaniesSearchAndEnrichResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/V3SearchAndEnrichCompanyResult'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3ContactSearchItem:
-      type: object
-      properties:
-        clientReferenceId:
-          type: string
-          example: my-ref-1
         id:
           type: string
-          example: '12345'
-        linkedinUrl:
+        name:
           type: string
-          example: https://www.linkedin.com/in/orit-shilvock-6243bb5
-        email:
+        color:
           type: string
-          format: email
-          example: orit.shilvock@lusha.com
-        firstName:
-          type: string
-          example: Orit
-        lastName:
-          type: string
-          example: Shilvock
-        companyName:
-          type: string
-          example: Lusha
-        companyDomain:
-          type: string
-          example: lusha.com
-    V3Billing:
-      type: object
-      description: Credit usage summary for a V3 API request
-      properties:
-        creditsCharged:
-          type: integer
-          description: Total credits charged for this request
-          example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    V3SearchOptions:
-      type: object
-      description: Additional options for search requests
-      properties:
-        includePartialProfiles:
-          type: boolean
-          description: Include partial profiles in results
-          example: true
+          example: '#FF5733'
     V3CompanyLocation:
       type: object
       properties:
@@ -974,15 +959,27 @@ components:
           type: string
           description: Postal/ZIP code (present on HQ location when available)
           example: '80904'
-    V3SicCode:
+    V3CompaniesSearchAndEnrichRequest:
       type: object
+      required:
+      - companies
       properties:
-        code:
-          type: integer
-          example: 7371
-        description:
-          type: string
-          example: Custom computer programming services
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3CompanySearchItem'
+          minItems: 1
+          maxItems: 100
+        options:
+          $ref: '#/components/schemas/V3SearchOptions'
+    V3SearchAndEnrichContactResult:
+      allOf:
+      - $ref: '#/components/schemas/V3EnrichedContact'
+      - type: object
+        properties:
+          clientReferenceId:
+            type: string
+            example: my-ref-1
     V3SearchAndEnrichCompanyResult:
       allOf:
       - $ref: '#/components/schemas/V3EnrichedCompany'
@@ -991,42 +988,14 @@ components:
           clientReferenceId:
             type: string
             example: comp-ref-1
-    ErrorResponse:
+    V3SearchOptions:
       type: object
-      required:
-      - statusCode
-      - message
+      description: Additional options for search requests
       properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    V3CompanySearchItem:
-      type: object
-      properties:
-        clientReferenceId:
-          type: string
-          example: comp-ref-1
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: lusha.com
+        includePartialProfiles:
+          type: boolean
+          description: Include partial profiles in results
+          example: true
     V3ItemError:
       type: object
       description: Per-item error in a batch response
@@ -1042,77 +1011,108 @@ components:
         message:
           type: string
           example: Contact not found
-    V3SearchAndEnrichContactResult:
-      allOf:
-      - $ref: '#/components/schemas/V3EnrichedContact'
-      - type: object
-        properties:
-          clientReferenceId:
-            type: string
-            example: my-ref-1
-    V3EmailAddress:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          example: orit.shilvock@lusha.com
-        type:
-          type: string
-          enum:
-          - work
-          - private
-          - unknown
-          example: work
-        confidence:
-          type:
-          - string
-          - 'null'
-          example: A+
-        updateDate:
-          type: string
-          format: date
-          example: '2026-04-23'
-    V3CompaniesSearchAndEnrichRequest:
+    V3ContactsSearchAndEnrichRequest:
       type: object
       required:
-      - companies
+      - contacts
       properties:
-        companies:
+        contacts:
           type: array
           items:
-            $ref: '#/components/schemas/V3CompanySearchItem'
+            $ref: '#/components/schemas/V3ContactSearchItem'
           minItems: 1
           maxItems: 100
-        options:
-          $ref: '#/components/schemas/V3SearchOptions'
-    V3ContactsSearchAndEnrichResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-        results:
+        reveal:
           type: array
           items:
-            $ref: '#/components/schemas/V3SearchAndEnrichContactResult'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    V3EnrichedContactCompanyRef:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Lusha
-        domain:
-          type: string
-          example: www.lusha.com
-        industry:
-          type: string
-          example: Technology, Information & Media
+            type: string
+            enum:
+            - emails
+            - phones
+          example:
+          - emails
+          - phones
+        options:
+          $ref: '#/components/schemas/V3SearchOptions'
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            message: Invalid request parameters
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
+    TooManyRequests:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            message: Too many requests. Please wait before making another request.
+      headers:
+        x-rate-limit-daily:
+          description: Total requests allowed per day
+          schema:
+            type: integer
+        x-daily-requests-left:
+          description: Requests remaining in daily quota
+          schema:
+            type: integer
+        x-rate-limit-hourly:
+          description: Total requests allowed per hour
+          schema:
+            type: integer
+        x-hourly-requests-left:
+          description: Requests remaining in hourly quota
+          schema:
+            type: integer
+        x-rate-limit-minute:
+          description: Total requests allowed per minute
+          schema:
+            type: integer
+        x-minute-requests-left:
+          description: Requests remaining in current minute window
+          schema:
+            type: integer
+    PaymentRequired:
+      description: Payment required - insufficient credits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 402
+            message: Insufficient credits for this operation
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

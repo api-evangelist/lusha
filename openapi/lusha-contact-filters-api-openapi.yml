@@ -148,45 +148,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    LocationSearchRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: Search text for location
-          example: un
-      required:
-      - text
-    CountryFilter:
-      type: object
-      properties:
-        name:
-          type: string
-          example: United States
-        code:
-          type: string
-          example: US
-      required:
-      - name
-      - code
-    LocationFilter:
-      type: object
-      properties:
-        continent:
-          type: string
-          example: North America
-        country:
-          type: string
-          example: United States
-        city:
-          type: string
-          example: New York
-        state:
-          type: string
-          example: New York
-        country_grouping:
-          type: string
-          example: na
     ErrorResponse:
       type: object
       required:
@@ -208,6 +169,45 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    CountryFilter:
+      type: object
+      properties:
+        name:
+          type: string
+          example: United States
+        code:
+          type: string
+          example: US
+      required:
+      - name
+      - code
+    LocationSearchRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Search text for location
+          example: un
+      required:
+      - text
+    LocationFilter:
+      type: object
+      properties:
+        continent:
+          type: string
+          example: North America
+        country:
+          type: string
+          example: United States
+        city:
+          type: string
+          example: New York
+        state:
+          type: string
+          example: New York
+        country_grouping:
+          type: string
+          example: na
   responses:
     Unauthorized:
       description: Unauthorized - invalid or missing API key
