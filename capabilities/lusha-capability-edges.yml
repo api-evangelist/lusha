@@ -1,0 +1,36 @@
+slug: lusha
+provider: Lusha
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Account
+  spec_file: lusha-account-api-openapi.yml
+  capability_id: BC-4270.50
+  capability_id_l1: BC-4270
+  capability_name: API Consumption Governance
+  confidence: 0.72
+  evidence: 'GET /v3/account/usage getAccountUsage; schemas: RateLimits, PlanInfo, CreditsUsage, RateLimitTier,
+    PricingEntry'
+  reason: The single operation reports API credit consumption, rate-limit tiers and plan information for
+    the API consumer — API consumption governance (quotas, rate limits, usage mapped to plan tiers) rather
+    than any customer-facing accounting capability.
+- tag: Enrich
+  spec_file: lusha-enrich-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.7
+  evidence: POST /v3/contacts/enrich enrichContacts Enrich Contacts; POST /v3/companies/enrich enrichCompanies
+    Enrich Companies; schemas V3EnrichedContact, V3EmailAddress, V3PhoneNumber
+  reason: The operations append verified attributes (emails, phones, company location/NAICS) to contact
+    and company records — appending to the customer/prospect master record, i.e. customer data management.
