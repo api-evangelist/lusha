@@ -1,21 +1,24 @@
-generated: '2026-08-13'
+generated: '2026-09-23'
 method: generated
-source: openapi/lusha-account-api-openapi.yml, openapi/lusha-buying-group-api-openapi.yml, openapi/lusha-companies-tables-api-openapi.yml,
-  openapi/lusha-contacts-tables-api-openapi.yml, openapi/lusha-enrich-api-openapi.yml, openapi/lusha-filters-api-openapi.yml,
-  openapi/lusha-lookalikes-api-openapi.yml, openapi/lusha-prospecting-api-openapi.yml, openapi/lusha-search-api-openapi.yml,
+source: openapi/lusha-account-api-openapi.yml, openapi/lusha-account-management-api-openapi.yml,
+  openapi/lusha-buying-group-api-openapi.yml, openapi/lusha-companies-tables-api-openapi.yml,
+  openapi/lusha-company-filters-api-openapi.yml, openapi/lusha-contact-filters-api-openapi.yml,
+  openapi/lusha-contacts-tables-api-openapi.yml, openapi/lusha-enrich-api-openapi.yml, openapi/lusha-enrichment-api-openapi.yml,
+  openapi/lusha-filters-api-openapi.yml, openapi/lusha-lookalikes-api-openapi.yml, openapi/lusha-prospecting-api-openapi.yml,
+  openapi/lusha-prospecting-search-enrich-api-openapi.yml, openapi/lusha-search-api-openapi.yml,
   openapi/lusha-search-enrich-api-openapi.yml, openapi/lusha-signals-api-openapi.yml, openapi/lusha-webhooks-api-openapi.yml,
   openapi/lusha-website-visits-api-openapi.yml
 description: Recommended x-agentic-access execution contracts, classified heuristically from
   the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
   audience per deployment. See research/curity/agentic-governance/.
 summary:
-  operations: 58
+  operations: 88
   by_action_class:
-    connected: 20
-    acting: 38
+    connected: 60
+    acting: 28
   by_consequence:
-    read: 20
-    write: 38
+    read: 60
+    write: 28
   human_in_the_loop_required: 0
 operations:
 - path: /v3/account/usage
@@ -28,22 +31,26 @@ operations:
     token:
       max-ttl: 3600
     audit: none
+- path: /account/usage
+  method: get
+  operationId: getAccountUsageStats
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/buying-group
   method: post
   operationId: getContactsBuyingGroup
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/companies/tables
   method: post
   operationId: createCompaniesTable
@@ -64,18 +71,12 @@ operations:
   method: post
   operationId: listCompaniesTables
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/companies/tables/{table_id}
   method: get
   operationId: getCompaniesTable
@@ -202,6 +203,146 @@ operations:
       - abnormal
       - high-value
     audit: required
+- path: /prospecting/filters/companies/names
+  method: post
+  operationId: searchCompanyNames
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/industries_labels
+  method: get
+  operationId: getCompanyIndustries
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/sizes
+  method: get
+  operationId: getCompanySizes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/revenues
+  method: get
+  operationId: getCompanyRevenues
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/locations
+  method: post
+  operationId: searchCompanyLocations
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/sics
+  method: get
+  operationId: getCompanySicCodes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/naics
+  method: get
+  operationId: getCompanyNaicsCodes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/intent_topics
+  method: get
+  operationId: getCompanyIntentTopics
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/companies/technologies
+  method: post
+  operationId: searchCompanyTechnologies
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/contacts/departments
+  method: get
+  operationId: getContactDepartments
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/contacts/seniority
+  method: get
+  operationId: getContactSeniority
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/contacts/existing_data_points
+  method: get
+  operationId: getContactDataPoints
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/contacts/all_countries
+  method: get
+  operationId: getContactCountries
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/filters/contacts/locations
+  method: post
+  operationId: searchContactLocations
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/tables
   method: post
   operationId: createContactsTable
@@ -222,18 +363,12 @@ operations:
   method: post
   operationId: listContactsTables
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/tables/{table_id}
   method: get
   operationId: getContactsTable
@@ -392,6 +527,46 @@ operations:
       - abnormal
       - high-value
     audit: required
+- path: /v2/person
+  method: get
+  operationId: searchSingleContact
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v2/person
+  method: post
+  operationId: searchMultipleContacts
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v2/company
+  method: get
+  operationId: searchSingleCompanyV2
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v2/company
+  method: post
+  operationId: searchMultipleCompaniesV2
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/prospecting/filters
   method: get
   operationId: getContactFilterTypes
@@ -436,34 +611,42 @@ operations:
   method: post
   operationId: getContactLookalikes
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/companies/lookalike
   method: post
   operationId: getCompanyLookalikes
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
+- path: /v3/lookalike/contacts
+  method: post
+  operationId: getContactLookalikes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v3/lookalike/companies
+  method: post
+  operationId: getCompanyLookalikes
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/prospecting
   method: post
   operationId: prospectingContacts
@@ -496,38 +679,78 @@ operations:
       - abnormal
       - high-value
     audit: required
+- path: /prospecting/contact/search
+  method: post
+  operationId: searchProspectingContacts
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/contact/enrich
+  method: post
+  operationId: enrichProspectingContacts
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /prospecting/company/search
+  method: post
+  operationId: searchProspectingCompanies
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /prospecting/company/enrich
+  method: post
+  operationId: enrichProspectingCompanies
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
 - path: /v3/contacts/search
   method: post
   operationId: searchContacts
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/companies/search
   method: post
   operationId: searchCompanies
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/search-and-enrich
   method: post
   operationId: searchAndEnrichContacts
@@ -564,34 +787,22 @@ operations:
   method: post
   operationId: getContactSignals
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/companies/signals
   method: post
   operationId: getCompanySignals
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/signals/types
   method: get
   operationId: getContactSignalTypes
@@ -636,34 +847,72 @@ operations:
   method: post
   operationId: getCompanySignalScores
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /v3/contacts/signal-score
   method: post
   operationId: getContactSignalScores
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
+- path: /api/signals/filters/{objectType}
+  method: get
+  operationId: getSignalOptions
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/signals/contacts
+  method: post
+  operationId: getContactSignalsById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/signals/contacts/search
+  method: post
+  operationId: searchContactSignals
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/signals/companies
+  method: post
+  operationId: getCompanySignalsById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/signals/companies/search
+  method: post
+  operationId: searchCompanySignals
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /api/subscriptions
   method: post
   operationId: createSubscription
@@ -814,15 +1063,9 @@ operations:
   method: post
   operationId: getWebsiteVisits
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none

@@ -127,3 +127,20 @@ x-evidence:
 - url: https://registry.npmjs.org/@lusha-org/mcp
   http_status: 200
   note: latest 1.2.0 published 2025-08-24
+rfc9728:
+  endpoint: https://mcp.lusha.com
+  metadata_url: https://mcp.lusha.com/.well-known/oauth-protected-resource
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://mcp.lusha.com
+    authorization_servers:
+    - https://auth.lusha.com
+    scopes_supported:
+    - mcp
+    bearer_methods_supported:
+    - header
+    resource_name: Lusha MCP Server
+    resource_documentation: https://docs.lusha.com/mcp
