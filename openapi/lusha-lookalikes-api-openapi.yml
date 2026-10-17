@@ -532,32 +532,6 @@ paths:
       description: Production server
 components:
   schemas:
-    DedupeSessionInvalidError:
-      type: object
-      additionalProperties: false
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: string
-          example: DEDUPE_SESSION_INVALID
-        message:
-          type: string
-          example: The provided dedupeSessionId is invalid or expired. Generate a new request without dedupeSessionId to start a fresh run.
-    ContactLookalikesMeta:
-      type: object
-      additionalProperties: false
-      required:
-      - returned
-      - hasMore
-      properties:
-        returned:
-          type: integer
-          example: 25
-        hasMore:
-          type: boolean
-          example: true
     ErrorResponse:
       type: object
       required:
@@ -579,77 +553,6 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
-    V3LookAlikeCompanyResult:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '16303253'
-        name:
-          type: string
-          example: Marriott International
-        domain:
-          type: string
-          example: marriott.com
-        employeeCount:
-          type: object
-          properties:
-            exact:
-              type: integer
-              example: 255334
-        industry:
-          type: string
-          example: Hospitality
-        location:
-          type: object
-          properties:
-            country:
-              type: string
-              example: United States
-            state:
-              type: string
-              example: Maryland
-            city:
-              type: string
-              example: Bethesda
-        socialLinks:
-          type: object
-          properties:
-            linkedin:
-              type: string
-              example: https://www.linkedin.com/company/marriott-international
-    ContactItem:
-      type: object
-      additionalProperties: false
-      required:
-      - firstName
-      - lastName
-      description: At least one of companyDomain or companyName is required.
-      properties:
-        firstName:
-          type: string
-          example: Miri
-        lastName:
-          type: string
-          example: Tamir
-        companyDomain:
-          type: string
-          example: lusha.com
-        companyName:
-          type: string
-          example: Lusha
-    CompanyLookalikesMeta:
-      type: object
-      required:
-      - returned
-      - hasMore
-      properties:
-        returned:
-          type: integer
-          example: 1
-        hasMore:
-          type: boolean
-          example: true
     TableWrite:
       type: object
       description: 'Added to a Prospecting, Enrich, Signals, or Lookalike response when `tableId` is passed on the request. The primary response is unaffected even if the table write fails.
@@ -708,54 +611,191 @@ components:
           $ref: '#/components/schemas/TableWrite'
         billing:
           $ref: '#/components/schemas/V3Billing'
-    ContactLookalikesResponse:
+    V3LookAlikeCompanyResult:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '16303253'
+        name:
+          type: string
+          example: Marriott International
+        domain:
+          type: string
+          example: marriott.com
+        employeeCount:
+          type: object
+          properties:
+            exact:
+              type: integer
+              example: 255334
+        industry:
+          type: string
+          example: Hospitality
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: United States
+            state:
+              type: string
+              example: Maryland
+            city:
+              type: string
+              example: Bethesda
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/company/marriott-international
+    CompanyLookalikesMeta:
+      type: object
+      required:
+      - returned
+      - hasMore
+      properties:
+        returned:
+          type: integer
+          example: 1
+        hasMore:
+          type: boolean
+          example: true
+    ContactItem:
       type: object
       additionalProperties: false
       required:
-      - dedupeSessionId
-      - results
-      - meta
+      - firstName
+      - lastName
+      description: At least one of companyDomain or companyName is required.
       properties:
-        dedupeSessionId:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        results:
+        firstName:
+          type: string
+          example: Miri
+        lastName:
+          type: string
+          example: Tamir
+        companyDomain:
+          type: string
+          example: lusha.com
+        companyName:
+          type: string
+          example: Lusha
+    ContactLookalikesMeta:
+      type: object
+      additionalProperties: false
+      required:
+      - returned
+      - hasMore
+      properties:
+        returned:
+          type: integer
+          example: 25
+        hasMore:
+          type: boolean
+          example: true
+    V3LookAlikeContactResult:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '4389064624'
+        firstName:
+          type: string
+          example: Yehuda
+        lastName:
+          type: string
+          example: Rapp
+        socialLinks:
+          type: object
+          properties:
+            linkedin:
+              type: string
+              example: https://www.linkedin.com/in/yehuda-rapp-53909b99
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '16303253'
+            name:
+              type: string
+              example: Lusha
+            domain:
+              type: string
+              example: www.lusha.com
+        jobTitle:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Senior Solutions Engineer
+            departments:
+              type: array
+              items:
+                type: string
+              example:
+              - Engineering & Technical
+            seniority:
+              type: string
+              example: Senior
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+              example: Israel
+            state:
+              type: string
+              example: Tel Aviv District
+            city:
+              type: string
+              example: Tel Aviv
+    DedupeSessionInvalidError:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          example: DEDUPE_SESSION_INVALID
+        message:
+          type: string
+          example: The provided dedupeSessionId is invalid or expired. Generate a new request without dedupeSessionId to start a fresh run.
+    CompanyIdentifiersBatch:
+      type: object
+      properties:
+        domains:
           type: array
           items:
-            $ref: '#/components/schemas/V3LookAlikeContactResult'
-        meta:
-          $ref: '#/components/schemas/ContactLookalikesMeta'
-        tableWrite:
-          $ref: '#/components/schemas/TableWrite'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
-    ContactLookalikesRequest:
+            type: string
+          maxItems: 100
+          example:
+          - sap.com
+          - oracle.com
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - https://www.linkedin.com/company/sap
+      minProperties: 1
+    V3Billing:
       type: object
-      additionalProperties: false
-      required:
-      - seeds
+      description: Credit usage summary for a V3 API request
       properties:
-        dedupeSessionId:
-          type: string
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        seeds:
-          $ref: '#/components/schemas/ContactIdentifiersBatch'
-        exclude:
-          $ref: '#/components/schemas/ContactIdentifiersBatch'
-        limit:
+        creditsCharged:
           type: integer
-          minimum: 1
-          maximum: 100
-          default: 25
-          example: 25
-        tableId:
-          type: string
-          description: Optional. If provided, results are also persisted to this table. See the Tables API.
-          example: '482910'
+          description: Total credits charged for this request
+          example: 3
+        resultsReturned:
+          type: integer
+          description: Number of successful results returned
+          example: 1
     ContactIdentifiersBatch:
       type:
       - object
@@ -823,94 +863,168 @@ components:
           type: string
           description: Optional. If provided, results are also persisted to this table. See the Tables API.
           example: '583021'
-    V3Billing:
+    ContactLookalikesResponse:
       type: object
-      description: Credit usage summary for a V3 API request
+      additionalProperties: false
+      required:
+      - dedupeSessionId
+      - results
+      - meta
       properties:
+        dedupeSessionId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/V3LookAlikeContactResult'
+        meta:
+          $ref: '#/components/schemas/ContactLookalikesMeta'
+        tableWrite:
+          $ref: '#/components/schemas/TableWrite'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    ContactLookalikesRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - seeds
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        seeds:
+          $ref: '#/components/schemas/ContactIdentifiersBatch'
+        exclude:
+          $ref: '#/components/schemas/ContactIdentifiersBatch'
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
+        tableId:
+          type: string
+          description: Optional. If provided, results are also persisted to this table. See the Tables API.
+          example: '482910'
+    CompanyLookalikesResponse_2:
+      type: object
+      required:
+      - dedupeSessionId
+      - results
+      - meta
+      properties:
+        dedupeSessionId:
+          type: string
+          format: uuid
+          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookalikeCompanyResult'
+        meta:
+          $ref: '#/components/schemas/CompanyLookalikesMeta'
         creditsCharged:
           type: integer
-          description: Total credits charged for this request
           example: 3
-        resultsReturned:
-          type: integer
-          description: Number of successful results returned
-          example: 1
-    CompanyIdentifiersBatch:
+          minimum: 0
+    ContactItem_2:
       type: object
+      additionalProperties: false
+      required:
+      - firstName
+      - lastName
       properties:
-        domains:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          example:
-          - sap.com
-          - oracle.com
-        linkedinUrls:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          example:
-          - https://www.linkedin.com/company/sap
-      minProperties: 1
-    V3LookAlikeContactResult:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '4389064624'
         firstName:
           type: string
-          example: Yehuda
+          example: John
         lastName:
           type: string
-          example: Rapp
-        socialLinks:
-          type: object
-          properties:
-            linkedin:
-              type: string
-              example: https://www.linkedin.com/in/yehuda-rapp-53909b99
-        company:
-          type: object
-          properties:
-            id:
-              type: string
-              example: '16303253'
-            name:
-              type: string
-              example: Lusha
-            domain:
-              type: string
-              example: www.lusha.com
-        jobTitle:
-          type: object
-          properties:
-            title:
-              type: string
-              example: Senior Solutions Engineer
-            departments:
-              type: array
-              items:
-                type: string
-              example:
-              - Engineering & Technical
-            seniority:
-              type: string
-              example: Senior
+          example: Doe
+        companyDomain:
+          type: string
+          example: acme.com
+        companyName:
+          type: string
+          example: Acme Inc
+    LookalikeCompanyResult:
+      type: object
+      required:
+      - domain
+      - linkedinUrl
+      - name
+      - employeeCount
+      - industry
+      - location
+      properties:
+        domain:
+          type:
+          - string
+          - 'null'
+          example: marriott.com
+        linkedinUrl:
+          type:
+          - string
+          - 'null'
+          example: https://www.linkedin.com/company/marriott-international
+        name:
+          type: string
+          example: Marriott International
+        employeeCount:
+          type:
+          - integer
+          - 'null'
+          example: 255334
+        industry:
+          type:
+          - string
+          - 'null'
+          example: Hospitality
         location:
           type: object
+          required:
+          - country
+          - state
+          - city
           properties:
             country:
-              type: string
-              example: Israel
+              type:
+              - string
+              - 'null'
+              example: United States
             state:
-              type: string
-              example: Tel Aviv District
+              type:
+              - string
+              - 'null'
+              example: Maryland
             city:
-              type: string
-              example: Tel Aviv
+              type:
+              - string
+              - 'null'
+              example: Bethesda
+    ContactLocation:
+      type: object
+      additionalProperties: false
+      properties:
+        country:
+          type:
+          - string
+          - 'null'
+          example: United States
+        state:
+          type:
+          - string
+          - 'null'
+          example: Maryland
+        city:
+          type:
+          - string
+          - 'null'
+          example: Bethesda
     LookalikeContactResult:
       type: object
       additionalProperties: false
@@ -973,120 +1087,60 @@ components:
               example: Director
         location:
           $ref: '#/components/schemas/ContactLocation'
-    ContactItem_2:
-      type: object
-      additionalProperties: false
-      required:
-      - firstName
-      - lastName
-      properties:
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: Doe
-        companyDomain:
-          type: string
-          example: acme.com
-        companyName:
-          type: string
-          example: Acme Inc
-    ContactLocation:
-      type: object
+    ContactIdentifiersBatch_2:
+      type:
+      - object
+      - 'null'
       additionalProperties: false
       properties:
-        country:
-          type:
-          - string
-          - 'null'
-          example: United States
-        state:
-          type:
-          - string
-          - 'null'
-          example: Maryland
-        city:
-          type:
-          - string
-          - 'null'
-          example: Bethesda
-    LookalikeCompanyResult:
+        linkedinUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          example:
+          - https://www.linkedin.com/in/johndoe
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactItem_2'
+          maxItems: 100
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          maxItems: 100
+          example:
+          - john@acme.com
+        contactIds:
+          type: array
+          items:
+            type: integer
+          maxItems: 100
+          example:
+          - 1234
+          - 4567
+      minProperties: 1
+    CompanyLookalikesRequest_2:
       type: object
       required:
-      - domain
-      - linkedinUrl
-      - name
-      - employeeCount
-      - industry
-      - location
-      properties:
-        domain:
-          type:
-          - string
-          - 'null'
-          example: marriott.com
-        linkedinUrl:
-          type:
-          - string
-          - 'null'
-          example: https://www.linkedin.com/company/marriott-international
-        name:
-          type: string
-          example: Marriott International
-        employeeCount:
-          type:
-          - integer
-          - 'null'
-          example: 255334
-        industry:
-          type:
-          - string
-          - 'null'
-          example: Hospitality
-        location:
-          type: object
-          required:
-          - country
-          - state
-          - city
-          properties:
-            country:
-              type:
-              - string
-              - 'null'
-              example: United States
-            state:
-              type:
-              - string
-              - 'null'
-              example: Maryland
-            city:
-              type:
-              - string
-              - 'null'
-              example: Bethesda
-    CompanyLookalikesResponse_2:
-      type: object
-      required:
-      - dedupeSessionId
-      - results
-      - meta
+      - seeds
       properties:
         dedupeSessionId:
           type: string
           format: uuid
           example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/LookalikeCompanyResult'
-        meta:
-          $ref: '#/components/schemas/CompanyLookalikesMeta'
-        creditsCharged:
+        seeds:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        exclude:
+          $ref: '#/components/schemas/CompanyIdentifiersBatch'
+        limit:
           type: integer
-          example: 3
-          minimum: 0
+          minimum: 1
+          maximum: 100
+          default: 25
+          example: 25
     ContactLookalikesResponse_2:
       type: object
       additionalProperties: false
@@ -1131,60 +1185,6 @@ components:
           maximum: 100
           default: 25
           example: 25
-    CompanyLookalikesRequest_2:
-      type: object
-      required:
-      - seeds
-      properties:
-        dedupeSessionId:
-          type: string
-          format: uuid
-          example: 58adaa77-7a6e-4c9b-8c2d-820a6538e613
-        seeds:
-          $ref: '#/components/schemas/CompanyIdentifiersBatch'
-        exclude:
-          $ref: '#/components/schemas/CompanyIdentifiersBatch'
-        limit:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 25
-          example: 25
-    ContactIdentifiersBatch_2:
-      type:
-      - object
-      - 'null'
-      additionalProperties: false
-      properties:
-        linkedinUrls:
-          type: array
-          items:
-            type: string
-          maxItems: 100
-          example:
-          - https://www.linkedin.com/in/johndoe
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactItem_2'
-          maxItems: 100
-        emails:
-          type: array
-          items:
-            type: string
-            format: email
-          maxItems: 100
-          example:
-          - john@acme.com
-        contactIds:
-          type: array
-          items:
-            type: integer
-          maxItems: 100
-          example:
-          - 1234
-          - 4567
-      minProperties: 1
   responses:
     Forbidden:
       description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
@@ -1203,15 +1203,6 @@ components:
               value:
                 statusCode: 403
                 message: V3 API access is not enabled for your account
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
     BadRequest:
       description: Bad request - invalid input data
       content:
@@ -1221,6 +1212,15 @@ components:
           example:
             statusCode: 400
             message: Invalid request parameters
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
     Forbidden_2:
       description: Forbidden - account inactive or feature not available
       content:

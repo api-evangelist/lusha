@@ -223,33 +223,46 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
           example:
-            statusCode: 400
-            message: Invalid request parameters
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
+          - 'entityType must be one of: contact, company'
+    FilterValuesResponse:
+      type: object
+      properties:
+        values:
+          description: Filter values (shape depends on filter type)
+    FilterTypesDiscoveryResponse:
+      type: object
+      properties:
+        availableFilters:
+          type: array
+          items:
+            type: object
+            properties:
+              filterType:
+                type: string
+              requiresQuery:
+                type: boolean
+  responses:
     Unauthorized:
       description: Unauthorized - invalid or missing API key
       content:
@@ -293,45 +306,32 @@ components:
           description: Requests remaining in current minute window
           schema:
             type: integer
-  schemas:
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-          - 'entityType must be one of: contact, company'
-    FilterValuesResponse:
-      type: object
-      properties:
-        values:
-          description: Filter values (shape depends on filter type)
-    FilterTypesDiscoveryResponse:
-      type: object
-      properties:
-        availableFilters:
-          type: array
-          items:
-            type: object
-            properties:
-              filterType:
-                type: string
-              requiresQuery:
-                type: boolean
+            statusCode: 400
+            message: Invalid request parameters
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

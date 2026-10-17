@@ -73,15 +73,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
-    AccountUsageStatsResponse:
-      type: object
-      properties:
-        usage:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/UsageStats'
-      required:
-      - usage
     ErrorResponse:
       type: object
       required:
@@ -103,6 +94,15 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    AccountUsageStatsResponse:
+      type: object
+      properties:
+        usage:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/UsageStats'
+      required:
+      - usage
     UsageStats:
       type: object
       properties:
@@ -120,15 +120,6 @@ components:
       - total
       - remaining
   responses:
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 500
-            message: Internal server error. Please try again later.
     Unauthorized:
       description: Unauthorized - invalid or missing API key
       content:
@@ -138,6 +129,15 @@ components:
           example:
             statusCode: 401
             message: Invalid API key
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 500
+            message: Internal server error. Please try again later.
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:

@@ -169,27 +169,6 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
-    CountryFilter:
-      type: object
-      properties:
-        name:
-          type: string
-          example: United States
-        code:
-          type: string
-          example: US
-      required:
-      - name
-      - code
-    LocationSearchRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: Search text for location
-          example: un
-      required:
-      - text
     LocationFilter:
       type: object
       properties:
@@ -208,6 +187,27 @@ components:
         country_grouping:
           type: string
           example: na
+    LocationSearchRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Search text for location
+          example: un
+      required:
+      - text
+    CountryFilter:
+      type: object
+      properties:
+        name:
+          type: string
+          example: United States
+        code:
+          type: string
+          example: US
+      required:
+      - name
+      - code
   responses:
     Unauthorized:
       description: Unauthorized - invalid or missing API key

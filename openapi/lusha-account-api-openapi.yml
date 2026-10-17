@@ -93,6 +93,47 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
+    PlanInfo:
+      type: object
+      properties:
+        category:
+          type: string
+          example: professional
+        renewalType:
+          type: string
+          example: annual
+        startDate:
+          type: string
+          format: date-time
+          example: '2026-01-01T00:00:00.000Z'
+        endDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Renewal/end date. Omitted (null) for free accounts, since they have no renewal cycle.
+          example: '2027-01-01T00:00:00.000Z'
+    ErrorResponse:
+      type: object
+      required:
+      - statusCode
+      - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages (optional, only for validation errors)
+          example:
+          - 'entityType must be one of: contact, company'
     RateLimits:
       type: object
       properties:
@@ -121,56 +162,6 @@ components:
           type: string
           format: date-time
           example: '2026-03-31T00:00:00.000Z'
-    ErrorResponse:
-      type: object
-      required:
-      - statusCode
-      - message
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: Validation failed
-        errors:
-          type: array
-          items:
-            type: string
-          description: Detailed error messages (optional, only for validation errors)
-          example:
-          - 'entityType must be one of: contact, company'
-    PlanInfo:
-      type: object
-      properties:
-        category:
-          type: string
-          example: professional
-        renewalType:
-          type: string
-          example: annual
-        startDate:
-          type: string
-          format: date-time
-          example: '2026-01-01T00:00:00.000Z'
-        endDate:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Renewal/end date. Omitted (null) for free accounts, since they have no renewal cycle.
-          example: '2027-01-01T00:00:00.000Z'
-    PricingEntry:
-      type: object
-      properties:
-        credits:
-          type: number
-          example: 1
-        perQuantity:
-          type: number
-          example: 25
     AccountUsageResponse:
       type: object
       properties:
@@ -184,6 +175,15 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/PricingEntry'
+    PricingEntry:
+      type: object
+      properties:
+        credits:
+          type: number
+          example: 1
+        perQuantity:
+          type: number
+          example: 25
     CreditsUsage:
       type: object
       properties:
@@ -197,6 +197,15 @@ components:
           type: number
           example: 8500
   responses:
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            message: Invalid API key
     InternalServerError:
       description: Internal server error
       content:
@@ -223,15 +232,6 @@ components:
               value:
                 statusCode: 403
                 message: V3 API access is not enabled for your account
-    Unauthorized:
-      description: Unauthorized - invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            statusCode: 401
-            message: Invalid API key
     TooManyRequests:
       description: Too many requests - rate limit exceeded
       content:

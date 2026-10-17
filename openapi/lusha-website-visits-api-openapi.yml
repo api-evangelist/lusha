@@ -136,26 +136,6 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
-    WebsiteVisitsFloatRange:
-      type: object
-      description: Float range filter (non-negative)
-      properties:
-        min:
-          type: number
-          minimum: 0
-        max:
-          type: number
-          minimum: 0
-    WebsiteVisitsIntRange:
-      type: object
-      description: Integer range filter (non-negative)
-      properties:
-        min:
-          type: integer
-          minimum: 0
-        max:
-          type: integer
-          minimum: 0
     ErrorResponse:
       type: object
       required:
@@ -177,83 +157,31 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
-    V3ItemError:
-      type: object
-      description: Per-item error in a batch response
-      properties:
-        code:
-          type: string
-          enum:
-          - NOT_FOUND
-          - COMPLIANCE_RESTRICTED
-          - ENRICH_FAILED
-          - NO_SCORE
-          example: NOT_FOUND
-        message:
-          type: string
-          example: Contact not found
-    V3CanRevealItem:
-      type: object
-      description: Indicates a data type that can be revealed and its credit cost
-      properties:
-        field:
-          type: string
-          enum:
-          - emails
-          - phones
-          example: emails
-        credits:
-          type: integer
-          description: Credit cost (0 when already revealed for this account)
-          example: 1
-    WebsiteVisitsFilters:
+    WebsiteVisitsResponse:
       type: object
       properties:
-        scoreBands:
+        requestId:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        results:
           type: array
           items:
-            type: string
-            enum:
-            - cold
-            - warm
-            - hot
-          description: Restrict to specific score bands.
-          example:
-          - hot
-          - warm
-        visitorCountries:
-          type: object
-          description: ISO 3166-1 alpha-2 country code filters.
-          properties:
-            include:
-              type: array
-              items:
-                type: string
-              example:
-              - US
-              - GB
-            exclude:
-              type: array
-              items:
-                type: string
-              example:
-              - CN
-        score:
-          allOf:
-          - $ref: '#/components/schemas/WebsiteVisitsIntRange'
-          description: Score range (1–100).
-        totalSessions:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        avgSessionMinutes:
-          $ref: '#/components/schemas/WebsiteVisitsFloatRange'
-        uniqueVisitors:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        daysVisited:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        highIntentPageviews:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
-        daysSinceLastVisit:
-          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+            $ref: '#/components/schemas/WebsiteVisitsCompanyResult'
+        pagination:
+          $ref: '#/components/schemas/WebsiteVisitsPagination'
+        billing:
+          $ref: '#/components/schemas/V3Billing'
+    WebsiteVisitsIntRange:
+      type: object
+      description: Integer range filter (non-negative)
+      properties:
+        min:
+          type: integer
+          minimum: 0
+        max:
+          type: integer
+          minimum: 0
     WebsiteVisitsCompanyResult:
       allOf:
       - $ref: '#/components/schemas/V3CompanyPreview'
@@ -305,6 +233,54 @@ components:
             type: string
             description: Primary visitor country (ISO 3166-1 alpha-2). Omitted if unavailable.
             example: US
+    WebsiteVisitsFilters:
+      type: object
+      properties:
+        scoreBands:
+          type: array
+          items:
+            type: string
+            enum:
+            - cold
+            - warm
+            - hot
+          description: Restrict to specific score bands.
+          example:
+          - hot
+          - warm
+        visitorCountries:
+          type: object
+          description: ISO 3166-1 alpha-2 country code filters.
+          properties:
+            include:
+              type: array
+              items:
+                type: string
+              example:
+              - US
+              - GB
+            exclude:
+              type: array
+              items:
+                type: string
+              example:
+              - CN
+        score:
+          allOf:
+          - $ref: '#/components/schemas/WebsiteVisitsIntRange'
+          description: Score range (1–100).
+        totalSessions:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        avgSessionMinutes:
+          $ref: '#/components/schemas/WebsiteVisitsFloatRange'
+        uniqueVisitors:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        daysVisited:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        highIntentPageviews:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
+        daysSinceLastVisit:
+          $ref: '#/components/schemas/WebsiteVisitsIntRange'
     WebsiteVisitsPagination:
       type: object
       required:
@@ -322,6 +298,21 @@ components:
           type: integer
           description: Total results across all pages.
           example: 142
+    V3ItemError:
+      type: object
+      description: Per-item error in a batch response
+      properties:
+        code:
+          type: string
+          enum:
+          - NOT_FOUND
+          - COMPLIANCE_RESTRICTED
+          - ENRICH_FAILED
+          - NO_SCORE
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Contact not found
     WebsiteVisitsRequest:
       type: object
       required:
@@ -379,6 +370,16 @@ components:
               example: desc
         filters:
           $ref: '#/components/schemas/WebsiteVisitsFilters'
+    WebsiteVisitsFloatRange:
+      type: object
+      description: Float range filter (non-negative)
+      properties:
+        min:
+          type: number
+          minimum: 0
+        max:
+          type: number
+          minimum: 0
     V3Billing:
       type: object
       description: Credit usage summary for a V3 API request
@@ -390,6 +391,20 @@ components:
         resultsReturned:
           type: integer
           description: Number of successful results returned
+          example: 1
+    V3CanRevealItem:
+      type: object
+      description: Indicates a data type that can be revealed and its credit cost
+      properties:
+        field:
+          type: string
+          enum:
+          - emails
+          - phones
+          example: emails
+        credits:
+          type: integer
+          description: Credit cost (0 when already revealed for this account)
           example: 1
     V3CompanyPreview:
       type: object
@@ -511,39 +526,7 @@ components:
           - headcountIncrease3m
         error:
           $ref: '#/components/schemas/V3ItemError'
-    WebsiteVisitsResponse:
-      type: object
-      properties:
-        requestId:
-          type: string
-          format: uuid
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebsiteVisitsCompanyResult'
-        pagination:
-          $ref: '#/components/schemas/WebsiteVisitsPagination'
-        billing:
-          $ref: '#/components/schemas/V3Billing'
   responses:
-    Forbidden:
-      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            accountInactive:
-              summary: Account inactive
-              value:
-                statusCode: 403
-                message: Your account is not active. Please reach out to support at support@lusha.com
-            v3NotEnabled:
-              summary: V3 access not enabled
-              value:
-                statusCode: 403
-                message: V3 API access is not enabled for your account
     Unauthorized:
       description: Unauthorized - invalid or missing API key
       content:
@@ -587,6 +570,23 @@ components:
           description: Requests remaining in current minute window
           schema:
             type: integer
+    Forbidden:
+      description: Forbidden - account inactive, V3 access not enabled, or plan does not include this feature
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            accountInactive:
+              summary: Account inactive
+              value:
+                statusCode: 403
+                message: Your account is not active. Please reach out to support at support@lusha.com
+            v3NotEnabled:
+              summary: V3 access not enabled
+              value:
+                statusCode: 403
+                message: V3 API access is not enabled for your account
     BadRequest:
       description: Bad request - invalid input data
       content:

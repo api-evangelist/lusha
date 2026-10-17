@@ -231,15 +231,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    CompanySizeRange:
-      type: object
-      properties:
-        min:
-          type: number
-          example: 1
-        max:
-          type: number
-          example: 10
     ErrorResponse:
       type: object
       required:
@@ -261,6 +252,39 @@ components:
           description: Detailed error messages (optional, only for validation errors)
           example:
           - 'entityType must be one of: contact, company'
+    RevenueRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 1000000
+    LocationSearchRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Search text for location
+          example: un
+      required:
+      - text
+    CompanyNameResult:
+      type: object
+      properties:
+        companyId:
+          type: number
+          example: 33222678
+        name:
+          type: string
+          example: Lusha
+        logoUrl:
+          type: string
+          example: https://logo.lusha.co/d/company_33222678_logo.jpg
+        fqdn:
+          type: string
+          example: www.lusha.com
     NaicsCode:
       type: object
       properties:
@@ -270,6 +294,30 @@ components:
         label:
           type: string
           example: Agriculture, Forestry, Fishing and Hunting
+    TechnologySearchRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Search text for technology
+          example: rss
+      required:
+      - text
+    CompanySizeRange:
+      type: object
+      properties:
+        min:
+          type: number
+          example: 1
+        max:
+          type: number
+          example: 10
+    Technology:
+      type: object
+      properties:
+        name:
+          type: string
+          example: rss
     IndustryLabel:
       type: object
       properties:
@@ -290,33 +338,6 @@ components:
               id:
                 type: number
                 example: 778
-    TechnologySearchRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: Search text for technology
-          example: rss
-      required:
-      - text
-    LocationSearchRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: Search text for location
-          example: un
-      required:
-      - text
-    SicCode:
-      type: object
-      properties:
-        code:
-          type: string
-          example: '1011'
-        label:
-          type: string
-          example: Iron ores
     CompanyLocationFilter:
       type: object
       properties:
@@ -329,12 +350,6 @@ components:
         country_grouping:
           type: string
           example: na
-    Technology:
-      type: object
-      properties:
-        name:
-          type: string
-          example: rss
     CompanyNameSearchRequest:
       type: object
       properties:
@@ -344,30 +359,15 @@ components:
           example: lusha
       required:
       - text
-    RevenueRange:
+    SicCode:
       type: object
       properties:
-        min:
-          type: number
-          example: 1
-        max:
-          type: number
-          example: 1000000
-    CompanyNameResult:
-      type: object
-      properties:
-        companyId:
-          type: number
-          example: 33222678
-        name:
+        code:
           type: string
-          example: Lusha
-        logoUrl:
+          example: '1011'
+        label:
           type: string
-          example: https://logo.lusha.co/d/company_33222678_logo.jpg
-        fqdn:
-          type: string
-          example: www.lusha.com
+          example: Iron ores
   responses:
     Unauthorized:
       description: Unauthorized - invalid or missing API key
