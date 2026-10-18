@@ -43,7 +43,7 @@ x-docs-platform-checked: 2026-10-03
 tags:
   - Sales Intelligence
   - B2B
-  - Enrichment
+  - Data Enrichment
   - Contact Data
   - Prospecting
   - Intents
@@ -76,6 +76,9 @@ apis:
   baseURL: https://api.lusha.com
   tags:
   - Search
+  - Data Enrichment
+  tags_raw:
+  - Search
   - Enrichment
   properties:
   - type: OpenAPI
@@ -92,6 +95,9 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/enrich
   baseURL: https://api.lusha.com
   tags:
+  - Data Enrichment
+  - Contact Data
+  tags_raw:
   - Enrichment
   - Contact Data
   properties:
@@ -109,6 +115,9 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/search-and-enrich
   baseURL: https://api.lusha.com
   tags:
+  - Data Enrichment
+  - Search
+  tags_raw:
   - Enrichment
   - Search
   properties:
@@ -245,6 +254,9 @@ apis:
   baseURL: https://api.lusha.com
   tags:
   - Tables
+  - Data Enrichment
+  tags_raw:
+  - Tables
   - Enrichment
   properties:
   - type: OpenAPI
@@ -261,6 +273,9 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/companies-tables
   baseURL: https://api.lusha.com
   tags:
+  - Tables
+  - Data Enrichment
+  tags_raw:
   - Tables
   - Enrichment
   properties:
@@ -414,6 +429,8 @@ apis:
   humanURL: https://docs.lusha.com/apis/openapi/search
   baseURL: https://api.lusha.com
   tags:
+  - Data Enrichment
+  tags_raw:
   - Enrichment
   properties:
   - type: OpenAPI
