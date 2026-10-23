@@ -2004,3 +2004,9 @@ components:
 x-refined-from:
 - lusha-openapi.yml
 - lusha-v2-openapi.yaml
+x-provenance:
+  method: harvested
+  publisher: Lusha
+  source: https://docs.lusha.com/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
